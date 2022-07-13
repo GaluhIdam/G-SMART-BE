@@ -12,10 +12,9 @@
 4. `composer install`
 5. Install [Laravel/Passport](https://laravel.com/docs/9.x/passport) dependencie
    ```sh
-   composer require laravel/passport
+   composer require laravel/sanctum
+   php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
    php artisan migrate
-   php artisan passport:install
-   php artisan passport:keys
    php artisan key:generate
    ```
  6. Install [Laravel/Spatie](https://spatie.be/docs/laravel-permission/v5/installation-laravel) dependencie
