@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
         $super_admin = User::create([
             'name'              => 'Super Administrator',
             'username'          => 'super_admin',
+            'role_id'           => 1,
             'email'             => 'super_admin@gmf.com',
             'password'          => password_hash('password_super_admin', PASSWORD_BCRYPT),
             'email_verified_at' => Carbon::now(),
@@ -28,6 +29,7 @@ class UserSeeder extends Seeder
         $admin = User::create([
             'name'              => 'Administrator',
             'username'          => 'admin',
+            'role_id'           => 2,
             'email'             => 'admin@gmf.com',
             'password'          => password_hash('password_admin', PASSWORD_BCRYPT),
             'email_verified_at' => Carbon::now(),
@@ -37,6 +39,7 @@ class UserSeeder extends Seeder
         $user  = User::create([
             'name'              => 'User',
             'username'          => 'user',
+            'role_id'           => 3,
             'email'             => 'user@gmf.com',
             'password'          => password_hash('password_user', PASSWORD_BCRYPT),
             'email_verified_at' => Carbon::now(),

@@ -34,27 +34,40 @@ class AuthController extends Controller
             'password'   => password_hash($request->get('password'), PASSWORD_DEFAULT),
         ]);
 
-        $token =  $register->createToken('token')->accessToken;
+        $token =  $register->createToken('token')->plainTextToken;
         return response()->json([
             'message' => 'Register has successfully!',
             'data'    => $register,
             'token'   => $token
-        ]);
+        ], 201);
     }
 
     public function login(Request $request)
     {
         if (Auth::attempt(['username' => $request->get('username'), 'password' => $request->get('password')])) {
-            $user = Auth::user();
-            $token =  $user->createToken('token')->accessToken;
+            $token = Auth::user()->createToken('token')->plainTextToken;
             return response()->json([
-                'messeage' => 'Authorized',
+                'message' => 'Authorized',
                 'token'    => $token,
             ], 200);
+            $request->session()->regenerate();
         } else {
             return response()->json([
                 'message' => 'Unauthorized'
             ], 401);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        $removeToken = $request->user()->tokens()->delete();
+        if ($removeToken) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Log out has successfully!',
+            ]);
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
         }
     }
 }
