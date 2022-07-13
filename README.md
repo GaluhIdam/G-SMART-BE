@@ -10,7 +10,7 @@
 2. go to project folder. `cd gsmart-api`
 3. Save as the. `env.example` to `.env` and set your database.
 4. `composer install`
-5. Install [Laravel/Passport](https://laravel.com/docs/9.x/passport) dependencie
+5. Install [Laravel/Sanctum](https://laravel.com/docs/9.x/passport) dependencie
    ```sh
    composer require laravel/sanctum
    php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
