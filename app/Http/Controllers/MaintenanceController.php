@@ -49,7 +49,9 @@ class MaintenanceController extends Controller
 
         $maintenance->appends($query_string);
 
-        return $maintenance;
+        return response()->json([
+            'data' => $maintenance,
+        ], 200);
     }
 
     public function create(Request $request)
@@ -60,7 +62,7 @@ class MaintenanceController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json($validator->errors());
         }
 
         $maintenance = Maintenance::create([
@@ -69,7 +71,7 @@ class MaintenanceController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Maintenance has created!',
+            'message' => 'Maintenance has been created successfully!',
             'data' => $maintenance,
         ], 201);
     }
@@ -78,7 +80,7 @@ class MaintenanceController extends Controller
     {
         $maintenance = Maintenance::find($id);
         if ($maintenance) {
-            return response()->json($maintenance, 302);
+            return response()->json($maintenance, 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
@@ -100,16 +102,16 @@ class MaintenanceController extends Controller
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
+                return response()->json($validator->errors());
             }
 
             $maintenance = Maintenance::where('id', $id)->update($request->all());
             $data = Maintenance::where('id', $id)->first();
 
             return response()->json([
-                'message' => 'Maintenance has updated!',
+                'message' => 'Maintenance has been updated successfully!',
                 'data' => $data,
-            ], 202);
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
@@ -124,17 +126,17 @@ class MaintenanceController extends Controller
             if ($maintenance) {
                 $maintenance->delete();
                 return response()->json([
-                    'message' => 'Maintenance has deleted!',
+                    'message' => 'Maintenance has been deleted successfully!',
                     'data'    => $maintenance
-                ], 202);
+                ], 200);
             } else {
                 return response()->json([
-                    'message' => 'Data not found !',
+                    'message' => 'Data not found!',
                 ], 404);
             }
         } else {
             return response()->json([
-                'message' => 'Data not found !',
+                'message' => 'Data not found!',
             ], 404);
         }
     }
