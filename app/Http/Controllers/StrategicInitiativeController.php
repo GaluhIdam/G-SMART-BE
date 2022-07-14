@@ -133,12 +133,12 @@ class StrategicInitiativeController extends Controller
                 ], 200);
             } else {
                 return response()->json([
-                    'message' => 'Data not found !',
+                    'message' => 'Data not found!',
                 ], 404);
             }
         } else {
             return response()->json([
-                'message' => 'Data not found !',
+                'message' => 'Data not found!',
             ], 404);
         }
     }
