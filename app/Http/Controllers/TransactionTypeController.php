@@ -49,7 +49,9 @@ class TransactionTypeController extends Controller
 
         $transaction_type->appends($query_string);
 
-        return $transaction_type;
+        return response()->json([
+            'data' => $transaction_type,
+        ], 200);
     }
 
     public function create(Request $request)
@@ -60,7 +62,7 @@ class TransactionTypeController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json($validator->errors());
         }
 
         $transaction_type = TransactionTypes::create([
@@ -69,7 +71,7 @@ class TransactionTypeController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Transaction Type has created!',
+            'message' => 'Transaction Type has been created successfully!',
             'data' => $transaction_type,
         ], 201);
     }
@@ -78,7 +80,7 @@ class TransactionTypeController extends Controller
     {
         $transaction_type = TransactionTypes::find($id);
         if ($transaction_type) {
-            return response()->json($transaction_type, 302);
+            return response()->json($transaction_type, 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
@@ -100,16 +102,16 @@ class TransactionTypeController extends Controller
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
+                return response()->json($validator->errors());
             }
 
             $transaction_type = TransactionTypes::where('id', $id)->update($request->all());
             $data = TransactionTypes::where('id', $id)->first();
 
             return response()->json([
-                'message' => 'Transaction Type has updated!',
+                'message' => 'Transaction Type has been updated successfully!',
                 'data' => $data,
-            ], 202);
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
@@ -124,17 +126,17 @@ class TransactionTypeController extends Controller
             if ($transaction_type) {
                 $transaction_type->delete();
                 return response()->json([
-                    'message' => 'Transaction Type has deleted!',
+                    'message' => 'Transaction Type has been deleted successfully!',
                     'data'    => $transaction_type
-                ], 202);
+                ], 200);
             } else {
                 return response()->json([
-                    'message' => 'Data not found !',
+                    'message' => 'Data not found!',
                 ], 404);
             }
         } else {
             return response()->json([
-                'message' => 'Data not found !',
+                'message' => 'Data not found!',
             ], 404);
         }
     }
