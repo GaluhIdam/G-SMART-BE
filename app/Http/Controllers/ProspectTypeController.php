@@ -49,7 +49,9 @@ class ProspectTypeController extends Controller
 
         $prospect_type->appends($query_string);
 
-        return $prospect_type;
+        return response()->json([
+            'data' => $prospect_type
+        ], 200);
     }
 
     public function create(Request $request)
@@ -60,7 +62,7 @@ class ProspectTypeController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json($validator->errors());
         }
 
         $prospect_type = ProspectTypes::create([
@@ -69,7 +71,7 @@ class ProspectTypeController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Prospect Types Type has created!',
+            'message' => 'Prospect Types Type has been created successfully!',
             'data' => $prospect_type,
         ], 201);
     }
@@ -78,7 +80,7 @@ class ProspectTypeController extends Controller
     {
         $prospect_type = ProspectTypes::find($id);
         if ($prospect_type) {
-            return response()->json($prospect_type, 302);
+            return response()->json($prospect_type, 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
@@ -107,9 +109,9 @@ class ProspectTypeController extends Controller
             $data = ProspectTypes::where('id', $id)->first();
 
             return response()->json([
-                'message' => 'Prospect Type has updated!',
+                'message' => 'Prospect Type has been updated successfully!',
                 'data' => $data,
-            ], 202);
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
@@ -124,9 +126,9 @@ class ProspectTypeController extends Controller
             if ($prospect_type) {
                 $prospect_type->delete();
                 return response()->json([
-                    'message' => 'Prospect Type has deleted!',
+                    'message' => 'Prospect Type has been deleted successfully!',
                     'data'    => $prospect_type
-                ], 202);
+                ], 200);
             } else {
                 return response()->json([
                     'message' => 'Data not found !',
