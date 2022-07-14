@@ -49,7 +49,9 @@ class StrategicInitiativeController extends Controller
 
         $strategic_initiative->appends($query_string);
 
-        return $strategic_initiative;
+        return response()->json([
+            'data' => $strategic_initiative,
+        ], 200);
     }
 
     public function create(Request $request)
@@ -62,7 +64,7 @@ class StrategicInitiativeController extends Controller
             ]
         );
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json($validator->errors());
         }
 
         $strategic_initiative = StrategicInitiatives::create([
@@ -71,7 +73,7 @@ class StrategicInitiativeController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Strategic Initiative has created!',
+            'message' => 'Strategic Initiative has been created successfully!',
             'data' => $strategic_initiative,
         ], 201);
     }
@@ -80,7 +82,7 @@ class StrategicInitiativeController extends Controller
     {
         $strategic_initiative = StrategicInitiatives::find($id);
         if ($strategic_initiative) {
-            return response()->json($strategic_initiative, 302);
+            return response()->json($strategic_initiative, 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
@@ -102,22 +104,23 @@ class StrategicInitiativeController extends Controller
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
+                return response()->json($validator->errors());
             }
 
             $strategic_initiative = StrategicInitiatives::where('id', $id)->update($request->all());
             $data = StrategicInitiatives::where('id', $id)->first();
 
             return response()->json([
-                'message' => 'Strategic Initiative has updated!',
+                'message' => 'Strategic Initiative has been updated successfully!',
                 'data' => $data,
-            ], 202);
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
             ], 404);
         }
     }
+
     public function destroy($id)
     {
         if ($id) {
@@ -125,9 +128,9 @@ class StrategicInitiativeController extends Controller
             if ($strategic_initiative) {
                 $strategic_initiative->delete();
                 return response()->json([
-                    'message' => 'Strategic Initiative has deleted!',
+                    'message' => 'Strategic Initiative has been deleted successfully!',
                     'data'    => $strategic_initiative
-                ], 202);
+                ], 200);
             } else {
                 return response()->json([
                     'message' => 'Data not found !',
