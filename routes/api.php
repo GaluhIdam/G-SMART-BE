@@ -20,9 +20,9 @@ Route::group(['middleware' => ['role:super-admin']], function () {
         //Strategic Initiative Routes
         Route::get('strategic-initiative', [StrategicInitiativeController::class, 'index']);
         Route::post('strategic-initiative-create', [StrategicInitiativeController::class, 'create']);
-        Route::get('strategic-initiative-show', [StrategicInitiativeController::class, 'show']);
-        Route::post('strategic-initiative-update', [StrategicInitiativeController::class, 'update']);
-        Route::delete('strategic-initiative-delete', [StrategicInitiativeController::class, 'delete']);
+        Route::get('strategic-initiative-show/{id}', [StrategicInitiativeController::class, 'show']);
+        Route::post('strategic-initiative-update/{id}', [StrategicInitiativeController::class, 'update']);
+        Route::delete('strategic-initiative-delete/{id}', [StrategicInitiativeController::class, 'delete']);
     });
 });
 
