@@ -17,23 +17,23 @@ return new class extends Migration
             $table->id();
             $table->year('year')->nullable();
 
-            $table->unsignedBigInteger('transaction_type_id');
+            $table->unsignedBigInteger('transaction_type_id')->nullable();
             $table->index('transaction_type_id');
-            $table->foreign('transaction_type_id')->references('id')->on('transaction_types');
+            $table->foreign('transaction_type_id')->references('id')->on('transaction_types')->onDelete('set null');
 
-            $table->unsignedBigInteger('prospect_type_id');
+            $table->unsignedBigInteger('prospect_type_id')->nullable();
             $table->index('prospect_type_id');
             $table->foreign('prospect_type_id')->references('id')->on('prospect_types');
 
-            $table->unsignedBigInteger('strategic_initiative_id');
+            $table->unsignedBigInteger('strategic_initiative_id')->nullable();
             $table->index('strategic_initiative_id');
             $table->foreign('strategic_initiative_id')->references('id')->on('strategic_initiatives');
 
-            $table->unsignedBigInteger('pm_id');
+            $table->unsignedBigInteger('pm_id')->nullable();
             $table->index('pm_id');
             $table->foreign('pm_id')->references('id')->on('users');
 
-            $table->unsignedBigInteger('customer_id');
+            $table->unsignedBigInteger('customer_id')->nullable();
             $table->index('customer_id');
             $table->foreign('customer_id')->references('id')->on('customers');
             $table->timestamps();
