@@ -58,7 +58,7 @@ class RegionController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:areas|max:100',
+            'name' => 'required|unique:regions|max:100',
             'area_id' => 'required|max:100',
         ]);
 
