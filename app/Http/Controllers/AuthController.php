@@ -23,7 +23,7 @@ class AuthController extends Controller
         );
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
         $register = User::create([
@@ -65,7 +65,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Log out has successfully!',
-            ]);
+            ], 200);
             $request->session()->invalidate();
             $request->session()->regenerateToken();
         }
