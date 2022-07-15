@@ -50,6 +50,7 @@ class StrategicInitiativeController extends Controller
         $strategic_initiative->appends($query_string);
 
         return response()->json([
+            'message' => 'Success!',
             'data' => $strategic_initiative,
         ], 200);
     }
@@ -82,7 +83,10 @@ class StrategicInitiativeController extends Controller
     {
         $strategic_initiative = StrategicInitiatives::find($id);
         if ($strategic_initiative) {
-            return response()->json($strategic_initiative, 200);
+            return response()->json([
+                'message' => 'Success!',
+                'data' => $strategic_initiative
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
