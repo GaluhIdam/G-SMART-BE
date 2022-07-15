@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\UserController;
@@ -19,6 +20,12 @@ Route::group(['middleware' => ['role:super-admin']], function () {
         Route::get('prospect', [ProspectController::class, 'index']);
         Route::post('prospect-create', [ProspectController::class, 'create']);
 
+        //Maintenance Routes
+        Route::get('maintenance', [MaintenanceController::class, 'index']);
+        Route::post('maintenance-create', [MaintenanceController::class, 'create']);
+        Route::get('maintenance-show/{id}', [MaintenanceController::class, 'show']);
+        Route::post('maintenance-update/{id}', [MaintenanceController::class, 'update']);
+        Route::delete('maintenance-delete/{id}', [MaintenanceController::class, 'destroy']);
         //Transaction Type Routes
         Route::get('transaction-type', [TransactionTypeController::class, 'index']);
         Route::post('transaction-type-create', [TransactionTypeController::class, 'create']);
