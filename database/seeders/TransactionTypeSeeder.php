@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\TransactionTypes;
+use App\Models\TransactionType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class TransactionTypesSeeder extends Seeder
+class TransactionTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,11 +15,11 @@ class TransactionTypesSeeder extends Seeder
      */
     public function run()
     {
-        TransactionTypes::create([
+        TransactionType::create([
             'name'        => 'TMB',
             'description' => 'Time Material Based',
         ]);
-        TransactionTypes::create([
+        TransactionType::create([
             'name'        => 'PBTH',
             'description' => 'Power By The Hours',
         ]);

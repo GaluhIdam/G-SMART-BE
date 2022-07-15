@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\ProspectTypes;
+use App\Models\ProspectType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ProspectTypesSeeder extends Seeder
+class ProspectTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,11 +15,11 @@ class ProspectTypesSeeder extends Seeder
      */
     public function run()
     {
-        ProspectTypes::create([
+        ProspectType::create([
             'name'        => 'Organic',
             'description' => 'If you need more info, please check it out'
         ]);
-        ProspectTypes::create([
+        ProspectType::create([
             'name'        => 'In Organic',
             'description' => 'Need to define which Strategic Initiative and selected PM'
         ]);

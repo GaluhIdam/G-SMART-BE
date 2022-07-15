@@ -2,7 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\TransactionTypes;
+use App\Models\User;
+use App\Models\Customer;
+use App\Models\ProspectType;
+use App\Models\TransactionType;
+use App\Models\StrategicInitiatives;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -20,12 +24,12 @@ class Prospect extends Model
 
     public function transaction_type_id()
     {
-        return $this->hasMany(TransactionTypes::class, 'id');
+        return $this->hasMany(TransactionType::class, 'id');
     }
 
     public function prospect_type_id()
     {
-        return $this->hasMany(ProspectTypes::class, 'id');
+        return $this->hasMany(ProspectType::class, 'id');
     }
 
     public function strategic_initiative_id()
