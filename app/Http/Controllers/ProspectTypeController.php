@@ -50,6 +50,7 @@ class ProspectTypeController extends Controller
         $prospect_type->appends($query_string);
 
         return response()->json([
+            'message' => 'Success!',
             'data' => $prospect_type
         ], 200);
     }
@@ -80,7 +81,10 @@ class ProspectTypeController extends Controller
     {
         $prospect_type = ProspectTypes::find($id);
         if ($prospect_type) {
-            return response()->json($prospect_type, 200);
+            return response()->json([
+                'message' => 'Success!',
+                'data' => $prospect_type
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
