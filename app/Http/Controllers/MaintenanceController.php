@@ -50,6 +50,7 @@ class MaintenanceController extends Controller
         $maintenance->appends($query_string);
 
         return response()->json([
+            'message' => 'Success!',
             'data' => $maintenance,
         ], 200);
     }
@@ -80,7 +81,10 @@ class MaintenanceController extends Controller
     {
         $maintenance = Maintenance::find($id);
         if ($maintenance) {
-            return response()->json($maintenance, 200);
+            return response()->json([
+                'message' => 'Success!',
+                'data' => $maintenance
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
