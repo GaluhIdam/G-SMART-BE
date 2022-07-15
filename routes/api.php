@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProspectController;
-use App\Http\Controllers\ProspectTypeController;
+use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\UserController;
 
 Route::post('register', [AuthController::class, 'register']);
@@ -19,12 +19,12 @@ Route::group(['middleware' => ['role:super-admin']], function () {
         Route::get('prospect', [ProspectController::class, 'index']);
         Route::post('prospect-create', [ProspectController::class, 'create']);
 
-        //Prospect Type Routes
-        Route::get('prospect-type', [ProspectTypeController::class, 'index']);
-        Route::post('prospect-type-create', [ProspectTypeController::class, 'create']);
-        Route::get('prospect-type-show/{id}', [ProspectTypeController::class, 'show']);
-        Route::post('prospect-type-update/{id}', [ProspectTypeController::class, 'update']);
-        Route::delete('prospect-type-delete/{id}', [ProspectTypeController::class, 'destroy']);
+        //Transaction Type Routes
+        Route::get('transaction-type', [TransactionTypeController::class, 'index']);
+        Route::post('transaction-type-create', [TransactionTypeController::class, 'create']);
+        Route::get('transaction-type-show/{id}', [TransactionTypeController::class, 'show']);
+        Route::post('transaction-type-update/{id}', [TransactionTypeController::class, 'update']);
+        Route::delete('transaction-type-delete/{id}', [TransactionTypeController::class, 'destroy']);
     });
 });
 
