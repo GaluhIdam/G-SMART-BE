@@ -100,7 +100,7 @@ class MaintenanceController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'        => 'required|unique:maintenances,name,' . $id . '|max:1000',
+                    'name'        => 'required|unique:maintenances,name,' . $id . '|max:100',
                     'description' => 'required|max:100',
                 ]
             );
