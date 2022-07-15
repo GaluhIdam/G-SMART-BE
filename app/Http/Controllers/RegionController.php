@@ -100,7 +100,7 @@ class RegionController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'    => 'required|unique:regions,name,' . $id . '|max:1000',
+                    'name'    => 'required|unique:regions,name,' . $id . '|max:100',
                     'area_id' => 'required|max:100',
                 ]
             );
