@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ProspectController;
+use App\Http\Controllers\RegionController;
 use App\Http\Controllers\StrategicInitiativeController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\UserController;
@@ -30,7 +31,12 @@ Route::group(['middleware' => ['role:super-admin']], function () {
         Route::get('strategic-initiative-show/{id}', [StrategicInitiativeController::class, 'show']);
         Route::post('strategic-initiative-update/{id}', [StrategicInitiativeController::class, 'update']);
         Route::delete('strategic-initiative-delete/{id}', [StrategicInitiativeController::class, 'delete']);
-
+        //Region Routes
+        Route::get('region', [RegionController::class, 'index']);
+        Route::post('region-create', [RegionController::class, 'create']);
+        Route::get('region-show/{id}', [RegionController::class, 'show']);
+        Route::post('region-update/{id}', [RegionController::class, 'update']);
+        Route::delete('region-delete/{id}', [RegionController::class, 'destroy']);
         //Area Routes
         Route::get('area', [AreaController::class, 'index']);
         Route::post('area-create', [AreaController::class, 'create']);
