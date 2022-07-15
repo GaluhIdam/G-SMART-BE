@@ -100,7 +100,7 @@ class AMSController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'initial' => 'required|unique:ams,initial,' . $id . '|max:1000',
+                    'initial' => 'required|unique:ams,initial,' . $id . '|max:100',
                     'user_id' => 'required|max:100',
                 ]
             );
