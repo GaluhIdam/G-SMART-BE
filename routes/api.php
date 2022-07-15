@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\RegionController;
+use App\Http\Controllers\StrategicInitiativeController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\UserController;
 
@@ -22,7 +23,14 @@ Route::group(['middleware' => ['role:super-admin']], function () {
         //Prospect Routes
         Route::get('prospect', [ProspectController::class, 'index']);
         Route::post('prospect-create', [ProspectController::class, 'create']);
+        Route::get('users', [UserController::class, 'index']);
 
+        //Strategic Initiative Routes
+        Route::get('strategic-initiative', [StrategicInitiativeController::class, 'index']);
+        Route::post('strategic-initiative-create', [StrategicInitiativeController::class, 'create']);
+        Route::get('strategic-initiative-show/{id}', [StrategicInitiativeController::class, 'show']);
+        Route::post('strategic-initiative-update/{id}', [StrategicInitiativeController::class, 'update']);
+        Route::delete('strategic-initiative-delete/{id}', [StrategicInitiativeController::class, 'delete']);
         //Region Routes
         Route::get('region', [RegionController::class, 'index']);
         Route::post('region-create', [RegionController::class, 'create']);
