@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AMSController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,12 @@ Route::group(['middleware' => ['role:super-admin']], function () {
         Route::get('prospect', [ProspectController::class, 'index']);
         Route::post('prospect-create', [ProspectController::class, 'create']);
 
+        //Area Routes
+        Route::get('area', [AreaController::class, 'index']);
+        Route::post('area-create', [AreaController::class, 'create']);
+        Route::get('area-show/{id}', [AreaController::class, 'show']);
+        Route::post('area-update/{id}', [AreaController::class, 'update']);
+        Route::delete('area-delete/{id}', [AreaController::class, 'destroy']);
         //Maintenance Routes
         Route::get('maintenance', [MaintenanceController::class, 'index']);
         Route::post('maintenance-create', [MaintenanceController::class, 'create']);
