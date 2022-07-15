@@ -72,7 +72,7 @@ class ProspectTypeController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Prospect Types Type has been created successfully!',
+            'message' => 'Prospect Type has been created successfully!',
             'data' => $prospect_type,
         ], 201);
     }
@@ -100,7 +100,7 @@ class ProspectTypeController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'        => 'required|unique:prospect_types,name,' . $id . '|max:1000',
+                    'name'        => 'required|unique:prospect_types,name,' . $id . '|max:100',
                     'description' => 'required|max:100',
                 ]
             );
