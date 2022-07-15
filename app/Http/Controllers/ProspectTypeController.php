@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ProspectTypes;
+use App\Models\ProspectType;
 use Illuminate\Support\Facades\Validator;
 
 class ProspectTypeController extends Controller
@@ -28,7 +28,7 @@ class ProspectTypeController extends Controller
             $paginate = 10;
         }
 
-        $prospect_type = ProspectTypes::when($search, function ($query) use ($search) {
+        $prospect_type = ProspectType::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('description', 'LIKE', "%{$search}%");
@@ -66,7 +66,7 @@ class ProspectTypeController extends Controller
             return response()->json($validator->errors());
         }
 
-        $prospect_type = ProspectTypes::create([
+        $prospect_type = ProspectType::create([
             'name'        => $request->get('name'),
             'description' => $request->get('description'),
         ]);
@@ -79,7 +79,7 @@ class ProspectTypeController extends Controller
 
     public function show($id)
     {
-        $prospect_type = ProspectTypes::find($id);
+        $prospect_type = ProspectType::find($id);
         if ($prospect_type) {
             return response()->json([
                 'message' => 'Success!',
@@ -94,7 +94,7 @@ class ProspectTypeController extends Controller
 
     public function update(Request $request, $id)
     {
-        $prospect_type = ProspectTypes::find($id);
+        $prospect_type = ProspectType::find($id);
 
         if ($prospect_type) {
             $validator = Validator::make(
@@ -109,8 +109,8 @@ class ProspectTypeController extends Controller
                 return response()->json($validator->errors());
             }
 
-            $prospect_type = ProspectTypes::where('id', $id)->update($request->all());
-            $data = ProspectTypes::where('id', $id)->first();
+            $prospect_type = ProspectType::where('id', $id)->update($request->all());
+            $data = ProspectType::where('id', $id)->first();
 
             return response()->json([
                 'message' => 'Prospect Type has been updated successfully!',
@@ -126,7 +126,7 @@ class ProspectTypeController extends Controller
     public function destroy($id)
     {
         if ($id) {
-            $prospect_type = ProspectTypes::where('id', $id)->first();
+            $prospect_type = ProspectType::where('id', $id)->first();
             if ($prospect_type) {
                 $prospect_type->delete();
                 return response()->json([

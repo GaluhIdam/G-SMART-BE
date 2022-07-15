@@ -19,23 +19,23 @@ return new class extends Migration
 
             $table->unsignedBigInteger('transaction_type_id')->nullable();
             $table->index('transaction_type_id');
-            $table->foreign('transaction_type_id')->references('id')->on('transaction_types')->onDelete('cascade');
+            $table->foreign('transaction_type_id')->references('id')->on('transaction_types')->onDelete('cascade')->onUpdate('cascade');
 
             $table->unsignedBigInteger('prospect_type_id')->nullable();
             $table->index('prospect_type_id');
-            $table->foreign('prospect_type_id')->references('id')->on('prospect_types')->onDelete('cascade');
+            $table->foreign('prospect_type_id')->references('id')->on('prospect_types')->onDelete('cascade')->onUpdate('cascade');
 
             $table->unsignedBigInteger('strategic_initiative_id')->nullable();
             $table->index('strategic_initiative_id');
-            $table->foreign('strategic_initiative_id')->references('id')->on('strategic_initiatives')->onDelete('cascade');
+            $table->foreign('strategic_initiative_id')->references('id')->on('strategic_initiatives')->onDelete('cascade')->onUpdate('cascade');
 
             $table->unsignedBigInteger('pm_id')->nullable();
             $table->index('pm_id');
-            $table->foreign('pm_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('pm_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->index('customer_id');
-            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
