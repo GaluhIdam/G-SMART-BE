@@ -30,8 +30,8 @@ class AreaController extends Controller
 
         $area = Area::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('initial', 'LIKE', "%{$search}%")
-                    ->orWhere('user_id', 'LIKE', "%{$search}%");
+                $sub_query->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('scope', 'LIKE', "%{$search}%");
             });
         })->when($search_name, function ($query) use ($search_name) {
             $query->where('name', 'LIKE', "%{$search_name}%");
@@ -100,7 +100,7 @@ class AreaController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'        => 'required|unique:areas,name,' . $id . '|max:1000',
+                    'name'  => 'required|unique:areas,name,' . $id . '|max:1000',
                     'scope' => 'required|max:100',
                 ]
             );
