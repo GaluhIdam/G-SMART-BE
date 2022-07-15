@@ -50,6 +50,7 @@ class TransactionTypeController extends Controller
         $transaction_type->appends($query_string);
 
         return response()->json([
+            'message' => 'Success!',
             'data' => $transaction_type,
         ], 200);
     }
@@ -80,7 +81,10 @@ class TransactionTypeController extends Controller
     {
         $transaction_type = TransactionTypes::find($id);
         if ($transaction_type) {
-            return response()->json($transaction_type, 200);
+            return response()->json([
+                'message' => 'Success!',
+                'data' => $transaction_type
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
