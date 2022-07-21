@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProspectTypeController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\StrategicInitiativeController;
@@ -81,6 +82,13 @@ Route::group(['middleware' => ['role:super-admin']], function () {
         Route::get('prospect-type-show/{id}', [ProspectTypeController::class, 'show']);
         Route::post('prospect-type-update/{id}', [ProspectTypeController::class, 'update']);
         Route::delete('prospect-type-delete/{id}', [ProspectTypeController::class, 'destroy']);
+
+        //Permission Routes
+        Route::get('permission', [PermissionController::class, 'index']);
+        Route::post('permission-create', [PermissionController::class, 'create']);
+        Route::get('permission-show/{id}', [PermissionController::class, 'show']);
+        Route::post('permission-update/{id}', [PermissionController::class, 'update']);
+        Route::delete('permission-delete/{id}', [PermissionController::class, 'destroy']);
     });
 });
 
