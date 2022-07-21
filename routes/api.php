@@ -12,6 +12,7 @@ use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ProspectTypeController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\StrategicInitiativeController;
+use App\Http\Controllers\ACTypeIDController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -81,6 +82,13 @@ Route::group(['middleware' => ['role:super-admin']], function () {
         Route::get('prospect-type-show/{id}', [ProspectTypeController::class, 'show']);
         Route::post('prospect-type-update/{id}', [ProspectTypeController::class, 'update']);
         Route::delete('prospect-type-delete/{id}', [ProspectTypeController::class, 'destroy']);
+
+        //Aircraft Type Routes
+        Route::get('ac-type-id', [ACTypeIDController::class, 'index']);
+        Route::post('ac-type-id-create', [ACTypeIDController::class, 'create']);
+        Route::get('ac-type-id-show/{id}', [ACTypeIDController::class, 'show']);
+        Route::post('ac-type-id-update/{id}', [ACTypeIDController::class, 'update']);
+        Route::delete('ac-type-id-delete/{id}', [ACTypeIDController::class, 'destroy']);
     });
 });
 
