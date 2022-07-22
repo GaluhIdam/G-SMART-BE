@@ -14,7 +14,7 @@ use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\StrategicInitiativeController;
 use App\Http\Controllers\ACTypeIDController;
 use App\Http\Controllers\EngineController;
-
+use App\Http\Controllers\ComponentsController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -98,6 +98,13 @@ Route::group(['middleware' => ['role:super-admin']], function () {
         Route::get('engine-show/{id}', [EngineController::class, 'show']);
         Route::post('engine-update/{id}', [EngineController::class, 'update']);
         Route::delete('engine-delete/{id}', [EngineController::class, 'destroy']);
+
+        //Components Routes
+        Route::get('components', [ComponentsController::class, 'index']);
+        Route::post('components-create', [ComponentsController::class, 'create']);
+        Route::get('components-show/{id}', [ComponentsController::class, 'show']);
+        Route::post('components-update/{id}', [ComponentsController::class, 'update']);
+        Route::delete('components-delete/{id}', [ComponentsController::class, 'destroy']);
     });
 });
 
