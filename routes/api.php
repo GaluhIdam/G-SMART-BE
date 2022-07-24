@@ -15,6 +15,7 @@ use App\Http\Controllers\StrategicInitiativeController;
 use App\Http\Controllers\ACTypeIDController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\ComponentsController;
+use App\Http\Controllers\ApuIdController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -105,6 +106,13 @@ Route::group(['middleware' => ['role:super-admin']], function () {
         Route::get('components-show/{id}', [ComponentsController::class, 'show']);
         Route::post('components-update/{id}', [ComponentsController::class, 'update']);
         Route::delete('components-delete/{id}', [ComponentsController::class, 'destroy']);
+
+        //apu_ids Routes
+        Route::get('apu-ids', [ApuIdController::class, 'index']);
+        Route::post('apu-ids-create', [ApuIdController::class, 'create']);
+        Route::get('apu-ids-show/{id}', [ApuIdController::class, 'show']);
+        Route::post('apu-ids-update/{id}', [ApuIdController::class, 'update']);
+        Route::delete('apu-ids-delete/{id}', [ApuIdController::class, 'destroy']);
     });
 });
 
