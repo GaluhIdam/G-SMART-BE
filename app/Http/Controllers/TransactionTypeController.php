@@ -63,7 +63,7 @@ class TransactionTypeController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
         $transaction_type = TransactionType::create([
@@ -100,15 +100,14 @@ class TransactionTypeController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'        => 'required|unique:transaction_types,name,' . $id . '|max:1000',
-                    'description' => 'required|max:100',
+                    'name'        => 'required|unique:transaction_types,name,' . $id . '|max:255',
+                    'description' => 'required|max:255',
                 ]
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json($validator->errors(), 422);
             }
-
             $transaction_type = TransactionType::where('id', $id)->update($request->all());
             $data = TransactionType::where('id', $id)->first();
 

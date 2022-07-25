@@ -14,16 +14,17 @@ class AuthController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'name'        => 'required|unique:users|max:20',
-                'username'    => 'required|unique:users|max:10',
+                'name'        => 'required|unique:users',
+                'username'    => 'required|unique:users',
                 'email'       => 'required|unique:users|email',
-                'password'    => 'required',
+                'role_id'     => 'required',
+                'password'    => 'required|min:8',
                 're-password' => 'required|same:password',
             ]
         );
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json($validator->errors());
         }
 
         $register = User::create([
@@ -44,17 +45,30 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        if (Auth::attempt(['username' => $request->get('username'), 'password' => $request->get('password')])) {
-            $token = Auth::user()->createToken('token')->plainTextToken;
-            return response()->json([
-                'message' => 'Authorized',
-                'token'    => $token,
-            ], 200);
-            $request->session()->regenerate();
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'username'    => 'required',
+                'password'    => 'required',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
         } else {
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
+            if (Auth::attempt(['username' => $request->get('username'), 'password' => $request->get('password')])) {
+                $token = Auth::user()->createToken('token')->plainTextToken;
+                return response()->json([
+                    'message' => 'Authorized',
+                    'token'    => $token,
+                ], 200);
+                $request->session()->regenerate();
+            } else {
+                return response()->json([
+                    'message' => 'Unauthorized',
+                    'errors' => $validator->errors()
+                ], 401);
+            }
         }
     }
 
