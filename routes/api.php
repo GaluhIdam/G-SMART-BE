@@ -16,6 +16,8 @@ use App\Http\Controllers\AircraftTypeController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\ApuController;
+use App\Http\Controllers\RoleController;
+use Spatie\Permission\Contracts\Role;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -28,9 +30,16 @@ Route::middleware('auth:sanctum')->group(function () {
     //User Routes
     Route::get('users', [UserController::class, 'index'])->middleware(['permission:read_users']);
     Route::post('users-create', [UserController::class, 'create'])->middleware(['permission:create_users']);
-    Route::get('users-show', [UserController::class, 'show'])->middleware(['permission:show_users']);
-    Route::put('users-update', [UserController::class, 'update'])->middleware(['permission:update_users']);
-    Route::delete('users-delete', [UserController::class, 'delete'])->middleware(['permission:delete_users']);
+    Route::get('users-show/{id}', [UserController::class, 'show'])->middleware(['permission:show_users']);
+    Route::put('users-update/{id}', [UserController::class, 'update'])->middleware(['permission:update_users']);
+    Route::delete('users-delete/{id}', [UserController::class, 'delete'])->middleware(['permission:delete_users']);
+
+    //User Routes
+    Route::get('role', [RoleController::class, 'index'])->middleware(['permission:read_role|role']);
+    Route::post('role-create', [RoleController::class, 'create'])->middleware(['permission:create_role|role']);
+    Route::get('role-show/{id}', [RoleController::class, 'show'])->middleware(['permission:show_role|role']);
+    Route::put('role-update/{id}', [RoleController::class, 'update'])->middleware(['permission:update_role|role']);
+    Route::delete('role-delete/{id}', [RoleController::class, 'destroy'])->middleware(['permission:delete_role|role']);
 
     //Prospect Routes #Status Hold
     Route::get('prospect', [ProspectController::class, 'index']);

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\TransactionType;
+use Spatie\Permission\Models\Role;
 
-class TransactionTypeController extends Controller
+class RoleController extends Controller
 {
     public function index(Request $request)
     {
@@ -25,10 +25,9 @@ class TransactionTypeController extends Controller
             $paginate = 10;
         }
 
-        $transaction_type = TransactionType::when($search, function ($query) use ($search) {
+        $role = Role::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%");
+                $sub_query->where('name', 'LIKE', "%{$search}%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
@@ -40,38 +39,37 @@ class TransactionTypeController extends Controller
             'by' => $by,
         ];
 
-        $transaction_type->appends($query_string);
+        $role->appends($query_string);
 
         return response()->json([
             'message' => 'Success!',
-            'data' => $transaction_type,
+            'data' => $role,
         ], 200);
     }
 
     public function create(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:transaction_types|max:255',
-            'description' => 'required|max:255',
+            'name' => 'required|unique:roles|max:255',
         ]);
 
-        $transaction_type = TransactionType::create([
+        $role = Role::create([
             'name' => $request->get('name'),
-            'description' => $request->get('description'),
+            'guard_name' => 'web',
         ]);
 
         return response()->json([
-            'message' => 'Transaction Type has been created successfully!',
-            'data' => $transaction_type,
+            'message' => 'Role has been created successfully!',
+            'data' => $role,
         ], 201);
     }
 
     public function show($id)
     {
-        if ($transaction_type = TransactionType::find($id)) {
+        if ($role = Role::find($id)) {
             return response()->json([
                 'message' => 'Success!',
-                'data' => $transaction_type
+                'data' => $role
             ], 200);
         } else {
             return response()->json([
@@ -82,17 +80,16 @@ class TransactionTypeController extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($transaction_type = TransactionType::find($id)) {
+        if ($role = Role::find($id)) {
             $request->validate([
-                'name' => 'required|unique:transaction_types,name,' . $id . '|max:255',
-                'description' => 'required|max:255',
+                'name' => 'required|unique:roles,name,' . $id . '|max:255',
             ]);
 
-            $transaction_type->update($request->all());
+            $role->update($request->all());
 
             return response()->json([
-                'message' => 'Transaction Type has been updated successfully!',
-                'data' => $transaction_type,
+                'message' => 'Role has been updated successfully!',
+                'data' => $role,
             ], 200);
         } else {
             return response()->json([
@@ -103,11 +100,10 @@ class TransactionTypeController extends Controller
 
     public function destroy($id)
     {
-        if ($transaction_type = TransactionType::find($id)) {
-            $transaction_type->delete();
-
+        if ($role = Role::find($id)) {
+            $role->delete();
             return response()->json([
-                'message' => 'Transaction Type has been deleted successfully!',
+                'message' => 'Role has been deleted successfully!',
             ], 200);
         } else {
             return response()->json([

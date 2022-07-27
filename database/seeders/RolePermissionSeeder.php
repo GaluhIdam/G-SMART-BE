@@ -18,12 +18,20 @@ class RolePermissionSeeder extends Seeder
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        //Users Permission
+        //User Permission
         $read_users = Permission::create(['name' => 'read_users']);
         $create_users = Permission::create(['name' => 'create_users']);
         $show_users = Permission::create(['name' => 'show_users']);
         $update_users = Permission::create(['name' => 'update_users']);
         $delete_users = Permission::create(['name' => 'delete_users']);
+
+        //Role Permission
+        $role = Permission::create(['name' => 'role']);
+        $read_role = Permission::create(['name' => 'read_role']);
+        $create_role = Permission::create(['name' => 'create_role']);
+        $show_role = Permission::create(['name' => 'show_role']);
+        $update_role = Permission::create(['name' => 'update_role']);
+        $delete_role = Permission::create(['name' => 'delete_role']);
 
         //Strategic Initiative Permission
         $read_strategic_initiative = Permission::create(['name' => 'read_strategic_initiative']);
@@ -109,14 +117,21 @@ class RolePermissionSeeder extends Seeder
         $update_apu = Permission::create(['name' => 'update_apu']);
         $delete_apu = Permission::create(['name' => 'delete_apu']);
 
-        //Role Super Admin
-        $role_super_admin = Role::create(['name' => 'super-admin']);
-        $role_super_admin->givePermissionTo(Permission::all());
-
         //Role Admin
-        $role_admin = Role::create(['name' => 'admin']);
+        $admin = Role::create([
+            'name' => 'Administrator',
+            'description' => 'Manage All Module',
+        ])->givePermissionTo(Permission::all());
+
+        $Roler = Role::create([
+            'name' => 'Roler',
+            'description' => 'Manage All Role',
+        ])->givePermissionTo(['role']);
 
         //Role User
-        $role_user = Role::create(['name' => 'user']);
+        $user = Role::create([
+            'name' => 'User',
+            'description' => 'Only Specific Permission',
+        ])->givePermissionTo($read_role, $create_role, $show_role, $update_role, $delete_role);
     }
 }
