@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProspectTypeController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\StrategicInitiativeController;
