@@ -12,33 +12,39 @@ class UserSeeder extends Seeder
     public function run()
     {
         $administrator = User::create([
-            'name'              => 'Admin JTI',
+            'name'              => 'Zudith Muhammad Iqbal',
             'username'          => 'administrator',
+            'nopeg'             => 582813,
+            'unit'              => 'TDI-2',
             'role_id'           => 1,
-            'email'             => 'admin@gmf.com',
+            'email'             => 'zudith@gmf-aeroasia.co.id',
             'password'          => password_hash('password', PASSWORD_BCRYPT),
             'email_verified_at' => Carbon::now(),
         ]);
         $administrator->assignRole('Administrator');
 
+        $roler = User::create([
+            'name'              => 'Roler JTI',
+            'username'          => 'roler',
+            'nopeg'             => 582815,
+            'unit'              => 'TDI-2',
+            'role_id'           => 2,
+            'email'             => 'roler@gmf.com',
+            'password'          => password_hash('password', PASSWORD_BCRYPT),
+            'email_verified_at' => Carbon::now(),
+        ]);
+        $roler->assignRole('Roler');
+
         $user = User::create([
             'name'              => 'User JTI',
             'username'          => 'user',
-            'role_id'           => 2,
+            'nopeg'             => 582814,
+            'unit'              => 'TDI-2',
+            'role_id'           => 3,
             'email'             => 'user@gmf.com',
             'password'          => password_hash('password', PASSWORD_BCRYPT),
             'email_verified_at' => Carbon::now(),
         ]);
         $user->assignRole('User');
-
-        $roler = User::create([
-            'name'              => 'Roler JTI',
-            'username'          => 'roler',
-            'role_id'           => 3,
-            'email'             => 'roler@gmf.com',
-            'password'          => password_hash('password', PASSWORD_BCRYPT),
-            'email_verified_at' => Carbon::now(),
-        ]);
-        $roler->assignRole('User');
     }
 }
