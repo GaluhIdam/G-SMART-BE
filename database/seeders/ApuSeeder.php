@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Apu;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ACTypeIDSeeder extends Seeder
+class ApuSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +15,8 @@ class ACTypeIDSeeder extends Seeder
      */
     public function run()
     {
-        //
+        Apu::create([
+            'name' => 'GTCP85',
+        ]);
     }
 }

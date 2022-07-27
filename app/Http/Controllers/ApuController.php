@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ACTypeID;
+use App\Models\Apu;
 use Illuminate\Support\Facades\Validator;
 
-class ACTypeIDController extends Controller
+class ApuController extends Controller
 {
     public function index(Request $request)
     {
-        $search             = $request->get('search');
-        $search_name        = $request->get('name');
+        $search = $request->get('search');
 
         if ($request->get('order') && $request->get('by')) {
             $order = $request->get('order');
@@ -27,13 +26,10 @@ class ACTypeIDController extends Controller
             $paginate = 10;
         }
 
-        $ac_type_id = ACTypeID::when($search, function ($query) use ($search) {
+        $apu = Apu::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%");
+                $sub_query->where('name', 'LIKE', "%{$search}%");
             });
-        })->when($search_name, function ($query) use ($search_name) {
-            $query->where('name', 'LIKE', "%{$search_name}%");
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
         })->paginate($paginate);
@@ -44,41 +40,41 @@ class ACTypeIDController extends Controller
             'by' => $by,
         ];
 
-        $ac_type_id->appends($query_string);
+        $apu->appends($query_string);
 
         return response()->json([
             'message' => 'Success!',
-            'data' => $ac_type_id
+            'data' => $apu
         ], 200);
     }
 
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:ac_type_id',
+            'name' => 'required|unique:apu_id',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
-        $ac_type_id = ACTypeID::create([
+        $apu = Apu::create([
             'name' => $request->get('name'),
         ]);
 
         return response()->json([
-            'message' => 'Aircraft Type has been created successfully!',
-            'data' => $ac_type_id,
+            'message' => 'Apu has been created successfully!',
+            'data' => $apu,
         ], 201);
     }
 
     public function show($id)
     {
-        $ac_type_id = ACTypeID::find($id);
-        if ($ac_type_id) {
+        $apu = Apu::find($id);
+        if ($apu) {
             return response()->json([
                 'message' => 'Success!',
-                'data' => $ac_type_id
+                'data' => $apu
             ], 200);
         } else {
             return response()->json([
@@ -89,26 +85,25 @@ class ACTypeIDController extends Controller
 
     public function update(Request $request, $id)
     {
-        $ac_type_id = ACTypeID::find($id);
+        $apu = Apu::find($id);
 
-        if ($ac_type_id) {
+        if ($apu) {
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'        => 'required|unique:ac_type_id,name,' . $id . '|max:100',
-
+                    'name' => 'required|unique:apu_id,name,' . $id . '|max:255',
                 ]
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json($validator->errors(), 422);
             }
 
-            $ac_type_id = ACTypeID::where('id', $id)->update($request->all());
-            $data = ACTypeID::where('id', $id)->first();
+            $apu = Apu::where('id', $id)->update($request->all());
+            $data = Apu::where('id', $id)->first();
 
             return response()->json([
-                'message' => 'Aircraft Type has been updated successfully!',
+                'message' => 'Apu has been updated successfully!',
                 'data' => $data,
             ], 200);
         } else {
@@ -121,12 +116,12 @@ class ACTypeIDController extends Controller
     public function destroy($id)
     {
         if ($id) {
-            $ac_type_id = ACTypeID::where('id', $id)->first();
-            if ($ac_type_id) {
-                $ac_type_id->delete();
+            $apu = Apu::where('id', $id)->first();
+            if ($apu) {
+                $apu->delete();
                 return response()->json([
-                    'message' => 'Aircraft Type has been deleted successfully!',
-                    'data'    => $ac_type_id
+                    'message' => 'Apu has been deleted successfully!',
+                    'data'    => $apu
                 ], 200);
             } else {
                 return response()->json([

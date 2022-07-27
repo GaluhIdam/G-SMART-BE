@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('components', function (Blueprint $table) {
-            $table->id()->unsigned();
-            $table->string('name')->nullable();
+        Schema::create('apu_id', function (Blueprint $table) {
+            $table->id();
+            $table->string("name");
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('components');
+        Schema::dropIfExists('apu_id');
     }
 };

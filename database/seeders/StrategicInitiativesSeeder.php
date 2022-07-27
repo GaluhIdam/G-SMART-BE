@@ -16,8 +16,8 @@ class StrategicInitiativesSeeder extends Seeder
     public function run()
     {
         StrategicInitiatives::create([
-            'name'        => 'Restructuring',
-            'description' => 'Menstruktur ulang',
+            'name'        => 'Military',
+            'description' => 'Military Based Project',
         ]);
     }
 }

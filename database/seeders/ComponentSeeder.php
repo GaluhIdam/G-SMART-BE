@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Region;
+use App\Models\Component;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class RegionSeeder extends Seeder
+class ComponentSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,9 +15,8 @@ class RegionSeeder extends Seeder
      */
     public function run()
     {
-        Region::create([
-            'name' => 'South East Asia',
-            'area_id' => 1,
+        Component::create([
+            'name' => 'Wheel & Brake',
         ]);
     }
 }

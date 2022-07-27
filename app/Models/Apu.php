@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ACTypeID extends Model
+class Apu extends Model
 {
     use HasFactory;
 
-    protected $table = 'ac_type_id';
-
+    protected $table = 'apu_id';
     protected $fillable = [
         'name',
     ];

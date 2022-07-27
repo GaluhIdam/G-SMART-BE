@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Countrie;
+use App\Models\AircraftType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CountrieSeeder extends Seeder
+class AircraftTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,9 +15,8 @@ class CountrieSeeder extends Seeder
      */
     public function run()
     {
-        Countrie::create([
-            'name' => 'Indonesia',
-            'region_id' => 1,
+        AircraftType::create([
+            'name' => 'B777',
         ]);
     }
 }

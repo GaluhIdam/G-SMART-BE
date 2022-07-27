@@ -10,9 +10,7 @@ class AreaController extends Controller
 {
     public function index(Request $request)
     {
-        $search          = $request->get('search');
-        $search_name     = $request->get('name');
-        $search_scope    = $request->get('scope');
+        $search = $request->get('search');
 
         if ($request->get('order') && $request->get('by')) {
             $order = $request->get('order');
@@ -33,10 +31,6 @@ class AreaController extends Controller
                 $sub_query->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('scope', 'LIKE', "%{$search}%");
             });
-        })->when($search_name, function ($query) use ($search_name) {
-            $query->where('name', 'LIKE', "%{$search_name}%");
-        })->when($search_scope, function ($query) use ($search_scope) {
-            $query->where('scope', 'LIKE', "%{$search_scope}%");
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
         })->paginate($paginate);
@@ -58,12 +52,12 @@ class AreaController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:areas|max:100',
-            'scope' => 'required|max:100',
+            'name' => 'required|unique:areas|max:255',
+            'scope' => 'required|max:255',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
         $area = Area::create([
@@ -100,13 +94,13 @@ class AreaController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'  => 'required|unique:areas,name,' . $id . '|max:1000',
-                    'scope' => 'required|max:100',
+                    'name'  => 'required|unique:areas,name,' . $id . '|max:2550',
+                    'scope' => 'required|max:255',
                 ]
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json($validator->errors(), 422);
             }
 
             $area = Area::where('id', $id)->update($request->all());

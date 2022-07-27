@@ -12,112 +12,114 @@ use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ProspectTypeController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\StrategicInitiativeController;
-use App\Http\Controllers\ACTypeIDController;
+use App\Http\Controllers\AircraftTypeController;
 use App\Http\Controllers\EngineController;
-use App\Http\Controllers\ComponentsController;
-use App\Http\Controllers\ApuIdController;
+use App\Http\Controllers\ComponentController;
+use App\Http\Controllers\ApuController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
-Route::group(['middleware' => ['role:super-admin']], function () {
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('logout', [AuthController::class, 'logout']);
-        Route::get('users', [UserController::class, 'index']);
 
-        //Prospect Routes
-        Route::get('prospect', [ProspectController::class, 'index']);
-        Route::post('prospect-create', [ProspectController::class, 'create']);
-        Route::get('users', [UserController::class, 'index']);
+Route::middleware('auth:sanctum')->group(function () {
 
-        //Strategic Initiative Routes
-        Route::get('strategic-initiative', [StrategicInitiativeController::class, 'index']);
-        Route::post('strategic-initiative-create', [StrategicInitiativeController::class, 'create']);
-        Route::get('strategic-initiative-show/{id}', [StrategicInitiativeController::class, 'show']);
-        Route::post('strategic-initiative-update/{id}', [StrategicInitiativeController::class, 'update']);
-        Route::delete('strategic-initiative-delete/{id}', [StrategicInitiativeController::class, 'delete']);
+    Route::post('logout', [AuthController::class, 'logout']);
 
-        //Region Routes
-        Route::get('region', [RegionController::class, 'index']);
-        Route::post('region-create', [RegionController::class, 'create']);
-        Route::get('region-show/{id}', [RegionController::class, 'show']);
-        Route::post('region-update/{id}', [RegionController::class, 'update']);
-        Route::delete('region-delete/{id}', [RegionController::class, 'destroy']);
+    //User Routes
+    Route::get('users', [UserController::class, 'index'])->middleware(['permission:read_users']);
+    Route::post('users-create', [UserController::class, 'create'])->middleware(['permission:create_users']);
+    Route::get('users-show', [UserController::class, 'show'])->middleware(['permission:show_users']);
+    Route::put('users-update', [UserController::class, 'update'])->middleware(['permission:update_users']);
+    Route::delete('users-delete', [UserController::class, 'delete'])->middleware(['permission:delete_users']);
 
-        //Countries Routes
-        Route::get('countries', [CountriesController::class, 'index']);
-        Route::post('countries-create', [CountriesController::class, 'create']);
-        Route::get('countries-show/{id}', [CountriesController::class, 'show']);
-        Route::post('countries-update/{id}', [CountriesController::class, 'update']);
-        Route::delete('countries-delete/{id}', [CountriesController::class, 'destroy']);
+    //Prospect Routes #Status Hold
+    Route::get('prospect', [ProspectController::class, 'index']);
+    Route::post('prospect-create', [ProspectController::class, 'create']);
+    Route::get('prospect-show/{id}', [ProspectController::class, 'show']);
+    Route::put('prospect-update/{id}', [ProspectController::class, 'update']);
+    Route::delete('prospect-delete/{id}', [ProspectController::class, 'delete']);
 
-        //Area Routes
-        Route::get('area', [AreaController::class, 'index']);
-        Route::post('area-create', [AreaController::class, 'create']);
-        Route::get('area-show/{id}', [AreaController::class, 'show']);
-        Route::post('area-update/{id}', [AreaController::class, 'update']);
-        Route::delete('area-delete/{id}', [AreaController::class, 'destroy']);
+    //Strategic Initiative Routes
+    Route::get('strategic-initiative', [StrategicInitiativeController::class, 'index'])->middleware(['permission:read_strategic_initiative']);
+    Route::post('strategic-initiative-create', [StrategicInitiativeController::class, 'create'])->middleware(['permission:create_strategic_initiative']);
+    Route::get('strategic-initiative-show/{id}', [StrategicInitiativeController::class, 'show'])->middleware(['permission:show_strategic_initiative']);
+    Route::post('strategic-initiative-update/{id}', [StrategicInitiativeController::class, 'update'])->middleware(['permission:update_strategic_initiative']);
+    Route::delete('strategic-initiative-delete/{id}', [StrategicInitiativeController::class, 'delete'])->middleware(['permission:delete_strategic_initiative']);
 
-        //Maintenance Routes
-        Route::get('maintenance', [MaintenanceController::class, 'index']);
-        Route::post('maintenance-create', [MaintenanceController::class, 'create']);
-        Route::get('maintenance-show/{id}', [MaintenanceController::class, 'show']);
-        Route::post('maintenance-update/{id}', [MaintenanceController::class, 'update']);
-        Route::delete('maintenance-delete/{id}', [MaintenanceController::class, 'destroy']);
+    //Region Routes
+    Route::get('region', [RegionController::class, 'index'])->middleware(['permission:read_region']);
+    Route::post('region-create', [RegionController::class, 'create'])->middleware(['permission:create_region']);
+    Route::get('region-show/{id}', [RegionController::class, 'show'])->middleware(['permission:show_region']);
+    Route::post('region-update/{id}', [RegionController::class, 'update'])->middleware(['permission:update_region']);
+    Route::delete('region-delete/{id}', [RegionController::class, 'destroy'])->middleware(['permission:delete_region']);
 
-        //Transaction Type Routes
-        Route::get('transaction-type', [TransactionTypeController::class, 'index']);
-        Route::post('transaction-type-create', [TransactionTypeController::class, 'create']);
-        Route::get('transaction-type-show/{id}', [TransactionTypeController::class, 'show']);
-        Route::post('transaction-type-update/{id}', [TransactionTypeController::class, 'update']);
-        Route::delete('transaction-type-delete/{id}', [TransactionTypeController::class, 'destroy']);
+    //Countries Routes
+    Route::get('countries', [CountriesController::class, 'index'])->middleware(['permission:read_countries']);
+    Route::post('countries-create', [CountriesController::class, 'create'])->middleware(['permission:create_countries']);
+    Route::get('countries-show/{id}', [CountriesController::class, 'show'])->middleware(['permission:show_countries']);
+    Route::post('countries-update/{id}', [CountriesController::class, 'update'])->middleware(['permission:update_countries']);
+    Route::delete('countries-delete/{id}', [CountriesController::class, 'destroy'])->middleware(['permission:delete_countries']);
 
-        //AMS Routes
-        Route::get('ams', [AMSController::class, 'index']);
-        Route::post('ams-create', [AMSController::class, 'create']);
-        Route::get('ams-show/{id}', [AMSController::class, 'show']);
-        Route::post('ams-update/{id}', [AMSController::class, 'update']);
-        Route::delete('ams-delete/{id}', [AMSController::class, 'destroy']);
+    //Area Routes
+    Route::get('area', [AreaController::class, 'index'])->middleware(['permission:read_area']);
+    Route::post('area-create', [AreaController::class, 'create'])->middleware(['permission:create_area']);
+    Route::get('area-show/{id}', [AreaController::class, 'show'])->middleware(['permission:show_area']);
+    Route::post('area-update/{id}', [AreaController::class, 'update'])->middleware(['permission:update_area']);
+    Route::delete('area-delete/{id}', [AreaController::class, 'destroy'])->middleware(['permission:delete_area']);;
 
-        //Prospect Type Routes
-        Route::get('prospect-type', [ProspectTypeController::class, 'index']);
-        Route::post('prospect-type-create', [ProspectTypeController::class, 'create']);
-        Route::get('prospect-type-show/{id}', [ProspectTypeController::class, 'show']);
-        Route::post('prospect-type-update/{id}', [ProspectTypeController::class, 'update']);
-        Route::delete('prospect-type-delete/{id}', [ProspectTypeController::class, 'destroy']);
+    //Maintenance Routes
+    Route::get('maintenance', [MaintenanceController::class, 'index'])->middleware(['permission:read_maintenance']);
+    Route::post('maintenance-create', [MaintenanceController::class, 'create'])->middleware(['permission:create_maintenance']);
+    Route::get('maintenance-show/{id}', [MaintenanceController::class, 'show'])->middleware(['permission:show_maintenance']);
+    Route::put('maintenance-update/{id}', [MaintenanceController::class, 'update'])->middleware(['permission:update_maintenance']);
+    Route::delete('maintenance-delete/{id}', [MaintenanceController::class, 'destroy'])->middleware(['permission:delete_maintenance']);
 
-        //Aircraft Type Routes
-        Route::get('ac-type-id', [ACTypeIDController::class, 'index']);
-        Route::post('ac-type-id-create', [ACTypeIDController::class, 'create']);
-        Route::get('ac-type-id-show/{id}', [ACTypeIDController::class, 'show']);
-        Route::post('ac-type-id-update/{id}', [ACTypeIDController::class, 'update']);
-        Route::delete('ac-type-id-delete/{id}', [ACTypeIDController::class, 'destroy']);
+    //Transaction Type Routes
+    Route::get('transaction-type', [TransactionTypeController::class, 'index'])->middleware(['permission:read_transaction_type']);
+    Route::post('transaction-type-create', [TransactionTypeController::class, 'create'])->middleware(['permission:create_transaction_type']);
+    Route::get('transaction-type-show/{id}', [TransactionTypeController::class, 'show'])->middleware(['permission:show_transaction_type']);
+    Route::put('transaction-type-update/{id}', [TransactionTypeController::class, 'update'])->middleware(['permission:update_transaction_type']);
+    Route::delete('transaction-type-delete/{id}', [TransactionTypeController::class, 'destroy'])->middleware(['permission:delete_transaction_type']);
 
-        //Engine Routes
-        Route::get('engine', [EngineController::class, 'index']);
-        Route::post('engine-create', [EngineController::class, 'create']);
-        Route::get('engine-show/{id}', [EngineController::class, 'show']);
-        Route::post('engine-update/{id}', [EngineController::class, 'update']);
-        Route::delete('engine-delete/{id}', [EngineController::class, 'destroy']);
+    //AMS Routes
+    Route::get('ams', [AMSController::class, 'index'])->middleware(['permission:read_ams']);
+    Route::post('ams-create', [AMSController::class, 'create'])->middleware(['permission:create_ams']);
+    Route::get('ams-show/{id}', [AMSController::class, 'show'])->middleware(['permission:show_ams']);
+    Route::put('ams-update/{id}', [AMSController::class, 'update'])->middleware(['permission:update_ams']);
+    Route::delete('ams-delete/{id}', [AMSController::class, 'destroy'])->middleware(['permission:delete_ams']);
 
-        //Components Routes
-        Route::get('components', [ComponentsController::class, 'index']);
-        Route::post('components-create', [ComponentsController::class, 'create']);
-        Route::get('components-show/{id}', [ComponentsController::class, 'show']);
-        Route::post('components-update/{id}', [ComponentsController::class, 'update']);
-        Route::delete('components-delete/{id}', [ComponentsController::class, 'destroy']);
+    //Prospect Type Routes
+    Route::get('prospect-type', [ProspectTypeController::class, 'index'])->middleware(['permission:read_prospect_type']);
+    Route::post('prospect-type-create', [ProspectTypeController::class, 'create'])->middleware(['permission:create_prospect_type']);
+    Route::get('prospect-type-show/{id}', [ProspectTypeController::class, 'show'])->middleware(['permission:show_prospect_type']);
+    Route::put('prospect-type-update/{id}', [ProspectTypeController::class, 'update'])->middleware(['permission:update_prospect_type']);
+    Route::delete('prospect-type-delete/{id}', [ProspectTypeController::class, 'destroy'])->middleware(['permission:delete_prospect_type']);
 
-        //apu_ids Routes
-        Route::get('apu-ids', [ApuIdController::class, 'index']);
-        Route::post('apu-ids-create', [ApuIdController::class, 'create']);
-        Route::get('apu-ids-show/{id}', [ApuIdController::class, 'show']);
-        Route::post('apu-ids-update/{id}', [ApuIdController::class, 'update']);
-        Route::delete('apu-ids-delete/{id}', [ApuIdController::class, 'destroy']);
-    });
-});
+    //Aircraft Type Routes
+    Route::get('aircraft-type', [AircraftTypeController::class, 'index'])->middleware(['permission:read_aircraft_type']);
+    Route::post('aircraft-type-create', [AircraftTypeController::class, 'create'])->middleware(['permission:create_aircraft_type']);
+    Route::get('aircraft-type-show/{id}', [AircraftTypeController::class, 'show'])->middleware(['permission:show_aircraft_type']);
+    Route::put('aircraft-type-update/{id}', [AircraftTypeController::class, 'update'])->middleware(['permission:update_aircraft_type']);
+    Route::delete('aircraft-type-delete/{id}', [AircraftTypeController::class, 'destroy'])->middleware(['permission:delete_aircraft_type']);
 
-Route::group(['middleware' => ['role:admin|super-admin']], function () {
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('prospect', [ProspectController::class, 'index']);
-    });
+    //Engine Routes
+    Route::get('engine', [EngineController::class, 'index'])->middleware(['permission:read_engine']);
+    Route::post('engine-create', [EngineController::class, 'create'])->middleware(['permission:create_engine']);
+    Route::get('engine-show/{id}', [EngineController::class, 'show'])->middleware(['permission:show_engine']);
+    Route::put('engine-update/{id}', [EngineController::class, 'update'])->middleware(['permission:update_engine']);
+    Route::delete('engine-delete/{id}', [EngineController::class, 'destroy'])->middleware(['permission:delete_engine']);
+
+    //Component Routes
+    Route::get('component', [ComponentController::class, 'index'])->middleware(['permission:read_component']);
+    Route::post('component-create', [ComponentController::class, 'create'])->middleware(['permission:create_component']);
+    Route::get('component-show/{id}', [ComponentController::class, 'show'])->middleware(['permission:show_component']);
+    Route::put('component-update/{id}', [ComponentController::class, 'update'])->middleware(['permission:update_component']);
+    Route::delete('component-delete/{id}', [ComponentController::class, 'destroy'])->middleware(['permission:delete_component']);
+
+    //APU Routes
+    Route::get('apu', [ApuController::class, 'index'])->middleware(['permission:read_apu']);
+    Route::post('apu-create', [ApuController::class, 'create'])->middleware(['permission:create_apu']);
+    Route::get('apu-show/{id}', [ApuController::class, 'show'])->middleware(['permission:show_apu']);
+    Route::put('apu-update/{id}', [ApuController::class, 'update'])->middleware(['permission:update_apu']);
+    Route::delete('apu-delete/{id}', [ApuController::class, 'destroy'])->middleware(['permission:delete_apu']);
 });

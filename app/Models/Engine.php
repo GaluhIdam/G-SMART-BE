@@ -9,7 +9,7 @@ class Engine extends Model
 {
     use HasFactory;
 
-    protected $table = 'engine';
+    protected $table = 'engine_id';
 
     protected $fillable = [
         'name',

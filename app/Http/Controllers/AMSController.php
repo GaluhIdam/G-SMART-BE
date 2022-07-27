@@ -10,9 +10,7 @@ class AMSController extends Controller
 {
     public function index(Request $request)
     {
-        $search             = $request->get('search');
-        $search_initial     = $request->get('initial');
-        $search_user_id     = $request->get('user_id');
+        $search = $request->get('search');
 
         if ($request->get('order') && $request->get('by')) {
             $order = $request->get('order');
@@ -33,10 +31,6 @@ class AMSController extends Controller
                 $sub_query->where('initial', 'LIKE', "%{$search}%")
                     ->orWhere('user_id', 'LIKE', "%{$search}%");
             });
-        })->when($search_initial, function ($query) use ($search_initial) {
-            $query->where('initial', 'LIKE', "%{$search_initial}%");
-        })->when($search_user_id, function ($query) use ($search_user_id) {
-            $query->where('user_id', 'LIKE', "%{$search_user_id}%");
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
         })->paginate($paginate);
@@ -58,12 +52,12 @@ class AMSController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'initial' => 'required|unique:ams|max:100',
-            'user_id' => 'required|max:100',
+            'initial' => 'required|unique:ams|max:255',
+            'user_id' => 'required|max:255',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
         $ams = AMS::create([
@@ -100,13 +94,13 @@ class AMSController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'initial' => 'required|unique:ams,initial,' . $id . '|max:100',
-                    'user_id' => 'required|max:100',
+                    'initial' => 'required|unique:ams,initial,' . $id . '|max:255',
+                    'user_id' => 'required|max:255',
                 ]
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json($validator->errors(), 422);
             }
 
             $ams = AMS::where('id', $id)->update($request->all());

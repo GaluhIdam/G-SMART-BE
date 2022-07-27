@@ -6,27 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('engine', function (Blueprint $table) {
+        Schema::create('engine_id', function (Blueprint $table) {
             $table->id()->unsigned();
             $table->string('name')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('ac_type_id');
+        Schema::dropIfExists('engine_id');
     }
 };

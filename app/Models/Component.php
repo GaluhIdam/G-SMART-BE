@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ApuId extends Model
+class Component extends Model
 {
     use HasFactory;
-    protected $table = 'apu_ids';
+
+    protected $table = 'component_id';
     protected $fillable = [
         'name',
     ];
 }
-

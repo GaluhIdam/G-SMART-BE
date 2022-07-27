@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Components;
+use App\Models\AircraftType;
 use Illuminate\Support\Facades\Validator;
 
-class ComponentsController extends Controller
+class AircraftTypeController extends Controller
 {
     public function index(Request $request)
     {
-        $search             = $request->get('search');
-        $search_name        = $request->get('name');
+        $search = $request->get('search');
 
         if ($request->get('order') && $request->get('by')) {
             $order = $request->get('order');
@@ -27,13 +26,10 @@ class ComponentsController extends Controller
             $paginate = 10;
         }
 
-        $components = Components::when($search, function ($query) use ($search) {
+        $ac_type_id = AircraftType::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%");
+                $sub_query->where('name', 'LIKE', "%{$search}%");
             });
-        })->when($search_name, function ($query) use ($search_name) {
-            $query->where('name', 'LIKE', "%{$search_name}%");
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
         })->paginate($paginate);
@@ -44,41 +40,41 @@ class ComponentsController extends Controller
             'by' => $by,
         ];
 
-        $components->appends($query_string);
+        $ac_type_id->appends($query_string);
 
         return response()->json([
             'message' => 'Success!',
-            'data' => $components
+            'data' => $ac_type_id
         ], 200);
     }
 
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:components',
+            'name' => 'required|unique:ac_type_id',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
-        $components = Components::create([
+        $ac_type_id = AircraftType::create([
             'name' => $request->get('name'),
         ]);
 
         return response()->json([
-            'message' => 'Component has been created successfully!',
-            'data' => $components,
+            'message' => 'Aircraft Type has been created successfully!',
+            'data' => $ac_type_id,
         ], 201);
     }
 
     public function show($id)
     {
-        $components = Components::find($id);
-        if ($components) {
+        $ac_type_id = AircraftType::find($id);
+        if ($ac_type_id) {
             return response()->json([
                 'message' => 'Success!',
-                'data' => $components
+                'data' => $ac_type_id
             ], 200);
         } else {
             return response()->json([
@@ -89,26 +85,26 @@ class ComponentsController extends Controller
 
     public function update(Request $request, $id)
     {
-        $components = Components::find($id);
+        $ac_type_id = AircraftType::find($id);
 
-        if ($components) {
+        if ($ac_type_id) {
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'        => 'required|unique:components,name,' . $id . '|max:100',
+                    'name' => 'required|unique:ac_type_id,name,' . $id . '|max:100',
 
                 ]
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json($validator->errors(), 422);
             }
 
-            $components = Components::where('id', $id)->update($request->all());
-            $data = Components::where('id', $id)->first();
+            $ac_type_id = AircraftType::where('id', $id)->update($request->all());
+            $data = AircraftType::where('id', $id)->first();
 
             return response()->json([
-                'message' => 'Component has been updated successfully!',
+                'message' => 'Aircraft Type has been updated successfully!',
                 'data' => $data,
             ], 200);
         } else {
@@ -121,12 +117,12 @@ class ComponentsController extends Controller
     public function destroy($id)
     {
         if ($id) {
-            $components = Components::where('id', $id)->first();
-            if ($components) {
-                $components->delete();
+            $ac_type_id = AircraftType::where('id', $id)->first();
+            if ($ac_type_id) {
+                $ac_type_id->delete();
                 return response()->json([
-                    'message' => 'Component has been deleted successfully!',
-                    'data'    => $components
+                    'message' => 'Aircraft Type has been deleted successfully!',
+                    'data'    => $ac_type_id
                 ], 200);
             } else {
                 return response()->json([

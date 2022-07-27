@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ApuId;
+use App\Models\Component;
 use Illuminate\Support\Facades\Validator;
 
-class ApuIdController extends Controller
+class ComponentController extends Controller
 {
     public function index(Request $request)
     {
-        $search             = $request->get('search');
-        $search_name        = $request->get('name');
+        $search = $request->get('search');
 
         if ($request->get('order') && $request->get('by')) {
             $order = $request->get('order');
@@ -27,13 +26,10 @@ class ApuIdController extends Controller
             $paginate = 10;
         }
 
-        $apu_ids = ApuId::when($search, function ($query) use ($search) {
+        $component = Component::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%");
+                $sub_query->where('name', 'LIKE', "%{$search}%");
             });
-        })->when($search_name, function ($query) use ($search_name) {
-            $query->where('name', 'LIKE', "%{$search_name}%");
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
         })->paginate($paginate);
@@ -44,41 +40,41 @@ class ApuIdController extends Controller
             'by' => $by,
         ];
 
-        $apu_ids->appends($query_string);
+        $component->appends($query_string);
 
         return response()->json([
             'message' => 'Success!',
-            'data' => $apu_ids
+            'data' => $component
         ], 200);
     }
 
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:apu_ids',
+            'name' => 'required|unique:component_id|max:255',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
-        $apu_ids = ApuId::create([
+        $component = Component::create([
             'name' => $request->get('name'),
         ]);
 
         return response()->json([
             'message' => 'Component has been created successfully!',
-            'data' => $apu_ids,
+            'data' => $component,
         ], 201);
     }
 
     public function show($id)
     {
-        $apu_ids = ApuId::find($id);
-        if ($apu_ids) {
+        $component = Component::find($id);
+        if ($component) {
             return response()->json([
                 'message' => 'Success!',
-                'data' => $apu_ids
+                'data' => $component
             ], 200);
         } else {
             return response()->json([
@@ -89,26 +85,25 @@ class ApuIdController extends Controller
 
     public function update(Request $request, $id)
     {
-        $apu_ids = ApuId::find($id);
+        $component = Component::find($id);
 
-        if ($apu_ids) {
+        if ($component) {
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'        => 'required|unique:apu_ids,name,' . $id . '|max:100',
-
+                    'name' => 'required|unique:component_id,name,' . $id . '|max:255',
                 ]
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json($validator->errors(), 422);
             }
 
-            $apu_ids = ApuId::where('id', $id)->update($request->all());
-            $data = ApuId::where('id', $id)->first();
+            $component = Component::where('id', $id)->update($request->all());
+            $data = Component::where('id', $id)->first();
 
             return response()->json([
-                'message' => 'apu_id has been updated successfully!',
+                'message' => 'Component has been updated successfully!',
                 'data' => $data,
             ], 200);
         } else {
@@ -121,12 +116,12 @@ class ApuIdController extends Controller
     public function destroy($id)
     {
         if ($id) {
-            $apu_ids = ApuId::where('id', $id)->first();
-            if ($apu_ids) {
-                $apu_ids->delete();
+            $component = Component::where('id', $id)->first();
+            if ($component) {
+                $component->delete();
                 return response()->json([
-                    'message' => 'apu_id has been deleted successfully!',
-                    'data'    => $apu_ids
+                    'message' => 'Component has been deleted successfully!',
+                    'data'    => $component
                 ], 200);
             } else {
                 return response()->json([
