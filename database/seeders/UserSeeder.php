@@ -9,41 +9,42 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        $super_admin = User::create([
-            'name'              => 'Super Administrator',
-            'username'          => 'super_admin',
+        $administrator = User::create([
+            'name'              => 'Zudith Muhammad Iqbal',
+            'username'          => 'administrator',
+            'nopeg'             => 582813,
+            'unit'              => 'TDI-2',
             'role_id'           => 1,
-            'email'             => 'super_admin@gmf.com',
+            'email'             => 'zudith@gmf-aeroasia.co.id',
             'password'          => password_hash('password', PASSWORD_BCRYPT),
             'email_verified_at' => Carbon::now(),
         ]);
-        $super_admin->assignRole('super-admin');
+        $administrator->assignRole('Administrator');
 
-        $admin = User::create([
-            'name'              => 'Administrator',
-            'username'          => 'admin',
+        $roler = User::create([
+            'name'              => 'Roler JTI',
+            'username'          => 'roler',
+            'nopeg'             => 582815,
+            'unit'              => 'TDI-2',
             'role_id'           => 2,
-            'email'             => 'admin@gmf.com',
+            'email'             => 'roler@gmf.com',
             'password'          => password_hash('password', PASSWORD_BCRYPT),
             'email_verified_at' => Carbon::now(),
         ]);
-        $admin->assignRole('admin');
+        $roler->assignRole('Roler');
 
-        $user  = User::create([
-            'name'              => 'User',
+        $user = User::create([
+            'name'              => 'User JTI',
             'username'          => 'user',
+            'nopeg'             => 582814,
+            'unit'              => 'TDI-2',
             'role_id'           => 3,
             'email'             => 'user@gmf.com',
             'password'          => password_hash('password', PASSWORD_BCRYPT),
             'email_verified_at' => Carbon::now(),
         ]);
-        $user->assignRole('user');
+        $user->assignRole('User');
     }
 }

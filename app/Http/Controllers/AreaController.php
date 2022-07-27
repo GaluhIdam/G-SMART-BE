@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class AreaController extends Controller
 {
@@ -51,19 +50,12 @@ class AreaController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => 'required|unique:areas|max:255',
             'scope' => 'required|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $area = Area::create([
-            'name'  => $request->get('name'),
-            'scope' => $request->get('scope'),
-        ]);
+        $area = Area::create($request->all());
 
         return response()->json([
             'message' => 'Area has been created successfully!',
@@ -73,8 +65,7 @@ class AreaController extends Controller
 
     public function show($id)
     {
-        $area = Area::find($id);
-        if ($area) {
+        if ($area = Area::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $area
@@ -88,27 +79,17 @@ class AreaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $area = Area::find($id);
+        if ($area = Area::find($id)) {
+            $request->validate([
+                'name'  => 'required|unique:areas,name,' . $id . '|max:2550',
+                'scope' => 'required|max:255',
+            ]);
 
-        if ($area) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name'  => 'required|unique:areas,name,' . $id . '|max:2550',
-                    'scope' => 'required|max:255',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-
-            $area = Area::where('id', $id)->update($request->all());
-            $data = Area::where('id', $id)->first();
+            $area->update($request->all());
 
             return response()->json([
                 'message' => 'Area has been updated successfully!',
-                'data' => $data,
+                'data' => $area,
             ], 200);
         } else {
             return response()->json([
@@ -119,19 +100,12 @@ class AreaController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $area = Area::where('id', $id)->first();
-            if ($area) {
-                $area->delete();
-                return response()->json([
-                    'message' => 'Area has been deleted successfully!',
-                    'data'    => $area
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($area = Area::find($id)) {
+            $area->delete();
+            return response()->json([
+                'message' => 'Area has been deleted successfully!',
+                'data'    => $area
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',

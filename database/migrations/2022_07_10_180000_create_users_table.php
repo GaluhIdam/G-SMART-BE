@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('username');
+            $table->string('nopeg')->unique();
+            $table->string('unit');
 
             $table->unsignedBigInteger('role_id');
             $table->index('role_id');
