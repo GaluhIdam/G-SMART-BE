@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Apu extends Model
 {
     use HasFactory;
+
     protected $table = 'apu_id';
     protected $fillable = [
         'name',

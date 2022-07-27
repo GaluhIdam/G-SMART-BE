@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Component;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ComponentsSeeder extends Seeder
+class ComponentSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +15,8 @@ class ComponentsSeeder extends Seeder
      */
     public function run()
     {
-        //
+        Component::create([
+            'name' => 'Wheel & Brake',
+        ]);
     }
 }

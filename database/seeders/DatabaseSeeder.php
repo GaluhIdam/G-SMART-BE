@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             StrategicInitiativesSeeder::class,
             CustomerSeeder::class,
             ProspectSeeder::class,
+            ApuSeeder::class,
+            ComponentSeeder::class,
         ]);
     }
 }
