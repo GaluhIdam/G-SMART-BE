@@ -33,6 +33,8 @@ class UserController extends Controller
                 $sub_query->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('username', 'LIKE', "%{$search}%")
                     ->orWhere('email', 'LIKE', "%{$search}%")
+                    ->orWhere('nopeg', 'LIKE', "%{$search}%")
+                    ->orWhere('unit', 'LIKE', "%{$search}%")
                     ->orWhere('role_id', 'LIKE', "%{$search}%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
