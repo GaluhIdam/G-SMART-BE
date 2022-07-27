@@ -34,6 +34,14 @@ class RolePermissionSeeder extends Seeder
         $update_role = Permission::create(['name' => 'update_role']);
         $delete_role = Permission::create(['name' => 'delete_role']);
 
+        //Permission Permission
+        $manage_permission = Permission::create(['name' => 'manage_permission']);
+        $read_permission = Permission::create(['name' => 'read_permission']);
+        $create_permission = Permission::create(['name' => 'create_permission']);
+        $show_permission = Permission::create(['name' => 'show_permission']);
+        $update_permission = Permission::create(['name' => 'update_permission']);
+        $delete_permission = Permission::create(['name' => 'delete_permission']);
+
         //Strategic Initiative Permission
         $manage_strategic_initiative = Permission::create(['name' => 'manage_strategic_initiative']);
         $read_strategic_initiative = Permission::create(['name' => 'read_strategic_initiative']);

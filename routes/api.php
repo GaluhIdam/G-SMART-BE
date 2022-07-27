@@ -35,12 +35,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('users-update/{id}', [UserController::class, 'update'])->middleware(['permission:update_users|manage_users']);
     Route::delete('users-delete/{id}', [UserController::class, 'delete'])->middleware(['permission:delete_users|manage_users']);
 
-    //User Routes
+    //Role Routes
     Route::get('role', [RoleController::class, 'index'])->middleware(['permission:read_role|manage_role']);
     Route::post('role-create', [RoleController::class, 'create'])->middleware(['permission:create_role|manage_role']);
     Route::get('role-show/{id}', [RoleController::class, 'show'])->middleware(['permission:show_role|manage_role']);
     Route::put('role-update/{id}', [RoleController::class, 'update'])->middleware(['permission:update_role|manage_role']);
     Route::delete('role-delete/{id}', [RoleController::class, 'destroy'])->middleware(['permission:delete_role|manage_role']);
+
+    //Permission Routes
+    Route::get('permission', [PermissionController::class, 'index'])->middleware(['permission:read_permission|manage_permission']);
+    Route::post('permission-create', [PermissionController::class, 'create'])->middleware(['permission:create_permission|manage_permission']);
+    Route::get('permission-show/{id}', [PermissionController::class, 'show'])->middleware(['permission:show_permission|manage_permission']);
+    Route::put('permission-update/{id}', [PermissionController::class, 'update'])->middleware(['permission:update_permission|manage_permission']);
+    Route::delete('permission-delete/{id}', [PermissionController::class, 'destroy'])->middleware(['permission:delete_permission|manage_permission']);
 
     //Prospect Routes #Status Hold
     Route::get('prospect', [ProspectController::class, 'index']);

@@ -3,17 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Permission;
-use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Permission;
 
 
 class PermissionController extends Controller
 {
     public function index(Request $request)
     {
-        $search             = $request->get('search');
-        $search_name        = $request->get('name');
-        $search_guard_name = $request->get('guard_name');
+        $search = $request->get('search');
 
         if ($request->get('order') && $request->get('by')) {
             $order = $request->get('order');
@@ -32,12 +29,8 @@ class PermissionController extends Controller
         $permission = Permission::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('guard_name', 'LIKE', "%{$search}%");
+                    ->orWhere('description', 'LIKE', "%{$search}%");
             });
-        })->when($search_name, function ($query) use ($search_name) {
-            $query->where('name', 'LIKE', "%{$search_name}%");
-        })->when($search_guard_name, function ($query) use ($search_guard_name) {
-            $query->where('guard_name', 'LIKE', "%{$search_guard_name}%");
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
         })->paginate($paginate);
@@ -58,19 +51,12 @@ class PermissionController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:permission|max:100',
-            'guard_name' => 'required|max:100',
+        $request->validate([
+            'name' => 'required|unique:permission|max:255',
+            'description' => 'required|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors());
-        }
-
-        $permission = Permission::create([
-            'name'        => $request->get('name'),
-            'guard_name' => $request->get('guard_name'),
-        ]);
+        $permission = Permission::create($request->all());
 
         return response()->json([
             'message' => 'Permission has been created successfully!',
@@ -80,8 +66,7 @@ class PermissionController extends Controller
 
     public function show($id)
     {
-        $permission = Permission::find($id);
-        if ($permission) {
+        if ($permission = Permission::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $permission
@@ -95,27 +80,17 @@ class PermissionController extends Controller
 
     public function update(Request $request, $id)
     {
-        $permission = Permission::find($id);
+        if ($permission = Permission::find($id)) {
+            $request->validate([
+                'name' => 'required|unique:permission,name,' . $id . '|max:255',
+                'description' => 'required|max:255',
+            ]);
 
-        if ($permission) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name'        => 'required|unique:permission,name,' . $id . '|max:1000',
-                    'guard_name' => 'required|max:100',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors());
-            }
-
-            $permission = Permission::where('id', $id)->update($request->all());
-            $data = Permission::where('id', $id)->first();
+            $permission->update($request->all());
 
             return response()->json([
                 'message' => 'Permission has been updated successfully!',
-                'data' => $data,
+                'data' => $permission,
             ], 200);
         } else {
             return response()->json([
@@ -126,19 +101,12 @@ class PermissionController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $permission = Permission::where('id', $id)->first();
-            if ($permission) {
-                $permission->delete();
-                return response()->json([
-                    'message' => 'Permission has been deleted successfully!',
-                    'data'    => $permission
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($permission = Permission::find($id)) {
+            $permission->delete();
+            return response()->json([
+                'message' => 'Permission has been deleted successfully!',
+                'data'    => $permission
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
