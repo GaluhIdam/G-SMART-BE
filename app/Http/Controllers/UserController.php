@@ -47,7 +47,7 @@ class UserController extends Controller
 
         $user->appends($query_string);
 
-        $user_active  = Auth::user();
+        $user_active = Auth::user();
 
         return response()->json([
             'message' => 'success',
