@@ -10,8 +10,7 @@ class EngineController extends Controller
 {
     public function index(Request $request)
     {
-        $search             = $request->get('search');
-        $search_name        = $request->get('name');
+        $search = $request->get('search');
 
         if ($request->get('order') && $request->get('by')) {
             $order = $request->get('order');
@@ -29,11 +28,8 @@ class EngineController extends Controller
 
         $engine = Engine::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%");
+                $sub_query->where('name', 'LIKE', "%{$search}%");
             });
-        })->when($search_name, function ($query) use ($search_name) {
-            $query->where('name', 'LIKE', "%{$search_name}%");
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
         })->paginate($paginate);
@@ -55,11 +51,11 @@ class EngineController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:engine',
+            'name' => 'required|unique:engine_id',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
         $engine = Engine::create([
@@ -95,13 +91,12 @@ class EngineController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'        => 'required|unique:engine,name,' . $id . '|max:100',
-
+                    'name' => 'required|unique:engine_id,name,' . $id . '|max:255',
                 ]
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json($validator->errors(), 422);
             }
 
             $engine = Engine::where('id', $id)->update($request->all());
