@@ -109,7 +109,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('engine-update/{id}', [EngineController::class, 'update'])->middleware(['permission:update_engine']);
     Route::delete('engine-delete/{id}', [EngineController::class, 'destroy'])->middleware(['permission:delete_engine']);
 
-    //Components Routes
+    //Component Routes
     Route::get('component', [ComponentController::class, 'index'])->middleware(['permission:read_component']);
     Route::post('component-create', [ComponentController::class, 'create'])->middleware(['permission:create_component']);
     Route::get('component-show/{id}', [ComponentController::class, 'show'])->middleware(['permission:show_component']);
