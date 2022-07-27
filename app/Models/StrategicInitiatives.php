@@ -9,6 +9,7 @@ class StrategicInitiatives extends Model
 {
     use HasFactory;
 
+    protected $table = 'strategic_initiatives';
     protected $fillable = [
         'name',
         'description',

@@ -16,7 +16,7 @@ class RegionSeeder extends Seeder
     public function run()
     {
         Region::create([
-            'name' => 'Domestic',
+            'name' => 'South East Asia',
             'area_id' => 1,
         ]);
     }

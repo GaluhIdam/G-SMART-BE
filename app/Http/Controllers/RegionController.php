@@ -10,9 +10,7 @@ class RegionController extends Controller
 {
     public function index(Request $request)
     {
-        $search          = $request->get('search');
-        $search_name     = $request->get('name');
-        $search_area_id    = $request->get('area_id');
+        $search = $request->get('search');
 
         if ($request->get('order') && $request->get('by')) {
             $order = $request->get('order');
@@ -33,10 +31,6 @@ class RegionController extends Controller
                 $sub_query->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('area_id', 'LIKE', "%{$search}%");
             });
-        })->when($search_name, function ($query) use ($search_name) {
-            $query->where('name', 'LIKE', "%{$search_name}%");
-        })->when($search_area_id, function ($query) use ($search_area_id) {
-            $query->where('area_id', 'LIKE', "%{$search_area_id}%");
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
         })->paginate($paginate);
@@ -58,8 +52,8 @@ class RegionController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:regions|max:100',
-            'area_id' => 'required|max:100',
+            'name' => 'required|unique:regions|max:255',
+            'area_id' => 'required|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -100,8 +94,8 @@ class RegionController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'    => 'required|unique:regions,name,' . $id . '|max:100',
-                    'area_id' => 'required|max:100',
+                    'name'    => 'required|unique:regions,name,' . $id . '|max:255',
+                    'area_id' => 'required|max:255',
                 ]
             );
 

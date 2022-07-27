@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Countrie;
+use App\Models\Countries;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CountrieSeeder extends Seeder
+class CountriesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,7 +15,7 @@ class CountrieSeeder extends Seeder
      */
     public function run()
     {
-        Countrie::create([
+        Countries::create([
             'name' => 'Indonesia',
             'region_id' => 1,
         ]);

@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             AMSSeeder::class,
             MaintenanceSeeder::class,
+            RegionSeeder::class,
             AreaSeeder::class,
             ProspectTypeSeeder::class,
             TransactionTypeSeeder::class,
