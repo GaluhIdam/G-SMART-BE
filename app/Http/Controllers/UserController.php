@@ -72,7 +72,7 @@ class UserController extends Controller
         );
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
         $register = User::create([
