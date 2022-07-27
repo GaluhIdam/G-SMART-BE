@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
             'username'          => 'super_admin',
             'role_id'           => 1,
             'email'             => 'super_admin@gmf.com',
-            'password'          => password_hash('password_super_admin', PASSWORD_BCRYPT),
+            'password'          => password_hash('password', PASSWORD_BCRYPT),
             'email_verified_at' => Carbon::now(),
         ]);
         $super_admin->assignRole('super-admin');
@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
             'username'          => 'admin',
             'role_id'           => 2,
             'email'             => 'admin@gmf.com',
-            'password'          => password_hash('password_admin', PASSWORD_BCRYPT),
+            'password'          => password_hash('password', PASSWORD_BCRYPT),
             'email_verified_at' => Carbon::now(),
         ]);
         $admin->assignRole('admin');
@@ -41,7 +41,7 @@ class UserSeeder extends Seeder
             'username'          => 'user',
             'role_id'           => 3,
             'email'             => 'user@gmf.com',
-            'password'          => password_hash('password_user', PASSWORD_BCRYPT),
+            'password'          => password_hash('password', PASSWORD_BCRYPT),
             'email_verified_at' => Carbon::now(),
         ]);
         $user->assignRole('user');

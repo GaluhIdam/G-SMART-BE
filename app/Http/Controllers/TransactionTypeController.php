@@ -51,17 +51,13 @@ class TransactionTypeController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => 'required|unique:transaction_types|max:255',
             'description' => 'required|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
         $transaction_type = TransactionType::create([
-            'name'        => $request->get('name'),
+            'name' => $request->get('name'),
             'description' => $request->get('description'),
         ]);
 
@@ -73,8 +69,7 @@ class TransactionTypeController extends Controller
 
     public function show($id)
     {
-        $transaction_type = TransactionType::find($id);
-        if ($transaction_type) {
+        if ($transaction_type = TransactionType::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $transaction_type
@@ -88,26 +83,17 @@ class TransactionTypeController extends Controller
 
     public function update(Request $request, $id)
     {
-        $transaction_type = TransactionType::find($id);
+        if ($transaction_type = TransactionType::find($id)) {
+            $request->validate([
+                'name' => 'required|unique:transaction_types,name,' . $id . '|max:255',
+                'description' => 'required|max:255',
+            ]);
 
-        if ($transaction_type) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name'        => 'required|unique:transaction_types,name,' . $id . '|max:255',
-                    'description' => 'required|max:255',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-            $transaction_type = TransactionType::where('id', $id)->update($request->all());
-            $data = TransactionType::where('id', $id)->first();
+            $transaction_type->update($request->all());
 
             return response()->json([
                 'message' => 'Transaction Type has been updated successfully!',
-                'data' => $data,
+                'data' => $transaction_type,
             ], 200);
         } else {
             return response()->json([
@@ -118,19 +104,12 @@ class TransactionTypeController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $transaction_type = TransactionType::where('id', $id)->first();
-            if ($transaction_type) {
-                $transaction_type->delete();
-                return response()->json([
-                    'message' => 'Transaction Type has been deleted successfully!',
-                    'data'    => $transaction_type
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($transaction_type = TransactionType::find($id)) {
+            $transaction_type->delete();
+            
+            return response()->json([
+                'message' => 'Transaction Type has been deleted successfully!',
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
