@@ -84,11 +84,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('maintenance-delete/{id}', [MaintenanceController::class, 'destroy'])->middleware(['permission:delete_maintenance|manage_maintenance']);
 
     //Transaction Type Routes
-    Route::get('transaction-type', [TransactionTypeController::class, 'index'])->middleware(['permission:read_transaction_type']);
-    Route::post('transaction-type-create', [TransactionTypeController::class, 'create'])->middleware(['permission:create_transaction_type']);
-    Route::get('transaction-type-show/{id}', [TransactionTypeController::class, 'show'])->middleware(['permission:show_transaction_type']);
-    Route::put('transaction-type-update/{id}', [TransactionTypeController::class, 'update'])->middleware(['permission:update_transaction_type']);
-    Route::delete('transaction-type-delete/{id}', [TransactionTypeController::class, 'destroy'])->middleware(['permission:delete_transaction_type']);
+    Route::get('transaction-type', [TransactionTypeController::class, 'index'])->middleware(['permission:read_transaction_type|manage_transaction_type']);
+    Route::post('transaction-type-create', [TransactionTypeController::class, 'create'])->middleware(['permission:create_transaction_type|manage_transaction_type']);
+    Route::get('transaction-type-show/{id}', [TransactionTypeController::class, 'show'])->middleware(['permission:show_transaction_type|manage_transaction_type']);
+    Route::put('transaction-type-update/{id}', [TransactionTypeController::class, 'update'])->middleware(['permission:update_transaction_type|manage_transaction_type']);
+    Route::delete('transaction-type-delete/{id}', [TransactionTypeController::class, 'destroy'])->middleware(['permission:delete_transaction_type|manage_transaction_type']);
 
     //AMS Routes
     Route::get('ams', [AMSController::class, 'index'])->middleware(['permission:read_ams|manage_ams']);

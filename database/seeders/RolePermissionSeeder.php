@@ -75,6 +75,7 @@ class RolePermissionSeeder extends Seeder
         $delete_maintenance = Permission::create(['name' => 'delete_maintenance']);
 
         //Transaction Type Permission
+        $manage_transaction_type = Permission::create(['name' => 'manage_transaction_type']);
         $read_transaction_type = Permission::create(['name' => 'read_transaction_type']);
         $create_transaction_type = Permission::create(['name' => 'create_transaction_type']);
         $show_transaction_type = Permission::create(['name' => 'show_transaction_type']);
