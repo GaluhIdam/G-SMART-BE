@@ -18,7 +18,6 @@ use App\Http\Controllers\EngineController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\ApuController;
 use App\Http\Controllers\RoleController;
-use Spatie\Permission\Contracts\Role;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
