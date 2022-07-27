@@ -16,7 +16,7 @@ class AMSSeeder extends Seeder
     public function run()
     {
         AMS::create([
-            'name' => 'Zudith Muhammad Iqbal',
+            'user_id' => 1,
             'initial' => 'ZMI',
         ]);
     }
