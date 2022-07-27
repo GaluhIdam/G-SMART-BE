@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ACTypeID;
+use App\Models\AircraftType;
 use Illuminate\Support\Facades\Validator;
 
-class ACTypeIDController extends Controller
+class AircraftTypeController extends Controller
 {
     public function index(Request $request)
     {
-        $search             = $request->get('search');
-        $search_name        = $request->get('name');
+        $search = $request->get('search');
 
         if ($request->get('order') && $request->get('by')) {
             $order = $request->get('order');
@@ -27,13 +26,10 @@ class ACTypeIDController extends Controller
             $paginate = 10;
         }
 
-        $ac_type_id = ACTypeID::when($search, function ($query) use ($search) {
+        $ac_type_id = AircraftType::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%");
+                $sub_query->where('name', 'LIKE', "%{$search}%");
             });
-        })->when($search_name, function ($query) use ($search_name) {
-            $query->where('name', 'LIKE', "%{$search_name}%");
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
         })->paginate($paginate);
@@ -59,10 +55,10 @@ class ACTypeIDController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
-        $ac_type_id = ACTypeID::create([
+        $ac_type_id = AircraftType::create([
             'name' => $request->get('name'),
         ]);
 
@@ -74,7 +70,7 @@ class ACTypeIDController extends Controller
 
     public function show($id)
     {
-        $ac_type_id = ACTypeID::find($id);
+        $ac_type_id = AircraftType::find($id);
         if ($ac_type_id) {
             return response()->json([
                 'message' => 'Success!',
@@ -89,23 +85,23 @@ class ACTypeIDController extends Controller
 
     public function update(Request $request, $id)
     {
-        $ac_type_id = ACTypeID::find($id);
+        $ac_type_id = AircraftType::find($id);
 
         if ($ac_type_id) {
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'        => 'required|unique:ac_type_id,name,' . $id . '|max:100',
+                    'name' => 'required|unique:ac_type_id,name,' . $id . '|max:100',
 
                 ]
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json($validator->errors(), 422);
             }
 
-            $ac_type_id = ACTypeID::where('id', $id)->update($request->all());
-            $data = ACTypeID::where('id', $id)->first();
+            $ac_type_id = AircraftType::where('id', $id)->update($request->all());
+            $data = AircraftType::where('id', $id)->first();
 
             return response()->json([
                 'message' => 'Aircraft Type has been updated successfully!',
@@ -121,7 +117,7 @@ class ACTypeIDController extends Controller
     public function destroy($id)
     {
         if ($id) {
-            $ac_type_id = ACTypeID::where('id', $id)->first();
+            $ac_type_id = AircraftType::where('id', $id)->first();
             if ($ac_type_id) {
                 $ac_type_id->delete();
                 return response()->json([

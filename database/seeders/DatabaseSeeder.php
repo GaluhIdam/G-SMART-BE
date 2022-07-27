@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Customer;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use phpseclib3\Math\BigInteger\Engines\Engine;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,11 +16,12 @@ class DatabaseSeeder extends Seeder
             ProspectTypeSeeder::class,
             TransactionTypeSeeder::class,
             StrategicInitiativesSeeder::class,
-            CustomerSeeder::class,
-            ProspectSeeder::class,
             ApuSeeder::class,
             ComponentSeeder::class,
             EngineSeeder::class,
+            AircraftTypeSeeder::class,
+            CustomerSeeder::class,
+            ProspectSeeder::class,
         ]);
     }
 }
