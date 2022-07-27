@@ -46,14 +46,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('prospect-create', [ProspectController::class, 'create']);
     Route::get('prospect-show/{id}', [ProspectController::class, 'show']);
     Route::put('prospect-update/{id}', [ProspectController::class, 'update']);
-    Route::delete('prospect-delete/{id}', [ProspectController::class, 'delete']);
+    Route::delete('prospect-delete/{id}', [ProspectController::class, 'destroy']);
 
     //Strategic Initiative Routes
     Route::get('strategic-initiative', [StrategicInitiativeController::class, 'index'])->middleware(['permission:read_strategic_initiative|manage_strategic_initiative']);
     Route::post('strategic-initiative-create', [StrategicInitiativeController::class, 'create'])->middleware(['permission:create_strategic_initiative|manage_strategic_initiative']);
     Route::get('strategic-initiative-show/{id}', [StrategicInitiativeController::class, 'show'])->middleware(['permission:show_strategic_initiative|manage_strategic_initiative']);
     Route::post('strategic-initiative-update/{id}', [StrategicInitiativeController::class, 'update'])->middleware(['permission:update_strategic_initiative|manage_strategic_initiative']);
-    Route::delete('strategic-initiative-delete/{id}', [StrategicInitiativeController::class, 'delete'])->middleware(['permission:delete_strategic_initiative|manage_strategic_initiative']);
+    Route::delete('strategic-initiative-delete/{id}', [StrategicInitiativeController::class, 'destroy'])->middleware(['permission:delete_strategic_initiative|manage_strategic_initiative']);
 
     //Region Routes
     Route::get('region', [RegionController::class, 'index'])->middleware(['permission:read_region|manage_region']);

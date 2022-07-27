@@ -50,17 +50,11 @@ class ApuController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:apu_id',
+        $request->validate([
+            'name' => 'required|unique:apu_id|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $apu = Apu::create([
-            'name' => $request->get('name'),
-        ]);
+        $apu = Apu::create($request->all());
 
         return response()->json([
             'message' => 'Apu has been created successfully!',
@@ -70,8 +64,7 @@ class ApuController extends Controller
 
     public function show($id)
     {
-        $apu = Apu::find($id);
-        if ($apu) {
+        if ($apu = Apu::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $apu
@@ -85,26 +78,16 @@ class ApuController extends Controller
 
     public function update(Request $request, $id)
     {
-        $apu = Apu::find($id);
+        if ($apu = Apu::find($id)) {
+            $request->validate([
+                'name' => 'required|unique:apu_id,name,' . $id . '|max:255',
+            ]);
 
-        if ($apu) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name' => 'required|unique:apu_id,name,' . $id . '|max:255',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-
-            $apu = Apu::where('id', $id)->update($request->all());
-            $data = Apu::where('id', $id)->first();
+            $apu->update($request->all());
 
             return response()->json([
                 'message' => 'Apu has been updated successfully!',
-                'data' => $data,
+                'data' => $apu,
             ], 200);
         } else {
             return response()->json([
@@ -115,19 +98,12 @@ class ApuController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $apu = Apu::where('id', $id)->first();
-            if ($apu) {
-                $apu->delete();
-                return response()->json([
-                    'message' => 'Apu has been deleted successfully!',
-                    'data'    => $apu
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($apu = Apu::find($id)) {
+            $apu->delete();
+            return response()->json([
+                'message' => 'Apu has been deleted successfully!',
+                'data'    => $apu
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',

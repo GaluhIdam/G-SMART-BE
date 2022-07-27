@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Component;
-use Illuminate\Support\Facades\Validator;
 
 class ComponentController extends Controller
 {
@@ -50,17 +49,11 @@ class ComponentController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => 'required|unique:component_id|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $component = Component::create([
-            'name' => $request->get('name'),
-        ]);
+        $component = Component::create($request->all());
 
         return response()->json([
             'message' => 'Component has been created successfully!',
@@ -70,8 +63,7 @@ class ComponentController extends Controller
 
     public function show($id)
     {
-        $component = Component::find($id);
-        if ($component) {
+        if ($component = Component::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $component
@@ -85,26 +77,16 @@ class ComponentController extends Controller
 
     public function update(Request $request, $id)
     {
-        $component = Component::find($id);
+        if ($component = Component::find($id)) {
+            $request->validate([
+                'name' => 'required|unique:component_id,name,' . $id . '|max:255',
+            ]);
 
-        if ($component) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name' => 'required|unique:component_id,name,' . $id . '|max:255',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-
-            $component = Component::where('id', $id)->update($request->all());
-            $data = Component::where('id', $id)->first();
+            $component->update($request->all());
 
             return response()->json([
                 'message' => 'Component has been updated successfully!',
-                'data' => $data,
+                'data' => $component,
             ], 200);
         } else {
             return response()->json([
@@ -115,19 +97,12 @@ class ComponentController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $component = Component::where('id', $id)->first();
-            if ($component) {
-                $component->delete();
-                return response()->json([
-                    'message' => 'Component has been deleted successfully!',
-                    'data'    => $component
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($component = Component::find($id)) {
+            $component->delete();
+            return response()->json([
+                'message' => 'Component has been deleted successfully!',
+                'data'    => $component
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',

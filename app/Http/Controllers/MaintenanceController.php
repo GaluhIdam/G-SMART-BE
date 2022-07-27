@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Maintenance;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class MaintenanceController extends Controller
 {
@@ -51,19 +50,12 @@ class MaintenanceController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => 'required|unique:maintenances|max:255',
             'description' => 'required|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $maintenance = Maintenance::create([
-            'name'        => $request->get('name'),
-            'description' => $request->get('description'),
-        ]);
+        $maintenance = Maintenance::create($request->all());
 
         return response()->json([
             'message' => 'Maintenance has been created successfully!',
@@ -73,8 +65,7 @@ class MaintenanceController extends Controller
 
     public function show($id)
     {
-        $maintenance = Maintenance::find($id);
-        if ($maintenance) {
+        if ($maintenance = Maintenance::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $maintenance
@@ -88,27 +79,17 @@ class MaintenanceController extends Controller
 
     public function update(Request $request, $id)
     {
-        $maintenance = Maintenance::find($id);
+        if ($maintenance = Maintenance::find($id)) {
+            $request->all([
+                'name'        => 'required|unique:maintenances,name,' . $id . '|max:255',
+                'description' => 'required|max:255',
+            ]);
 
-        if ($maintenance) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name'        => 'required|unique:maintenances,name,' . $id . '|max:255',
-                    'description' => 'required|max:255',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-
-            $maintenance = Maintenance::where('id', $id)->update($request->all());
-            $data = Maintenance::where('id', $id)->first();
+            $maintenance->update($request->all());
 
             return response()->json([
                 'message' => 'Maintenance has been updated successfully!',
-                'data' => $data,
+                'data' => $maintenance,
             ], 200);
         } else {
             return response()->json([

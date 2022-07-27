@@ -50,17 +50,11 @@ class AircraftTypeController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:ac_type_id',
+        $request->validate([
+            'name' => 'required|unique:ac_type_id|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $ac_type_id = AircraftType::create([
-            'name' => $request->get('name'),
-        ]);
+        $ac_type_id = AircraftType::create($request->all());
 
         return response()->json([
             'message' => 'Aircraft Type has been created successfully!',
@@ -70,8 +64,7 @@ class AircraftTypeController extends Controller
 
     public function show($id)
     {
-        $ac_type_id = AircraftType::find($id);
-        if ($ac_type_id) {
+        if ($ac_type_id = AircraftType::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $ac_type_id
@@ -85,27 +78,16 @@ class AircraftTypeController extends Controller
 
     public function update(Request $request, $id)
     {
-        $ac_type_id = AircraftType::find($id);
+        if ($ac_type_id = AircraftType::find($id)) {
+            $request->validate([
+                'name' => 'required|unique:ac_type_id,name,' . $id . '|max:255',
+            ]);
 
-        if ($ac_type_id) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name' => 'required|unique:ac_type_id,name,' . $id . '|max:100',
-
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-
-            $ac_type_id = AircraftType::where('id', $id)->update($request->all());
-            $data = AircraftType::where('id', $id)->first();
+            $ac_type_id->update($request->all());
 
             return response()->json([
                 'message' => 'Aircraft Type has been updated successfully!',
-                'data' => $data,
+                'data' => $ac_type_id,
             ], 200);
         } else {
             return response()->json([
@@ -116,19 +98,12 @@ class AircraftTypeController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $ac_type_id = AircraftType::where('id', $id)->first();
-            if ($ac_type_id) {
-                $ac_type_id->delete();
-                return response()->json([
-                    'message' => 'Aircraft Type has been deleted successfully!',
-                    'data'    => $ac_type_id
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($ac_type_id = AircraftType::find($id)) {
+            $ac_type_id->delete();
+            return response()->json([
+                'message' => 'Aircraft Type has been deleted successfully!',
+                'data'    => $ac_type_id
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',

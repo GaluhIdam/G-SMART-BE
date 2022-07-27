@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\StrategicInitiatives;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class StrategicInitiativeController extends Controller
 {
@@ -51,21 +50,12 @@ class StrategicInitiativeController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name' => 'required|unique:strategic_initiatives|max:255',
-                'description' => 'required|max:255',
-            ]
-        );
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $strategic_initiative = StrategicInitiatives::create([
-            'name'        => $request->get('name'),
-            'description' => $request->get('description'),
+        $request->validate([
+            'name' => 'required|unique:strategic_initiatives|max:255',
+            'description' => 'required|max:255',
         ]);
+
+        $strategic_initiative = StrategicInitiatives::create($request->all());
 
         return response()->json([
             'message' => 'Strategic Initiative has been created successfully!',
@@ -75,8 +65,7 @@ class StrategicInitiativeController extends Controller
 
     public function show($id)
     {
-        $strategic_initiative = StrategicInitiatives::find($id);
-        if ($strategic_initiative) {
+        if ($strategic_initiative = StrategicInitiatives::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $strategic_initiative
@@ -90,27 +79,17 @@ class StrategicInitiativeController extends Controller
 
     public function update(Request $request, $id)
     {
-        $strategic_initiative = StrategicInitiatives::find($id);
+        if ($strategic_initiative = StrategicInitiatives::find($id)) {
+            $request->validate([
+                'name' => 'required|unique:strategic_initiatives,name,' . $id . '|max:255',
+                'description' => 'required|max:255',
+            ]);
 
-        if ($strategic_initiative) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name'        => 'required|unique:strategic_initiatives,name,' . $id . '|max:255',
-                    'description' => 'required|max:255',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-
-            $strategic_initiative = StrategicInitiatives::where('id', $id)->update($request->all());
-            $data = StrategicInitiatives::where('id', $id)->first();
+            $strategic_initiative->update($request->all());
 
             return response()->json([
                 'message' => 'Strategic Initiative has been updated successfully!',
-                'data' => $data,
+                'data' => $strategic_initiative,
             ], 200);
         } else {
             return response()->json([
@@ -121,19 +100,12 @@ class StrategicInitiativeController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $strategic_initiative = StrategicInitiatives::where('id', $id)->first();
-            if ($strategic_initiative) {
-                $strategic_initiative->delete();
-                return response()->json([
-                    'message' => 'Strategic Initiative has been deleted successfully!',
-                    'data'    => $strategic_initiative
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($strategic_initiative = StrategicInitiatives::find($id)) {
+            $strategic_initiative->delete();
+            return response()->json([
+                'message' => 'Strategic Initiative has been deleted successfully!',
+                'data'    => $strategic_initiative
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',

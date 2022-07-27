@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Countries;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class CountriesController extends Controller
 {
@@ -51,19 +50,12 @@ class CountriesController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => 'required|unique:countries|max:255',
-            'region_id' => 'required|max:255',
+            'region_id' => 'required',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $countries = Countries::create([
-            'name'  => $request->get('name'),
-            'region_id' => $request->get('region_id'),
-        ]);
+        $countries = Countries::create($request->all());
 
         return response()->json([
             'message' => 'Countries has been created successfully!',
@@ -73,8 +65,7 @@ class CountriesController extends Controller
 
     public function show($id)
     {
-        $countries = Countries::find($id);
-        if ($countries) {
+        if ($countries = Countries::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $countries
@@ -88,27 +79,17 @@ class CountriesController extends Controller
 
     public function update(Request $request, $id)
     {
-        $countries = Countries::find($id);
+        if ($countries = Countries::find($id)) {
+            $request->validate([
+                'name'  => 'required|unique:countries,name,' . $id . '|max:255',
+                'region_id' => 'required',
+            ]);
 
-        if ($countries) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name'  => 'required|unique:countries,name,' . $id . '|max:255',
-                    'region_id' => 'required|max:255',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-
-            $countries = Countries::where('id', $id)->update($request->all());
-            $data = Countries::where('id', $id)->first();
+            $countries->update($request->all());
 
             return response()->json([
                 'message' => 'Countries has been updated successfully!',
-                'data' => $data,
+                'data' => $countries,
             ], 200);
         } else {
             return response()->json([
@@ -119,19 +100,12 @@ class CountriesController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $countries = Countries::where('id', $id)->first();
-            if ($countries) {
-                $countries->delete();
-                return response()->json([
-                    'message' => 'Countries has been deleted successfully!',
-                    'data'    => $countries
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($countries = Countries::find($id)) {
+            $countries->delete();
+            return response()->json([
+                'message' => 'Countries has been deleted successfully!',
+                'data'    => $countries
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',

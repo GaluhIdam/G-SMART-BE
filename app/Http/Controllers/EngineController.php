@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Engine;
-use Illuminate\Support\Facades\Validator;
 
 class EngineController extends Controller
 {
@@ -50,17 +49,11 @@ class EngineController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:engine_id',
+        $request->validate([
+            'name' => 'required|unique:engine_id|255',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $engine = Engine::create([
-            'name' => $request->get('name'),
-        ]);
+        $engine = Engine::create($request->all());
 
         return response()->json([
             'message' => 'Engine has been created successfully!',
@@ -70,8 +63,7 @@ class EngineController extends Controller
 
     public function show($id)
     {
-        $engine = Engine::find($id);
-        if ($engine) {
+        if ($engine = Engine::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $engine
@@ -85,26 +77,17 @@ class EngineController extends Controller
 
     public function update(Request $request, $id)
     {
-        $engine = Engine::find($id);
+        if ($engine = Engine::find($id)) {
 
-        if ($engine) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name' => 'required|unique:engine_id,name,' . $id . '|max:255',
-                ]
-            );
+            $request->validate([
+                'name' => 'required|unique:engine_id,name,' . $id . '|max:255',
+            ]);
 
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-
-            $engine = Engine::where('id', $id)->update($request->all());
-            $data = Engine::where('id', $id)->first();
+            $engine->update($request->all());
 
             return response()->json([
                 'message' => 'Engine has been updated successfully!',
-                'data' => $data,
+                'data' => $engine,
             ], 200);
         } else {
             return response()->json([
@@ -115,19 +98,12 @@ class EngineController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $engine = Engine::where('id', $id)->first();
-            if ($engine) {
-                $engine->delete();
-                return response()->json([
-                    'message' => 'Engine has been deleted successfully!',
-                    'data'    => $engine
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($engine = Engine::find($id)) {
+            $engine->delete();
+            return response()->json([
+                'message' => 'Engine has been deleted successfully!',
+                'data'    => $engine
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
