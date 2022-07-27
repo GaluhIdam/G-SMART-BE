@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\AMS;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class AMSSeeder extends Seeder
 {
@@ -14,6 +15,9 @@ class AMSSeeder extends Seeder
      */
     public function run()
     {
-        //
+        AMS::create([
+            'name' => 'Zudith Muhammad Iqbal',
+            'initial' => 'ZMI',
+        ]);
     }
 }
