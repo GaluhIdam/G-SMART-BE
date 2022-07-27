@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             UserSeeder::class,
             AMSSeeder::class,
+            MaintenanceSeeder::class,
             ProspectTypeSeeder::class,
             TransactionTypeSeeder::class,
             StrategicInitiativesSeeder::class,

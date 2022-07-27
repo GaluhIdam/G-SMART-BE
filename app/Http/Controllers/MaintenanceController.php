@@ -10,9 +10,7 @@ class MaintenanceController extends Controller
 {
     public function index(Request $request)
     {
-        $search             = $request->get('search');
-        $search_name        = $request->get('name');
-        $search_description = $request->get('description');
+        $search = $request->get('search');
 
         if ($request->get('order') && $request->get('by')) {
             $order = $request->get('order');
@@ -33,10 +31,6 @@ class MaintenanceController extends Controller
                 $sub_query->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('description', 'LIKE', "%{$search}%");
             });
-        })->when($search_name, function ($query) use ($search_name) {
-            $query->where('name', 'LIKE', "%{$search_name}%");
-        })->when($search_description, function ($query) use ($search_description) {
-            $query->where('description', 'LIKE', "%{$search_description}%");
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
         })->paginate($paginate);
@@ -58,12 +52,12 @@ class MaintenanceController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:maintenances|max:100',
-            'description' => 'required|max:100',
+            'name' => 'required|unique:maintenances|max:255',
+            'description' => 'required|max:255',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
         $maintenance = Maintenance::create([
@@ -100,13 +94,13 @@ class MaintenanceController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name'        => 'required|unique:maintenances,name,' . $id . '|max:100',
-                    'description' => 'required|max:100',
+                    'name'        => 'required|unique:maintenances,name,' . $id . '|max:255',
+                    'description' => 'required|max:255',
                 ]
             );
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json($validator->errors(), 422);
             }
 
             $maintenance = Maintenance::where('id', $id)->update($request->all());
