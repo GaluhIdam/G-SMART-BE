@@ -101,7 +101,6 @@ class AMSController extends Controller
 
     public function destroy($id)
     {
-
         if ($ams = AMS::find($id)) {
             $ams->delete();
             return response()->json([

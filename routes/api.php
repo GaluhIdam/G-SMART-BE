@@ -17,6 +17,7 @@ use App\Http\Controllers\AircraftTypeController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\ApuController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 
 Route::post('register', [AuthController::class, 'register']);
@@ -138,4 +139,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('apu-show/{id}', [ApuController::class, 'show'])->middleware(['permission:show_apu|manage_apu']);
     Route::put('apu-update/{id}', [ApuController::class, 'update'])->middleware(['permission:update_apu|manage_apu']);
     Route::delete('apu-delete/{id}', [ApuController::class, 'destroy'])->middleware(['permission:delete_apu|manage_apu']);
+
+    //Product Routes
+    Route::get('product', [ProductController::class, 'index'])->middleware(['permission:read_product|manage_product']);
+    Route::post('product-create', [ProductController::class, 'create'])->middleware(['permission:create_product|manage_product']);
+    Route::get('product-show/{id}', [ProductController::class, 'show'])->middleware(['permission:show_product|manage_product']);
+    Route::put('product-update/{id}', [ProductController::class, 'update'])->middleware(['permission:update_product|manage_product']);
+    Route::delete('product-delete/{id}', [ProductController::class, 'destroy'])->middleware(['permission:delete_product|manage_product']);
 });
