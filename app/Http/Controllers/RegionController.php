@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Region;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class RegionController extends Controller
 {
@@ -51,19 +50,12 @@ class RegionController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => 'required|unique:regions|max:255',
-            'area_id' => 'required|max:255',
+            'area_id' => 'required',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors());
-        }
-
-        $region = Region::create([
-            'name'  => $request->get('name'),
-            'area_id' => $request->get('area_id'),
-        ]);
+        $region = Region::create($request->all());
 
         return response()->json([
             'message' => 'Region has been created successfully!',
@@ -73,8 +65,7 @@ class RegionController extends Controller
 
     public function show($id)
     {
-        $region = Region::find($id);
-        if ($region) {
+        if ($region = Region::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $region
@@ -88,27 +79,17 @@ class RegionController extends Controller
 
     public function update(Request $request, $id)
     {
-        $region = Region::find($id);
+        if ($region = Region::find($id)) {
+            $request->validate([
+                'name'    => 'required|unique:regions,name,' . $id . '|max:255',
+                'area_id' => 'required',
+            ]);
 
-        if ($region) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name'    => 'required|unique:regions,name,' . $id . '|max:255',
-                    'area_id' => 'required|max:255',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors());
-            }
-
-            $region = Region::where('id', $id)->update($request->all());
-            $data = Region::where('id', $id)->first();
+            $region->update($request->all());
 
             return response()->json([
                 'message' => 'Region has been updated successfully!',
-                'data' => $data,
+                'data' => $region,
             ], 200);
         } else {
             return response()->json([
@@ -119,19 +100,12 @@ class RegionController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $region = Region::where('id', $id)->first();
-            if ($region) {
-                $region->delete();
-                return response()->json([
-                    'message' => 'Region has been deleted successfully!',
-                    'data'    => $region
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($region = Region::find($id)) {
+            $region->delete();
+            return response()->json([
+                'message' => 'Region has been deleted successfully!',
+                'data'    => $region
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',

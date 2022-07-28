@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Countries;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
-class CountriesController extends Controller
+class RoleController extends Controller
 {
     public function index(Request $request)
     {
@@ -25,10 +25,9 @@ class CountriesController extends Controller
             $paginate = 10;
         }
 
-        $countries = Countries::when($search, function ($query) use ($search) {
+        $role = Role::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('region_id', 'LIKE', "%{$search}%");
+                $sub_query->where('name', 'LIKE', "%{$search}%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
@@ -40,35 +39,37 @@ class CountriesController extends Controller
             'by' => $by,
         ];
 
-        $countries->appends($query_string);
+        $role->appends($query_string);
 
         return response()->json([
             'message' => 'Success!',
-            'data' => $countries,
+            'data' => $role,
         ], 200);
     }
 
     public function create(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:countries|max:255',
-            'region_id' => 'required',
+            'name' => 'required|unique:roles|max:255',
         ]);
 
-        $countries = Countries::create($request->all());
+        $role = Role::create([
+            'name' => $request->get('name'),
+            'guard_name' => 'web',
+        ]);
 
         return response()->json([
-            'message' => 'Countries has been created successfully!',
-            'data' => $countries,
+            'message' => 'Role has been created successfully!',
+            'data' => $role,
         ], 201);
     }
 
     public function show($id)
     {
-        if ($countries = Countries::find($id)) {
+        if ($role = Role::find($id)) {
             return response()->json([
                 'message' => 'Success!',
-                'data' => $countries
+                'data' => $role
             ], 200);
         } else {
             return response()->json([
@@ -79,17 +80,16 @@ class CountriesController extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($countries = Countries::find($id)) {
+        if ($role = Role::find($id)) {
             $request->validate([
-                'name'  => 'required|unique:countries,name,' . $id . '|max:255',
-                'region_id' => 'required',
+                'name' => 'required|unique:roles,name,' . $id . '|max:255',
             ]);
 
-            $countries->update($request->all());
+            $role->update($request->all());
 
             return response()->json([
-                'message' => 'Countries has been updated successfully!',
-                'data' => $countries,
+                'message' => 'Role has been updated successfully!',
+                'data' => $role,
             ], 200);
         } else {
             return response()->json([
@@ -100,11 +100,10 @@ class CountriesController extends Controller
 
     public function destroy($id)
     {
-        if ($countries = Countries::find($id)) {
-            $countries->delete();
+        if ($role = Role::find($id)) {
+            $role->delete();
             return response()->json([
-                'message' => 'Countries has been deleted successfully!',
-                'data'    => $countries
+                'message' => 'Role has been deleted successfully!',
             ], 200);
         } else {
             return response()->json([

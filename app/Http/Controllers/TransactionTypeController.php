@@ -55,10 +55,7 @@ class TransactionTypeController extends Controller
             'description' => 'required|max:255',
         ]);
 
-        $transaction_type = TransactionType::create([
-            'name' => $request->get('name'),
-            'description' => $request->get('description'),
-        ]);
+        $transaction_type = TransactionType::create($request->all());
 
         return response()->json([
             'message' => 'Transaction Type has been created successfully!',
@@ -105,7 +102,7 @@ class TransactionTypeController extends Controller
     {
         if ($transaction_type = TransactionType::find($id)) {
             $transaction_type->delete();
-            
+
             return response()->json([
                 'message' => 'Transaction Type has been deleted successfully!',
             ], 200);

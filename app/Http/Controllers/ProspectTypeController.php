@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ProspectType;
-use Illuminate\Support\Facades\Validator;
 
 class ProspectTypeController extends Controller
 {
@@ -51,19 +50,12 @@ class ProspectTypeController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => 'required|unique:prospect_types|max:255',
             'description' => 'required|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $prospect_type = ProspectType::create([
-            'name'        => $request->get('name'),
-            'description' => $request->get('description'),
-        ]);
+        $prospect_type = ProspectType::create($request->all());
 
         return response()->json([
             'message' => 'Prospect Type has been created successfully!',
@@ -73,8 +65,7 @@ class ProspectTypeController extends Controller
 
     public function show($id)
     {
-        $prospect_type = ProspectType::find($id);
-        if ($prospect_type) {
+        if ($prospect_type = ProspectType::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $prospect_type
@@ -88,27 +79,17 @@ class ProspectTypeController extends Controller
 
     public function update(Request $request, $id)
     {
-        $prospect_type = ProspectType::find($id);
+        if ($prospect_type = ProspectType::find($id)) {
+            $request->validate([
+                'name'        => 'required|unique:prospect_types,name,' . $id . '|max:255',
+                'description' => 'required|max:255',
+            ]);
 
-        if ($prospect_type) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name'        => 'required|unique:prospect_types,name,' . $id . '|max:255',
-                    'description' => 'required|max:255',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-
-            $prospect_type = ProspectType::where('id', $id)->update($request->all());
-            $data = ProspectType::where('id', $id)->first();
+            $prospect_type->update($request->all());
 
             return response()->json([
                 'message' => 'Prospect Type has been updated successfully!',
-                'data' => $data,
+                'data' => $prospect_type,
             ], 200);
         } else {
             return response()->json([
@@ -119,19 +100,12 @@ class ProspectTypeController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $prospect_type = ProspectType::where('id', $id)->first();
-            if ($prospect_type) {
-                $prospect_type->delete();
-                return response()->json([
-                    'message' => 'Prospect Type has been deleted successfully!',
-                    'data'    => $prospect_type
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($prospect_type = ProspectType::find($id)) {
+            $prospect_type->delete();
+            return response()->json([
+                'message' => 'Prospect Type has been deleted successfully!',
+                'data'    => $prospect_type
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',

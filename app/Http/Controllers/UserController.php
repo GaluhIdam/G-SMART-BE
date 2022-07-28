@@ -33,6 +33,8 @@ class UserController extends Controller
                 $sub_query->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('username', 'LIKE', "%{$search}%")
                     ->orWhere('email', 'LIKE', "%{$search}%")
+                    ->orWhere('nopeg', 'LIKE', "%{$search}%")
+                    ->orWhere('unit', 'LIKE', "%{$search}%")
                     ->orWhere('role_id', 'LIKE', "%{$search}%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
@@ -47,7 +49,7 @@ class UserController extends Controller
 
         $user->appends($query_string);
 
-        $user_active  = Auth::user();
+        $user_active = Auth::user();
 
         return response()->json([
             'message' => 'success',
@@ -59,21 +61,14 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name'        => 'required|unique:users',
-                'username'    => 'required|unique:users',
-                'email'       => 'required|unique:users|email',
-                'role_id'     => 'required',
-                'password'    => 'required|min:8',
-                're_password' => 'required|same:password',
-            ]
-        );
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+        $request->validate([
+            'name'        => 'required|unique:users',
+            'username'    => 'required|unique:users',
+            'email'       => 'required|unique:users|email',
+            'role_id'     => 'required',
+            'password'    => 'required|min:8',
+            're_password' => 'required|same:password',
+        ]);
 
         $register = User::create([
             'name'       => $request->get('name'),
@@ -82,6 +77,7 @@ class UserController extends Controller
             'email'      => $request->get('email'),
             'password'   => password_hash($request->get('password'), PASSWORD_DEFAULT),
         ]);
+
         return response()->json([
             'message' => 'User created has successfully!',
             'data'    => $register,
@@ -90,8 +86,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::find($id);
-        if ($user) {
+        if ($user = User::find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $user
@@ -105,30 +100,20 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $user = User::find($id);
+        if ($user = User::find($id)) {
+            $request->validate([
+                'name'        => 'required|unique:users,name,' . $id . '|max:255',
+                'username'    => 'required|unique:users,username,' . $id . '|max:255',
+                'email'       => 'required|unique:users,email,' . $id . '|max:255',
+                'role_id'     => 'required',
+                'password'    => 'required|min:8|max:255',
+            ]);
 
-        if ($user) {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name'        => 'required|unique:users,name,' . $id . '|max:255',
-                    'username'    => 'required|unique:users,username,' . $id . '|max:255',
-                    'email'       => 'required|unique:users,email,' . $id . '|max:255',
-                    'role_id'     => 'required',
-                    'password'    => 'required|min:8',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-
-            $user = User::where('id', $id)->update($request->all());
-            $data = User::where('id', $id)->first();
+            $user->update($request->all());
 
             return response()->json([
                 'message' => 'User has been updated successfully!',
-                'data' => $data,
+                'data' => $user,
             ], 200);
         } else {
             return response()->json([
@@ -139,19 +124,12 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $user = User::where('id', $id)->first();
-            if ($user) {
-                $user->delete();
-                return response()->json([
-                    'message' => 'User has been deleted successfully!',
-                    'data'    => $user
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($user = User::where('id', $id)->first()) {
+            $user->delete();
+            return response()->json([
+                'message' => 'User has been deleted successfully!',
+                'data'    => $user
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
