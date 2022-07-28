@@ -27,8 +27,8 @@ class CountriesController extends Controller
 
         $countries = Countries::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('region_id', 'LIKE', "%{$search}%");
+                $sub_query->where('name', 'LIKE', "%$search%")
+                    ->orWhere('region_id', 'LIKE', "%$search%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);

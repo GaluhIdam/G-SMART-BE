@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Engine;
+use Spatie\Permission\Models\Permission;
 
-class EngineController extends Controller
+
+class PermissionController extends Controller
 {
     public function index(Request $request)
     {
@@ -25,9 +26,10 @@ class EngineController extends Controller
             $paginate = 10;
         }
 
-        $engine = Engine::when($search, function ($query) use ($search) {
+        $permission = Permission::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%$search%");
+                $sub_query->where('name', 'LIKE', "%$search%")
+                    ->orWhere('description', 'LIKE', "%$search%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
@@ -39,34 +41,35 @@ class EngineController extends Controller
             'by' => $by,
         ];
 
-        $engine->appends($query_string);
+        $permission->appends($query_string);
 
         return response()->json([
             'message' => 'Success!',
-            'data' => $engine
+            'data' => $permission,
         ], 200);
     }
 
     public function create(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:engine_id|max:255',
+            'name' => 'required|unique:permission|max:255',
+            'description' => 'required|max:255',
         ]);
 
-        $engine = Engine::create($request->all());
+        $permission = Permission::create($request->all());
 
         return response()->json([
-            'message' => 'Engine has been created successfully!',
-            'data' => $engine,
+            'message' => 'Permission has been created successfully!',
+            'data' => $permission,
         ], 201);
     }
 
     public function show($id)
     {
-        if ($engine = Engine::find($id)) {
+        if ($permission = Permission::find($id)) {
             return response()->json([
                 'message' => 'Success!',
-                'data' => $engine
+                'data' => $permission
             ], 200);
         } else {
             return response()->json([
@@ -77,17 +80,17 @@ class EngineController extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($engine = Engine::find($id)) {
-
+        if ($permission = Permission::find($id)) {
             $request->validate([
-                'name' => 'required|unique:engine_id,name,' . $id . '|max:255',
+                'name' => 'required|unique:permission,name,' . $id . '|max:255',
+                'description' => 'required|max:255',
             ]);
 
-            $engine->update($request->all());
+            $permission->update($request->all());
 
             return response()->json([
-                'message' => 'Engine has been updated successfully!',
-                'data' => $engine,
+                'message' => 'Permission has been updated successfully!',
+                'data' => $permission,
             ], 200);
         } else {
             return response()->json([
@@ -98,11 +101,11 @@ class EngineController extends Controller
 
     public function destroy($id)
     {
-        if ($engine = Engine::find($id)) {
-            $engine->delete();
+        if ($permission = Permission::find($id)) {
+            $permission->delete();
             return response()->json([
-                'message' => 'Engine has been deleted successfully!',
-                'data'    => $engine
+                'message' => 'Permission has been deleted successfully!',
+                'data'    => $permission
             ], 200);
         } else {
             return response()->json([

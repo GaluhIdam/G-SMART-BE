@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProspectTypeController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\StrategicInitiativeController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\AircraftTypeController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\ApuController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 
 Route::post('register', [AuthController::class, 'register']);
@@ -39,6 +41,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('role-show/{id}', [RoleController::class, 'show'])->middleware(['permission:show_role|manage_role']);
     Route::put('role-update/{id}', [RoleController::class, 'update'])->middleware(['permission:update_role|manage_role']);
     Route::delete('role-delete/{id}', [RoleController::class, 'destroy'])->middleware(['permission:delete_role|manage_role']);
+
+    //Permission Routes
+    Route::get('permission', [PermissionController::class, 'index'])->middleware(['permission:read_permission|manage_permission']);
+    Route::post('permission-create', [PermissionController::class, 'create'])->middleware(['permission:create_permission|manage_permission']);
+    Route::get('permission-show/{id}', [PermissionController::class, 'show'])->middleware(['permission:show_permission|manage_permission']);
+    Route::put('permission-update/{id}', [PermissionController::class, 'update'])->middleware(['permission:update_permission|manage_permission']);
+    Route::delete('permission-delete/{id}', [PermissionController::class, 'destroy'])->middleware(['permission:delete_permission|manage_permission']);
 
     //Prospect Routes #Status Hold
     Route::get('prospect', [ProspectController::class, 'index']);
@@ -130,4 +139,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('apu-show/{id}', [ApuController::class, 'show'])->middleware(['permission:show_apu|manage_apu']);
     Route::put('apu-update/{id}', [ApuController::class, 'update'])->middleware(['permission:update_apu|manage_apu']);
     Route::delete('apu-delete/{id}', [ApuController::class, 'destroy'])->middleware(['permission:delete_apu|manage_apu']);
+
+    //Product Routes
+    Route::get('product', [ProductController::class, 'index'])->middleware(['permission:read_product|manage_product']);
+    Route::post('product-create', [ProductController::class, 'create'])->middleware(['permission:create_product|manage_product']);
+    Route::get('product-show/{id}', [ProductController::class, 'show'])->middleware(['permission:show_product|manage_product']);
+    Route::put('product-update/{id}', [ProductController::class, 'update'])->middleware(['permission:update_product|manage_product']);
+    Route::delete('product-delete/{id}', [ProductController::class, 'destroy'])->middleware(['permission:delete_product|manage_product']);
 });

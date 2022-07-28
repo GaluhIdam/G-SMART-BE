@@ -28,8 +28,8 @@ class AMSController extends Controller
 
         $ams = AMS::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('initial', 'LIKE', "%{$search}%")
-                    ->orWhere('user_id', 'LIKE', "%{$search}%");
+                $sub_query->where('initial', 'LIKE', "%$search%")
+                    ->orWhere('user_id', 'LIKE', "%$search%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
@@ -101,7 +101,6 @@ class AMSController extends Controller
 
     public function destroy($id)
     {
-
         if ($ams = AMS::find($id)) {
             $ams->delete();
             return response()->json([
