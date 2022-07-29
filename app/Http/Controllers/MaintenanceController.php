@@ -80,7 +80,7 @@ class MaintenanceController extends Controller
     public function update(Request $request, $id)
     {
         if ($maintenance = Maintenance::find($id)) {
-            $request->all([
+            $request->validate([
                 'name'        => 'required|unique:maintenances,name,' . $id . '|max:255',
                 'description' => 'required|max:255',
             ]);
