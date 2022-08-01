@@ -25,7 +25,7 @@ class RoleController extends Controller
             $paginate = 10;
         }
 
-        $role = Role::when($search, function ($query) use ($search) {
+        $role = Role::with('permissions')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%{$search}%");
             });
@@ -68,7 +68,7 @@ class RoleController extends Controller
 
     public function show($id)
     {
-        if ($role = Role::find($id)) {
+        if ($role = Role::with('permissions')->find($id)) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $role
