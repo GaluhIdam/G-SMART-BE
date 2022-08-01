@@ -51,10 +51,12 @@ class RoleController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:roles|max:255',
+            'description' => 'required|max:255',
         ]);
 
         $role = Role::create([
             'name' => $request->get('name'),
+            'description' => $request->get('description'),
             'guard_name' => 'web',
         ]);
 
@@ -83,6 +85,7 @@ class RoleController extends Controller
         if ($role = Role::find($id)) {
             $request->validate([
                 'name' => 'required|unique:roles,name,' . $id . '|max:255',
+                'description' => 'required|max:255',
             ]);
 
             $role->update($request->all());
