@@ -30,7 +30,9 @@ class AMSController extends Controller
             ->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('initial', 'LIKE', "%$search%")
-                    ->orWhere('user_id', 'LIKE', "%$search%");
+                    ->orWhereHas('user', function ($sub_sub_query) use ($search) {
+                        $sub_sub_query->where('name', 'LIKE', "%{$search}%");
+                    });
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
