@@ -26,7 +26,8 @@ class AMSController extends Controller
             $paginate = 10;
         }
 
-        $ams = AMS::when($search, function ($query) use ($search) {
+        $ams = AMS::with('user')
+            ->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('initial', 'LIKE', "%$search%")
                     ->orWhere('user_id', 'LIKE', "%$search%");

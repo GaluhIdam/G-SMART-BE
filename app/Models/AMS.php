@@ -10,8 +10,14 @@ class AMS extends Model
     use HasFactory;
 
     protected $table = 'ams';
+
     protected $fillable = [
         'initial',
         'user_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
