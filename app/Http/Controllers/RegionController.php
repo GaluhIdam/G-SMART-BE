@@ -52,7 +52,6 @@ class RegionController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:regions|max:255',
-            'area_id' => 'required',
         ]);
 
         $region = Region::create($request->all());
@@ -82,7 +81,6 @@ class RegionController extends Controller
         if ($region = Region::find($id)) {
             $request->validate([
                 'name'    => 'required|unique:regions,name,' . $id . '|max:255',
-                'area_id' => 'required',
             ]);
 
             $region->update($request->all());
