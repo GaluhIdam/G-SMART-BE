@@ -59,25 +59,24 @@ class RoleController extends Controller
         ]);
 
         DB::beginTransaction();
+
         $role = Role::create([
             'name' => $request->get('name'),
             'description' => $request->get('description'),
             'guard_name' => 'web',
         ]);
 
-        for ($i = 0; $i < count($request->get('permission_id')); $i++) {
-            $permission_id[] = [
-                RoleHasPermission::create([
-                    'permission_id' => $request->get('permission_id')[$i],
-                    'role_id' => $role->id
-                ]),
-            ];
+        foreach ($request->get('permission_id') as $value) {
+            RoleHasPermission::create([
+                'permission_id' => $value,
+                'role_id' => $role->id
+            ]);
         }
         DB::commit();
 
         return response()->json([
             'message' => 'Role has been created successfully!',
-            'data' => [$role, $permission_id],
+            'data' => [$role],
         ], 201);
     }
 
@@ -101,30 +100,20 @@ class RoleController extends Controller
             $request->validate([
                 'name' => 'required|unique:roles,name,' . $id . '|max:255',
                 'description' => 'required|max:255',
-                // 'permission_id' => 'required',
+                'permission_id' => 'required',
             ]);
 
-            if (count($role->permissions) < count($request->get('permission_id'))) {
-                for ($i = 0; $i < count($request->get('permission_id')); $i++) {
-                    if (RoleHasPermission::where('permission_id', $request->get('permission_id'))->where('role_id', $role->id)) {
-                        $permission_id[] = [
-                            RoleHasPermission::create([
-                                'permission_id' => $request->get('permission_id')[$i],
-                                'role_id' => $role->id
-                            ]),
-                        ];
-                    } else {
-                        return 'sama s';
-                    }
-                }
-                return 'sama';
-            } else {
-                return 'beda';
-            }
-            // return $role->permissions;
-            die;
             DB::beginTransaction();
-            $role->update();
+            $role->update($request->all());
+
+            RoleHasPermission::where('role_id', $role->id)->delete();
+
+            foreach ($request->get('permission_id') as $value) {
+                RoleHasPermission::create([
+                    'permission_id' => $value,
+                    'role_id' => $role->id
+                ]);
+            }
 
             DB::commit();
 
