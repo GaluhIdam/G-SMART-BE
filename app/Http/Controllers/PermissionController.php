@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permission;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Permission;
 
 
 class PermissionController extends Controller
@@ -82,8 +82,7 @@ class PermissionController extends Controller
     {
         if ($permission = Permission::find($id)) {
             $request->validate([
-                'name' => 'required|unique:permission,name,' . $id . '|max:255',
-                'description' => 'required|max:255',
+                'description' => 'required|unique:permissions,description,' . $id . '|max:255',
             ]);
 
             $permission->update($request->all());

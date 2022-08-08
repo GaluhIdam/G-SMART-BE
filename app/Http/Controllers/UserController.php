@@ -55,7 +55,7 @@ class UserController extends Controller
             'message' => 'success',
             'data' => $user,
             'user' => $user_active->name,
-            'email' => $user_active->email
+            'email' => $user_active->email,
         ], 200);
     }
 
