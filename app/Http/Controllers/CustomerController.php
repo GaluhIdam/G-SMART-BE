@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Countries;
+use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
-class CountriesController extends Controller
+class CustomerController extends Controller
 {
     public function index(Request $request)
     {
@@ -25,10 +26,10 @@ class CountriesController extends Controller
             $paginate = 10;
         }
 
-        $countries = Countries::with('region_id')->when($search, function ($query) use ($search) {
+        $customer = Customer::with('country_id.region_id')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%$search%")
-                    ->orWhere('region_id', 'LIKE', "%$search%");
+                    ->orWhere('code', 'LIKE', "%$search%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
@@ -40,35 +41,35 @@ class CountriesController extends Controller
             'by' => $by,
         ];
 
-        $countries->appends($query_string);
+        $customer->appends($query_string);
 
         return response()->json([
             'message' => 'Success!',
-            'data' => $countries,
+            'data' => $customer
         ], 200);
     }
 
     public function create(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:countries|max:255',
-            'region_id' => 'required',
+            'name' => 'required|unique:customers|max:255',
+            'code' => 'required|unique:customers|max:255',
         ]);
 
-        $countries = Countries::create($request->all());
+        $customer = Customer::create($request->all());
 
         return response()->json([
-            'message' => 'Countries has been created successfully!',
-            'data' => $countries,
+            'message' => 'Customer has been created successfully!',
+            'data' => $customer,
         ], 201);
     }
 
     public function show($id)
     {
-        if ($countries = Countries::find($id)) {
+        if ($customer = Customer::find($id)) {
             return response()->json([
                 'message' => 'Success!',
-                'data' => $countries
+                'data' => $customer
             ], 200);
         } else {
             return response()->json([
@@ -79,17 +80,17 @@ class CountriesController extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($countries = Countries::find($id)) {
+        if ($customer = Customer::find($id)) {
             $request->validate([
-                'name'  => 'required|unique:countries,name,' . $id . '|max:255',
-                'region_id' => 'required',
+                'name'        => 'required|unique:customers,name,' . $id . '|max:255',
+                'code'        => 'required|unique:customers,code,' . $id . '|max:255',
             ]);
 
-            $countries->update($request->all());
+            $customer->update($request->all());
 
             return response()->json([
-                'message' => 'Countries has been updated successfully!',
-                'data' => $countries,
+                'message' => 'Customer has been updated successfully!',
+                'data' => $customer,
             ], 200);
         } else {
             return response()->json([
@@ -100,12 +101,19 @@ class CountriesController extends Controller
 
     public function destroy($id)
     {
-        if ($countries = Countries::find($id)) {
-            $countries->delete();
-            return response()->json([
-                'message' => 'Countries has been deleted successfully!',
-                'data'    => $countries
-            ], 200);
+        if ($id) {
+            $customer = Customer::where('id', $id)->first();
+            if ($customer) {
+                $customer->delete();
+                return response()->json([
+                    'message' => 'Customer has been deleted successfully!',
+                    'data'    => $customer
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Data not found!',
+                ], 404);
+            }
         } else {
             return response()->json([
                 'message' => 'Data not found!',

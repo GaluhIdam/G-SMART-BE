@@ -10,6 +10,9 @@ class Permission extends Model
 {
     use HasFactory;
     protected $table = 'permissions';
+    protected $fillable = [
+        'description'
+    ];
 
     protected function name(): Attribute
     {

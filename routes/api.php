@@ -17,9 +17,11 @@ use App\Http\Controllers\AircraftTypeController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\ApuController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ModulePermissionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
+use App\Models\Customer;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -55,6 +57,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('prospect-show/{id}', [ProspectController::class, 'show']);
     Route::put('prospect-update/{id}', [ProspectController::class, 'update']);
     Route::delete('prospect-delete/{id}', [ProspectController::class, 'destroy']);
+
+    //Customer Routes
+    Route::get('customer', [CustomerController::class, 'index']);
+    Route::post('customer-create', [CustomerController::class, 'create']);
+    Route::get('customer-show/{id}', [CustomerController::class, 'show']);
+    Route::put('customer-update/{id}', [CustomerController::class, 'update']);
+    Route::delete('customer-delete/{id}', [CustomerController::class, 'destroy']);
 
     //Strategic Initiative Routes
     Route::get('strategic-initiative', [StrategicInitiativeController::class, 'index'])->middleware(['permission:read_strategic_initiative|manage_strategic_initiative']);

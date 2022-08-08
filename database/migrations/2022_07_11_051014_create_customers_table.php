@@ -18,7 +18,9 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('code')->nullable();
 
-            $table->unsignedBigInteger('country_id')->references('id')->on('countries');
+            $table->unsignedBigInteger('country_id')->nullable();
+            $table->index('country_id');
+            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade')->onUpdate('cascade');
 
             $table->timestamps();
         });
