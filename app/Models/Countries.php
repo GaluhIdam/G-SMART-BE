@@ -14,4 +14,9 @@ class Countries extends Model
         'name',
         'region_id',
     ];
+
+    public function region_id()
+    {
+        return $this->hasMany(Region::class, 'id');
+    }
 }

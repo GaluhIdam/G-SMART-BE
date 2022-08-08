@@ -14,4 +14,9 @@ class Customer extends Model
         'code',
         'country_id',
     ];
+
+    public function country_id()
+    {
+        return $this->hasMany(Countries::class, 'id');
+    }
 }

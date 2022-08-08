@@ -81,7 +81,7 @@ class AreaController extends Controller
     {
         if ($area = Area::find($id)) {
             $request->validate([
-                'name'  => 'required|unique:areas,name,' . $id . '|max:2550',
+                'name'  => 'required|unique:areas,name,' . $id . '|max:250',
                 'scope' => 'required|max:255',
             ]);
 
