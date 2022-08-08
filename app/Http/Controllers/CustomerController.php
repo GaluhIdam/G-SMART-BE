@@ -101,19 +101,12 @@ class CustomerController extends Controller
 
     public function destroy($id)
     {
-        if ($id) {
-            $customer = Customer::where('id', $id)->first();
-            if ($customer) {
-                $customer->delete();
-                return response()->json([
-                    'message' => 'Customer has been deleted successfully!',
-                    'data'    => $customer
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Data not found!',
-                ], 404);
-            }
+        if ($customer = Customer::find($id)) {
+            $customer->delete();
+            return response()->json([
+                'message' => 'Customer has been deleted successfully!',
+                'data'    => $customer
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Data not found!',
