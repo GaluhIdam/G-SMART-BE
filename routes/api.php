@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProspectTypeController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\StrategicInitiativeController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\AircraftTypeController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\ApuController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 
 Route::post('register', [AuthController::class, 'register']);
@@ -40,6 +42,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('role-update/{id}', [RoleController::class, 'update'])->middleware(['permission:update_role|manage_role']);
     Route::delete('role-delete/{id}', [RoleController::class, 'destroy'])->middleware(['permission:delete_role|manage_role']);
 
+    //Permission Routes
+    Route::get('permission', [PermissionController::class, 'index'])->middleware(['permission:read_permission|manage_permission']);
+    Route::get('permission-show/{id}', [PermissionController::class, 'show'])->middleware(['permission:show_permission|manage_permission']);
+    Route::put('permission-update/{id}', [PermissionController::class, 'update'])->middleware(['permission:update_permission|manage_permission']);
+
     //Prospect Routes #Status Hold
     Route::get('prospect', [ProspectController::class, 'index']);
     Route::post('prospect-create', [ProspectController::class, 'create']);
@@ -51,28 +58,28 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('strategic-initiative', [StrategicInitiativeController::class, 'index'])->middleware(['permission:read_strategic_initiative|manage_strategic_initiative']);
     Route::post('strategic-initiative-create', [StrategicInitiativeController::class, 'create'])->middleware(['permission:create_strategic_initiative|manage_strategic_initiative']);
     Route::get('strategic-initiative-show/{id}', [StrategicInitiativeController::class, 'show'])->middleware(['permission:show_strategic_initiative|manage_strategic_initiative']);
-    Route::post('strategic-initiative-update/{id}', [StrategicInitiativeController::class, 'update'])->middleware(['permission:update_strategic_initiative|manage_strategic_initiative']);
+    Route::put('strategic-initiative-update/{id}', [StrategicInitiativeController::class, 'update'])->middleware(['permission:update_strategic_initiative|manage_strategic_initiative']);
     Route::delete('strategic-initiative-delete/{id}', [StrategicInitiativeController::class, 'destroy'])->middleware(['permission:delete_strategic_initiative|manage_strategic_initiative']);
 
     //Region Routes
     Route::get('region', [RegionController::class, 'index'])->middleware(['permission:read_region|manage_region']);
     Route::post('region-create', [RegionController::class, 'create'])->middleware(['permission:create_region|manage_region']);
     Route::get('region-show/{id}', [RegionController::class, 'show'])->middleware(['permission:show_region|manage_region']);
-    Route::post('region-update/{id}', [RegionController::class, 'update'])->middleware(['permission:update_region|manage_region']);
+    Route::put('region-update/{id}', [RegionController::class, 'update'])->middleware(['permission:update_region|manage_region']);
     Route::delete('region-delete/{id}', [RegionController::class, 'destroy'])->middleware(['permission:delete_region|manage_region']);
 
     //Countries Routes
     Route::get('countries', [CountriesController::class, 'index'])->middleware(['permission:read_countries|manage_countries']);
     Route::post('countries-create', [CountriesController::class, 'create'])->middleware(['permission:create_countries|manage_countries']);
     Route::get('countries-show/{id}', [CountriesController::class, 'show'])->middleware(['permission:show_countries|manage_countries']);
-    Route::post('countries-update/{id}', [CountriesController::class, 'update'])->middleware(['permission:update_countries|manage_countries']);
+    Route::put('countries-update/{id}', [CountriesController::class, 'update'])->middleware(['permission:update_countries|manage_countries']);
     Route::delete('countries-delete/{id}', [CountriesController::class, 'destroy'])->middleware(['permission:delete_countries|manage_countries']);
 
     //Area Routes
     Route::get('area', [AreaController::class, 'index'])->middleware(['permission:read_area|manage_area']);
     Route::post('area-create', [AreaController::class, 'create'])->middleware(['permission:create_area|manage_area']);
     Route::get('area-show/{id}', [AreaController::class, 'show'])->middleware(['permission:show_area|manage_area']);
-    Route::post('area-update/{id}', [AreaController::class, 'update'])->middleware(['permission:update_area|manage_area']);
+    Route::put('area-update/{id}', [AreaController::class, 'update'])->middleware(['permission:update_area|manage_area']);
     Route::delete('area-delete/{id}', [AreaController::class, 'destroy'])->middleware(['permission:delete_area|manage_area']);;
 
     //Maintenance Routes
@@ -130,4 +137,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('apu-show/{id}', [ApuController::class, 'show'])->middleware(['permission:show_apu|manage_apu']);
     Route::put('apu-update/{id}', [ApuController::class, 'update'])->middleware(['permission:update_apu|manage_apu']);
     Route::delete('apu-delete/{id}', [ApuController::class, 'destroy'])->middleware(['permission:delete_apu|manage_apu']);
+
+    //Product Routes
+    Route::get('product', [ProductController::class, 'index'])->middleware(['permission:read_product|manage_product']);
+    Route::post('product-create', [ProductController::class, 'create'])->middleware(['permission:create_product|manage_product']);
+    Route::get('product-show/{id}', [ProductController::class, 'show'])->middleware(['permission:show_product|manage_product']);
+    Route::put('product-update/{id}', [ProductController::class, 'update'])->middleware(['permission:update_product|manage_product']);
+    Route::delete('product-delete/{id}', [ProductController::class, 'destroy'])->middleware(['permission:delete_product|manage_product']);
 });

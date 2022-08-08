@@ -27,8 +27,8 @@ class MaintenanceController extends Controller
 
         $maintenance = Maintenance::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%");
+                $sub_query->where('name', 'LIKE', "%$search%")
+                    ->orWhere('description', 'LIKE', "%$search%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
@@ -80,7 +80,7 @@ class MaintenanceController extends Controller
     public function update(Request $request, $id)
     {
         if ($maintenance = Maintenance::find($id)) {
-            $request->all([
+            $request->validate([
                 'name'        => 'required|unique:maintenances,name,' . $id . '|max:255',
                 'description' => 'required|max:255',
             ]);

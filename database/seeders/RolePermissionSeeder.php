@@ -9,11 +9,6 @@ use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
@@ -33,6 +28,14 @@ class RolePermissionSeeder extends Seeder
         $show_role = Permission::create(['name' => 'show_role']);
         $update_role = Permission::create(['name' => 'update_role']);
         $delete_role = Permission::create(['name' => 'delete_role']);
+
+        //Permission Permission
+        $manage_permission = Permission::create(['name' => 'manage_permission']);
+        $read_permission = Permission::create(['name' => 'read_permission']);
+        $create_permission = Permission::create(['name' => 'create_permission']);
+        $show_permission = Permission::create(['name' => 'show_permission']);
+        $update_permission = Permission::create(['name' => 'update_permission']);
+        $delete_permission = Permission::create(['name' => 'delete_permission']);
 
         //Strategic Initiative Permission
         $manage_strategic_initiative = Permission::create(['name' => 'manage_strategic_initiative']);
@@ -129,6 +132,14 @@ class RolePermissionSeeder extends Seeder
         $show_apu = Permission::create(['name' => 'show_apu']);
         $update_apu = Permission::create(['name' => 'update_apu']);
         $delete_apu = Permission::create(['name' => 'delete_apu']);
+
+        //Product Permission
+        $manage_product = Permission::create(['name' => 'manage_product']);
+        $read_product = Permission::create(['name' => 'read_product']);
+        $create_product = Permission::create(['name' => 'create_product']);
+        $show_product = Permission::create(['name' => 'show_product']);
+        $update_product = Permission::create(['name' => 'update_product']);
+        $delete_product = Permission::create(['name' => 'delete_product']);
 
         //Role Admin
         $admin = Role::create([

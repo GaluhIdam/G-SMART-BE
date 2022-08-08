@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
-use App\Models\Engine;
 
-class EngineController extends Controller
+class ProductController extends Controller
 {
     public function index(Request $request)
     {
@@ -25,9 +25,10 @@ class EngineController extends Controller
             $paginate = 10;
         }
 
-        $engine = Engine::when($search, function ($query) use ($search) {
+        $product = Product::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%$search%");
+                $sub_query->where('name', 'LIKE', "%$search%")
+                    ->orWhere('description', 'LIKE', "%$search%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
@@ -39,34 +40,35 @@ class EngineController extends Controller
             'by' => $by,
         ];
 
-        $engine->appends($query_string);
+        $product->appends($query_string);
 
         return response()->json([
             'message' => 'Success!',
-            'data' => $engine
+            'data' => $product,
         ], 200);
     }
 
     public function create(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:engine_id|max:255',
+            'name' => 'required|unique:products|max:255',
+            'description' => 'required|max:255',
         ]);
 
-        $engine = Engine::create($request->all());
+        $product = Product::create($request->all());
 
         return response()->json([
-            'message' => 'Engine has been created successfully!',
-            'data' => $engine,
+            'message' => 'Product has been created successfully!',
+            'data' => $product,
         ], 201);
     }
 
     public function show($id)
     {
-        if ($engine = Engine::find($id)) {
+        if ($product = Product::find($id)) {
             return response()->json([
                 'message' => 'Success!',
-                'data' => $engine
+                'data' => $product
             ], 200);
         } else {
             return response()->json([
@@ -77,17 +79,17 @@ class EngineController extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($engine = Engine::find($id)) {
-
+        if ($product = Product::find($id)) {
             $request->validate([
-                'name' => 'required|unique:engine_id,name,' . $id . '|max:255',
+                'name' => 'required|unique:products,name,' . $id . '|max:255',
+                'description' => 'required|max:255',
             ]);
 
-            $engine->update($request->all());
+            $product->update($request->all());
 
             return response()->json([
-                'message' => 'Engine has been updated successfully!',
-                'data' => $engine,
+                'message' => 'Product has been updated successfully!',
+                'data' => $product,
             ], 200);
         } else {
             return response()->json([
@@ -98,11 +100,11 @@ class EngineController extends Controller
 
     public function destroy($id)
     {
-        if ($engine = Engine::find($id)) {
-            $engine->delete();
+        if ($product = Product::find($id)) {
+            $product->delete();
+
             return response()->json([
-                'message' => 'Engine has been deleted successfully!',
-                'data'    => $engine
+                'message' => 'Product has been deleted successfully!',
             ], 200);
         } else {
             return response()->json([
