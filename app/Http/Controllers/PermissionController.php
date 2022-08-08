@@ -49,21 +49,6 @@ class PermissionController extends Controller
         ], 200);
     }
 
-    public function create(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:permission|max:255',
-            'description' => 'required|max:255',
-        ]);
-
-        $permission = Permission::create($request->all());
-
-        return response()->json([
-            'message' => 'Permission has been created successfully!',
-            'data' => $permission,
-        ], 201);
-    }
-
     public function show($id)
     {
         if ($permission = Permission::find($id)) {
@@ -82,8 +67,7 @@ class PermissionController extends Controller
     {
         if ($permission = Permission::find($id)) {
             $request->validate([
-                'name' => 'required|unique:permission,name,' . $id . '|max:255',
-                'description' => 'required|max:255',
+                'description' => 'required|max:255|unique:permissions,description,' . $id . '',
             ]);
 
             $permission->update($request->all());
@@ -91,21 +75,6 @@ class PermissionController extends Controller
             return response()->json([
                 'message' => 'Permission has been updated successfully!',
                 'data' => $permission,
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Data not found!',
-            ], 404);
-        }
-    }
-
-    public function destroy($id)
-    {
-        if ($permission = Permission::find($id)) {
-            $permission->delete();
-            return response()->json([
-                'message' => 'Permission has been deleted successfully!',
-                'data'    => $permission
             ], 200);
         } else {
             return response()->json([

@@ -44,10 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Permission Routes
     Route::get('permission', [PermissionController::class, 'index'])->middleware(['permission:read_permission|manage_permission']);
-    Route::post('permission-create', [PermissionController::class, 'create'])->middleware(['permission:create_permission|manage_permission']);
     Route::get('permission-show/{id}', [PermissionController::class, 'show'])->middleware(['permission:show_permission|manage_permission']);
     Route::put('permission-update/{id}', [PermissionController::class, 'update'])->middleware(['permission:update_permission|manage_permission']);
-    Route::delete('permission-delete/{id}', [PermissionController::class, 'destroy'])->middleware(['permission:delete_permission|manage_permission']);
 
     //Prospect Routes #Status Hold
     Route::get('prospect', [ProspectController::class, 'index']);
