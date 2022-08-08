@@ -13,15 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('modules', function (Blueprint $table) {
             $table->id()->unsigned();
-            $table->string('name')->nullable();
-            $table->string('code')->nullable();
-
-            $table->unsignedBigInteger('country_id')->nullable();
-            $table->index('country_id');
-            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade')->onUpdate('cascade');
-
+            $table->string('module_name')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('modules');
     }
 };

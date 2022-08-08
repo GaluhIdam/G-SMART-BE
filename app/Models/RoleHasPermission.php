@@ -5,18 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Customer extends Model
+class RoleHasPermission extends Model
 {
     use HasFactory;
-
+    protected $table = 'role_has_permissions';
     protected $fillable = [
-        'name',
-        'code',
-        'country_id',
+        'permission_id',
+        'role_id',
     ];
-
-    public function country_id()
-    {
-        return $this->hasMany(Countries::class, 'id');
-    }
 }

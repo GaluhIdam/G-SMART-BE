@@ -109,6 +109,7 @@ class CreatePermissionTables extends Migration
         Schema::create($tableNames['role_has_permissions'], function (Blueprint $table) use ($tableNames) {
             $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
             $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
+            $table->timestamps();
 
             $table->foreign(PermissionRegistrar::$pivotPermission)
                 ->references('id') // permission id

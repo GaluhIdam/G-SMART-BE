@@ -16,7 +16,10 @@ return new class extends Migration
         Schema::create('countries', function (Blueprint $table) {
             $table->id()->unsigned();
             $table->string('name')->nullable();
-            $table->unsignedBigInteger('region_id')->references('id')->on('regions');
+
+            $table->unsignedBigInteger('region_id')->nullable();
+            $table->index('region_id');
+            $table->foreign('region_id')->references('id')->on('regions')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }

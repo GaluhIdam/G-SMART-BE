@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Permission;
+use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
-
-class PermissionController extends Controller
+class CustomerController extends Controller
 {
     public function index(Request $request)
     {
@@ -26,10 +26,10 @@ class PermissionController extends Controller
             $paginate = 10;
         }
 
-        $permission = Permission::when($search, function ($query) use ($search) {
+        $customer = Customer::with('country_id.region_id')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%$search%")
-                    ->orWhere('description', 'LIKE', "%$search%");
+                    ->orWhere('code', 'LIKE', "%$search%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
@@ -41,35 +41,35 @@ class PermissionController extends Controller
             'by' => $by,
         ];
 
-        $permission->appends($query_string);
+        $customer->appends($query_string);
 
         return response()->json([
             'message' => 'Success!',
-            'data' => $permission,
+            'data' => $customer
         ], 200);
     }
 
     public function create(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:permission|max:255',
-            'description' => 'required|max:255',
+            'name' => 'required|unique:customers|max:255',
+            'code' => 'required|unique:customers|max:255',
         ]);
 
-        $permission = Permission::create($request->all());
+        $customer = Customer::create($request->all());
 
         return response()->json([
-            'message' => 'Permission has been created successfully!',
-            'data' => $permission,
+            'message' => 'Customer has been created successfully!',
+            'data' => $customer,
         ], 201);
     }
 
     public function show($id)
     {
-        if ($permission = Permission::find($id)) {
+        if ($customer = Customer::find($id)) {
             return response()->json([
                 'message' => 'Success!',
-                'data' => $permission
+                'data' => $customer
             ], 200);
         } else {
             return response()->json([
@@ -80,16 +80,17 @@ class PermissionController extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($permission = Permission::find($id)) {
+        if ($customer = Customer::find($id)) {
             $request->validate([
-                'description' => 'required|unique:permissions,description,' . $id . '|max:255',
+                'name'        => 'required|unique:customers,name,' . $id . '|max:255',
+                'code'        => 'required|unique:customers,code,' . $id . '|max:255',
             ]);
 
-            $permission->update($request->all());
+            $customer->update($request->all());
 
             return response()->json([
-                'message' => 'Permission has been updated successfully!',
-                'data' => $permission,
+                'message' => 'Customer has been updated successfully!',
+                'data' => $customer,
             ], 200);
         } else {
             return response()->json([
@@ -100,11 +101,11 @@ class PermissionController extends Controller
 
     public function destroy($id)
     {
-        if ($permission = Permission::find($id)) {
-            $permission->delete();
+        if ($customer = Customer::find($id)) {
+            $customer->delete();
             return response()->json([
-                'message' => 'Permission has been deleted successfully!',
-                'data'    => $permission
+                'message' => 'Customer has been deleted successfully!',
+                'data'    => $customer
             ], 200);
         } else {
             return response()->json([

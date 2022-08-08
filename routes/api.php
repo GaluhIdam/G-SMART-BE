@@ -17,8 +17,11 @@ use App\Http\Controllers\AircraftTypeController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\ApuController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ModulePermissionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
+use App\Models\Customer;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -27,6 +30,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('module-permission', [ModulePermissionController::class, 'index']);
 
     //User Routes
     Route::get('users', [UserController::class, 'index'])->middleware(['permission:read_users|manage_users']);
@@ -44,10 +48,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Permission Routes
     Route::get('permission', [PermissionController::class, 'index'])->middleware(['permission:read_permission|manage_permission']);
-    Route::post('permission-create', [PermissionController::class, 'create'])->middleware(['permission:create_permission|manage_permission']);
     Route::get('permission-show/{id}', [PermissionController::class, 'show'])->middleware(['permission:show_permission|manage_permission']);
     Route::put('permission-update/{id}', [PermissionController::class, 'update'])->middleware(['permission:update_permission|manage_permission']);
-    Route::delete('permission-delete/{id}', [PermissionController::class, 'destroy'])->middleware(['permission:delete_permission|manage_permission']);
 
     //Prospect Routes #Status Hold
     Route::get('prospect', [ProspectController::class, 'index']);
@@ -55,6 +57,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('prospect-show/{id}', [ProspectController::class, 'show']);
     Route::put('prospect-update/{id}', [ProspectController::class, 'update']);
     Route::delete('prospect-delete/{id}', [ProspectController::class, 'destroy']);
+
+    //Customer Routes
+    Route::get('customer', [CustomerController::class, 'index']);
+    Route::post('customer-create', [CustomerController::class, 'create']);
+    Route::get('customer-show/{id}', [CustomerController::class, 'show']);
+    Route::put('customer-update/{id}', [CustomerController::class, 'update']);
+    Route::delete('customer-delete/{id}', [CustomerController::class, 'destroy']);
 
     //Strategic Initiative Routes
     Route::get('strategic-initiative', [StrategicInitiativeController::class, 'index'])->middleware(['permission:read_strategic_initiative|manage_strategic_initiative']);
