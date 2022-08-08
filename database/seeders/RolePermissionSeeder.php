@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Module;
+use App\Models\ModulePermissions;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -14,132 +16,276 @@ class RolePermissionSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         //User Permission
-        $manage_users = Permission::create(['name' => 'manage_users']);
         $read_users = Permission::create(['name' => 'read_users']);
         $create_users = Permission::create(['name' => 'create_users']);
         $show_users = Permission::create(['name' => 'show_users']);
         $update_users = Permission::create(['name' => 'update_users']);
         $delete_users = Permission::create(['name' => 'delete_users']);
 
+        $manage_users = Module::create([
+            'module_name' => 'Manage User'
+        ]);
+
+        ModulePermissions::create(['module_id' => $manage_users->id, 'permission_id' => $read_users->id],);
+        ModulePermissions::create(['module_id' => $manage_users->id, 'permission_id' => $create_users->id],);
+        ModulePermissions::create(['module_id' => $manage_users->id, 'permission_id' => $show_users->id],);
+        ModulePermissions::create(['module_id' => $manage_users->id, 'permission_id' => $update_users->id],);
+        ModulePermissions::create(['module_id' => $manage_users->id, 'permission_id' => $delete_users->id],);
+
+
         //Role Permission
-        $manage_role = Permission::create(['name' => 'manage_role']);
+        $manage_role = Module::create([
+            'module_name' => 'Manage Role'
+        ]);
+
         $read_role = Permission::create(['name' => 'read_role']);
         $create_role = Permission::create(['name' => 'create_role']);
         $show_role = Permission::create(['name' => 'show_role']);
         $update_role = Permission::create(['name' => 'update_role']);
         $delete_role = Permission::create(['name' => 'delete_role']);
 
+        ModulePermissions::create(['module_id' => $manage_role->id, 'permission_id' => $read_role->id],);
+        ModulePermissions::create(['module_id' => $manage_role->id, 'permission_id' => $create_role->id],);
+        ModulePermissions::create(['module_id' => $manage_role->id, 'permission_id' => $show_role->id],);
+        ModulePermissions::create(['module_id' => $manage_role->id, 'permission_id' => $update_role->id],);
+        ModulePermissions::create(['module_id' => $manage_role->id, 'permission_id' => $delete_role->id],);
+
         //Permission Permission
-        $manage_permission = Permission::create(['name' => 'manage_permission']);
+        $manage_permission = Module::create([
+            'module_name' => 'Manage Permission'
+        ]);
         $read_permission = Permission::create(['name' => 'read_permission']);
         $create_permission = Permission::create(['name' => 'create_permission']);
         $show_permission = Permission::create(['name' => 'show_permission']);
         $update_permission = Permission::create(['name' => 'update_permission']);
         $delete_permission = Permission::create(['name' => 'delete_permission']);
 
+        ModulePermissions::create(['module_id' => $manage_permission->id, 'permission_id' => $read_permission->id],);
+        ModulePermissions::create(['module_id' => $manage_permission->id, 'permission_id' => $create_permission->id],);
+        ModulePermissions::create(['module_id' => $manage_permission->id, 'permission_id' => $show_permission->id],);
+        ModulePermissions::create(['module_id' => $manage_permission->id, 'permission_id' => $update_permission->id],);
+        ModulePermissions::create(['module_id' => $manage_permission->id, 'permission_id' => $delete_permission->id],);
+
         //Strategic Initiative Permission
-        $manage_strategic_initiative = Permission::create(['name' => 'manage_strategic_initiative']);
+        $manage_strategic_initiative = Module::create([
+            'module_name' => 'Manage Strategic Initiative'
+        ]);
+
         $read_strategic_initiative = Permission::create(['name' => 'read_strategic_initiative']);
         $create_strategic_initiative = Permission::create(['name' => 'create_strategic_initiative']);
         $show_strategic_initiative = Permission::create(['name' => 'show_strategic_initiative']);
         $update_strategic_initiative = Permission::create(['name' => 'update_strategic_initiative']);
         $delete_strategic_initiative = Permission::create(['name' => 'delete_strategic_initiative']);
 
+        ModulePermissions::create(['module_id' => $manage_strategic_initiative->id, 'permission_id' => $read_strategic_initiative->id],);
+        ModulePermissions::create(['module_id' => $manage_strategic_initiative->id, 'permission_id' => $create_strategic_initiative->id],);
+        ModulePermissions::create(['module_id' => $manage_strategic_initiative->id, 'permission_id' => $show_strategic_initiative->id],);
+        ModulePermissions::create(['module_id' => $manage_strategic_initiative->id, 'permission_id' => $update_strategic_initiative->id],);
+        ModulePermissions::create(['module_id' => $manage_strategic_initiative->id, 'permission_id' => $delete_strategic_initiative->id],);
+
         //Region Permission
-        $manage_region = Permission::create(['name' => 'manage_region']);
+        $manage_region = Module::create([
+            'module_name' => 'Manage Region'
+        ]);
+
         $read_region = Permission::create(['name' => 'read_region']);
         $create_region = Permission::create(['name' => 'create_region']);
         $show_region = Permission::create(['name' => 'show_region']);
         $update_region = Permission::create(['name' => 'update_region']);
         $delete_region = Permission::create(['name' => 'delete_region']);
 
+        ModulePermissions::create(['module_id' => $manage_region->id, 'permission_id' => $read_region->id],);
+        ModulePermissions::create(['module_id' => $manage_region->id, 'permission_id' => $create_region->id],);
+        ModulePermissions::create(['module_id' => $manage_region->id, 'permission_id' => $show_region->id],);
+        ModulePermissions::create(['module_id' => $manage_region->id, 'permission_id' => $update_region->id],);
+        ModulePermissions::create(['module_id' => $manage_region->id, 'permission_id' => $delete_region->id],);
+
         //Countries Permission
-        $manage_countries = Permission::create(['name' => 'manage_countries']);
+        $manage_countries = Module::create([
+            'module_name' => 'Manage Countries'
+        ]);
+
         $read_countries = Permission::create(['name' => 'read_countries']);
         $create_countries = Permission::create(['name' => 'create_countries']);
         $show_countries = Permission::create(['name' => 'show_countries']);
         $update_countries = Permission::create(['name' => 'update_countries']);
         $delete_countries = Permission::create(['name' => 'delete_countries']);
 
+        ModulePermissions::create(['module_id' => $manage_countries->id, 'permission_id' => $read_countries->id],);
+        ModulePermissions::create(['module_id' => $manage_countries->id, 'permission_id' => $create_countries->id],);
+        ModulePermissions::create(['module_id' => $manage_countries->id, 'permission_id' => $show_countries->id],);
+        ModulePermissions::create(['module_id' => $manage_countries->id, 'permission_id' => $update_countries->id],);
+        ModulePermissions::create(['module_id' => $manage_countries->id, 'permission_id' => $delete_countries->id],);
+
         //Area Permission
-        $manage_area = Permission::create(['name' => 'manage_area']);
+        $manage_area = Module::create([
+            'module_name' => 'Manage Area'
+        ]);
+
         $read_area = Permission::create(['name' => 'read_area']);
         $create_area = Permission::create(['name' => 'create_area']);
         $show_area = Permission::create(['name' => 'show_area']);
         $update_area = Permission::create(['name' => 'update_area']);
         $delete_area = Permission::create(['name' => 'delete_area']);
 
+        ModulePermissions::create(['module_id' => $manage_area->id, 'permission_id' => $read_area->id],);
+        ModulePermissions::create(['module_id' => $manage_area->id, 'permission_id' => $create_area->id],);
+        ModulePermissions::create(['module_id' => $manage_area->id, 'permission_id' => $show_area->id],);
+        ModulePermissions::create(['module_id' => $manage_area->id, 'permission_id' => $update_area->id],);
+        ModulePermissions::create(['module_id' => $manage_area->id, 'permission_id' => $delete_area->id],);
+
         //Maintenance Permission
-        $manage_maintenance = Permission::create(['name' => 'manage_maintenance']);
+        $manage_maintenance = Module::create([
+            'module_name' => 'Manage Maintenance'
+        ]);
+
         $read_maintenance = Permission::create(['name' => 'read_maintenance']);
         $create_maintenance = Permission::create(['name' => 'create_maintenance']);
         $show_maintenance = Permission::create(['name' => 'show_maintenance']);
         $update_maintenance = Permission::create(['name' => 'update_maintenance']);
         $delete_maintenance = Permission::create(['name' => 'delete_maintenance']);
 
+        ModulePermissions::create(['module_id' => $manage_maintenance->id, 'permission_id' => $read_maintenance->id],);
+        ModulePermissions::create(['module_id' => $manage_maintenance->id, 'permission_id' => $create_maintenance->id],);
+        ModulePermissions::create(['module_id' => $manage_maintenance->id, 'permission_id' => $show_maintenance->id],);
+        ModulePermissions::create(['module_id' => $manage_maintenance->id, 'permission_id' => $update_maintenance->id],);
+        ModulePermissions::create(['module_id' => $manage_maintenance->id, 'permission_id' => $delete_maintenance->id],);
+
         //Transaction Type Permission
-        $manage_transaction_type = Permission::create(['name' => 'manage_transaction_type']);
+        $manage_transaction_type = Module::create([
+            'module_name' => 'Manage Transaction Type'
+        ]);
+
         $read_transaction_type = Permission::create(['name' => 'read_transaction_type']);
         $create_transaction_type = Permission::create(['name' => 'create_transaction_type']);
         $show_transaction_type = Permission::create(['name' => 'show_transaction_type']);
         $update_transaction_type = Permission::create(['name' => 'update_transaction_type']);
         $delete_transaction_type = Permission::create(['name' => 'delete_transaction_type']);
 
+        ModulePermissions::create(['module_id' => $manage_transaction_type->id, 'permission_id' => $read_transaction_type->id],);
+        ModulePermissions::create(['module_id' => $manage_transaction_type->id, 'permission_id' => $create_transaction_type->id],);
+        ModulePermissions::create(['module_id' => $manage_transaction_type->id, 'permission_id' => $show_transaction_type->id],);
+        ModulePermissions::create(['module_id' => $manage_transaction_type->id, 'permission_id' => $update_transaction_type->id],);
+        ModulePermissions::create(['module_id' => $manage_transaction_type->id, 'permission_id' => $delete_transaction_type->id],);
+
         //AMS Permission
-        $manage_ams = Permission::create(['name' => 'manage_ams']);
+        $manage_ams = Module::create([
+            'module_name' => 'Manage AMS'
+        ]);
+
         $read_ams = Permission::create(['name' => 'read_ams']);
         $create_ams = Permission::create(['name' => 'create_ams']);
         $show_ams = Permission::create(['name' => 'show_ams']);
         $update_ams = Permission::create(['name' => 'update_ams']);
         $delete_ams = Permission::create(['name' => 'delete_ams']);
 
+        ModulePermissions::create(['module_id' => $manage_ams->id, 'permission_id' => $read_ams->id],);
+        ModulePermissions::create(['module_id' => $manage_ams->id, 'permission_id' => $create_ams->id],);
+        ModulePermissions::create(['module_id' => $manage_ams->id, 'permission_id' => $show_ams->id],);
+        ModulePermissions::create(['module_id' => $manage_ams->id, 'permission_id' => $update_ams->id],);
+        ModulePermissions::create(['module_id' => $manage_ams->id, 'permission_id' => $delete_ams->id],);
+
         //Prospect Type Permission
-        $manage_prospect_type = Permission::create(['name' => 'manage_prospect_type']);
+        $manage_prospect_type = Module::create([
+            'module_name' => 'Manage Prospect Type'
+        ]);
+
         $read_prospect_type = Permission::create(['name' => 'read_prospect_type']);
         $create_prospect_type = Permission::create(['name' => 'create_prospect_type']);
         $show_prospect_type = Permission::create(['name' => 'show_prospect_type']);
         $update_prospect_type = Permission::create(['name' => 'update_prospect_type']);
         $delete_prospect_type = Permission::create(['name' => 'delete_prospect_type']);
 
+        ModulePermissions::create(['module_id' => $manage_prospect_type->id, 'permission_id' => $read_prospect_type->id],);
+        ModulePermissions::create(['module_id' => $manage_prospect_type->id, 'permission_id' => $create_prospect_type->id],);
+        ModulePermissions::create(['module_id' => $manage_prospect_type->id, 'permission_id' => $show_prospect_type->id],);
+        ModulePermissions::create(['module_id' => $manage_prospect_type->id, 'permission_id' => $update_prospect_type->id],);
+        ModulePermissions::create(['module_id' => $manage_prospect_type->id, 'permission_id' => $delete_prospect_type->id],);
+
         //Aircraft Type Permission
-        $manage_aircraft_type = Permission::create(['name' => 'manage_aircraft_type']);
+        $manage_aircraft_type = Module::create([
+            'module_name' => 'Manage Aircraft Type'
+        ]);
+
         $read_aircraft_type = Permission::create(['name' => 'read_aircraft_type']);
         $create_aircraft_type = Permission::create(['name' => 'create_aircraft_type']);
         $show_aircraft_type = Permission::create(['name' => 'show_aircraft_type']);
         $update_aircraft_type = Permission::create(['name' => 'update_aircraft_type']);
         $delete_aircraft_type = Permission::create(['name' => 'delete_aircraft_type']);
 
+        ModulePermissions::create(['module_id' => $manage_aircraft_type->id, 'permission_id' => $read_aircraft_type->id],);
+        ModulePermissions::create(['module_id' => $manage_aircraft_type->id, 'permission_id' => $create_aircraft_type->id],);
+        ModulePermissions::create(['module_id' => $manage_aircraft_type->id, 'permission_id' => $show_aircraft_type->id],);
+        ModulePermissions::create(['module_id' => $manage_aircraft_type->id, 'permission_id' => $update_aircraft_type->id],);
+        ModulePermissions::create(['module_id' => $manage_aircraft_type->id, 'permission_id' => $delete_aircraft_type->id],);
+
         //Engine Permission
-        $manage_engine = Permission::create(['name' => 'manage_engine']);
+        $manage_engine = Module::create([
+            'module_name' => 'Manage Engine'
+        ]);
+
         $read_engine = Permission::create(['name' => 'read_engine']);
         $create_engine = Permission::create(['name' => 'create_engine']);
         $show_engine = Permission::create(['name' => 'show_engine']);
         $update_engine = Permission::create(['name' => 'update_engine']);
         $delete_engine = Permission::create(['name' => 'delete_engine']);
 
+        ModulePermissions::create(['module_id' => $manage_engine->id, 'permission_id' => $read_engine->id],);
+        ModulePermissions::create(['module_id' => $manage_engine->id, 'permission_id' => $create_engine->id],);
+        ModulePermissions::create(['module_id' => $manage_engine->id, 'permission_id' => $show_engine->id],);
+        ModulePermissions::create(['module_id' => $manage_engine->id, 'permission_id' => $update_engine->id],);
+        ModulePermissions::create(['module_id' => $manage_engine->id, 'permission_id' => $delete_engine->id],);
+
         //Component Permission
-        $manage_component = Permission::create(['name' => 'manage_component']);
+        $manage_component = Module::create([
+            'module_name' => 'Manage Component'
+        ]);
+
         $read_component = Permission::create(['name' => 'read_component']);
         $create_component = Permission::create(['name' => 'create_component']);
         $show_component = Permission::create(['name' => 'show_component']);
         $update_component = Permission::create(['name' => 'update_component']);
         $delete_component = Permission::create(['name' => 'delete_component']);
 
+        ModulePermissions::create(['module_id' => $manage_component->id, 'permission_id' => $read_component->id],);
+        ModulePermissions::create(['module_id' => $manage_component->id, 'permission_id' => $create_component->id],);
+        ModulePermissions::create(['module_id' => $manage_component->id, 'permission_id' => $show_component->id],);
+        ModulePermissions::create(['module_id' => $manage_component->id, 'permission_id' => $update_component->id],);
+        ModulePermissions::create(['module_id' => $manage_component->id, 'permission_id' => $delete_component->id],);
+
         //APU Permission
-        $manage_apu = Permission::create(['name' => 'manage_apu']);
+        $manage_apu = Module::create([
+            'module_name' => 'Manage APU'
+        ]);
+
         $read_apu = Permission::create(['name' => 'read_apu']);
         $create_apu = Permission::create(['name' => 'create_apu']);
         $show_apu = Permission::create(['name' => 'show_apu']);
         $update_apu = Permission::create(['name' => 'update_apu']);
         $delete_apu = Permission::create(['name' => 'delete_apu']);
 
+        ModulePermissions::create(['module_id' => $manage_apu->id, 'permission_id' => $read_apu->id],);
+        ModulePermissions::create(['module_id' => $manage_apu->id, 'permission_id' => $create_apu->id],);
+        ModulePermissions::create(['module_id' => $manage_apu->id, 'permission_id' => $show_apu->id],);
+        ModulePermissions::create(['module_id' => $manage_apu->id, 'permission_id' => $update_apu->id],);
+        ModulePermissions::create(['module_id' => $manage_apu->id, 'permission_id' => $delete_apu->id],);
+
         //Product Permission
-        $manage_product = Permission::create(['name' => 'manage_product']);
+        $manage_product = Module::create([
+            'module_name' => 'Manage Product'
+        ]);
+
         $read_product = Permission::create(['name' => 'read_product']);
         $create_product = Permission::create(['name' => 'create_product']);
         $show_product = Permission::create(['name' => 'show_product']);
         $update_product = Permission::create(['name' => 'update_product']);
         $delete_product = Permission::create(['name' => 'delete_product']);
+
+        ModulePermissions::create(['module_id' => $manage_product->id, 'permission_id' => $read_product->id],);
+        ModulePermissions::create(['module_id' => $manage_product->id, 'permission_id' => $create_product->id],);
+        ModulePermissions::create(['module_id' => $manage_product->id, 'permission_id' => $show_product->id],);
+        ModulePermissions::create(['module_id' => $manage_product->id, 'permission_id' => $update_product->id],);
+        ModulePermissions::create(['module_id' => $manage_product->id, 'permission_id' => $delete_product->id],);
 
         //Role Admin
         $admin = Role::create([
@@ -150,12 +296,12 @@ class RolePermissionSeeder extends Seeder
         $roler = Role::create([
             'name' => 'Roler',
             'description' => 'Manage All Role',
-        ])->givePermissionTo($manage_role);
+        ])->givePermissionTo($read_role, $read_users);
 
         //Role User
         $user = Role::create([
             'name' => 'User',
             'description' => 'Only Specific Permission',
-        ])->givePermissionTo($read_role, $create_role, $show_role, $update_role, $delete_role);
+        ])->givePermissionTo($read_product, $create_product, $show_product, $update_product, $delete_product, $read_users);
     }
 }

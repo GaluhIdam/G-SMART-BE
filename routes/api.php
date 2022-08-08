@@ -17,6 +17,7 @@ use App\Http\Controllers\AircraftTypeController;
 use App\Http\Controllers\EngineController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\ApuController;
+use App\Http\Controllers\ModulePermissionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 
@@ -27,6 +28,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('module-permission', [ModulePermissionController::class, 'index']);
 
     //User Routes
     Route::get('users', [UserController::class, 'index'])->middleware(['permission:read_users|manage_users']);
@@ -44,10 +46,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Permission Routes
     Route::get('permission', [PermissionController::class, 'index'])->middleware(['permission:read_permission|manage_permission']);
-    Route::post('permission-create', [PermissionController::class, 'create'])->middleware(['permission:create_permission|manage_permission']);
     Route::get('permission-show/{id}', [PermissionController::class, 'show'])->middleware(['permission:show_permission|manage_permission']);
     Route::put('permission-update/{id}', [PermissionController::class, 'update'])->middleware(['permission:update_permission|manage_permission']);
-    Route::delete('permission-delete/{id}', [PermissionController::class, 'destroy'])->middleware(['permission:delete_permission|manage_permission']);
 
     //Prospect Routes #Status Hold
     Route::get('prospect', [ProspectController::class, 'index']);
