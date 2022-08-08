@@ -55,7 +55,7 @@ class UserController extends Controller
             'message' => 'success',
             'data' => $user,
             'user' => $user_active->name,
-            'email' => $user_active->email
+            'email' => $user_active->email,
         ], 200);
     }
 
@@ -65,7 +65,6 @@ class UserController extends Controller
             'name'        => 'required|unique:users',
             'username'    => 'required|unique:users',
             'email'       => 'required|unique:users|email',
-            'role_id'     => 'required',
             'password'    => 'required|min:8',
             're_password' => 'required|same:password',
         ]);
@@ -105,7 +104,6 @@ class UserController extends Controller
                 'name'        => 'required|unique:users,name,' . $id . '|max:255',
                 'username'    => 'required|unique:users,username,' . $id . '|max:255',
                 'email'       => 'required|unique:users,email,' . $id . '|max:255',
-                'role_id'     => 'required',
                 'password'    => 'required|min:8|max:255',
             ]);
 

@@ -27,8 +27,7 @@ class RegionController extends Controller
 
         $region = Region::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%$search%")
-                    ->orWhere('area_id', 'LIKE', "%$search%");
+                $sub_query->where('name', 'LIKE', "%$search%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
@@ -52,7 +51,6 @@ class RegionController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:regions|max:255',
-            'area_id' => 'required',
         ]);
 
         $region = Region::create($request->all());
@@ -82,7 +80,6 @@ class RegionController extends Controller
         if ($region = Region::find($id)) {
             $request->validate([
                 'name'    => 'required|unique:regions,name,' . $id . '|max:255',
-                'area_id' => 'required',
             ]);
 
             $region->update($request->all());

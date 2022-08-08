@@ -17,7 +17,6 @@ class RegionSeeder extends Seeder
     {
         Region::create([
             'name' => 'South East Asia',
-            'area_id' => 1,
         ]);
     }
 }

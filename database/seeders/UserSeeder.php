@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Spatie\Permission\Models\Permission;
 
 class UserSeeder extends Seeder
 {
@@ -22,6 +22,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => Carbon::now(),
         ]);
         $administrator->assignRole('Administrator');
+        // $administrator->givePermissionTo(Permission::all());
 
         $roler = User::create([
             'name'              => 'Roler JTI',
@@ -34,6 +35,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => Carbon::now(),
         ]);
         $roler->assignRole('Roler');
+        // $user->givePermissionTo('read_product');
 
         $user = User::create([
             'name'              => 'User JTI',
@@ -46,5 +48,6 @@ class UserSeeder extends Seeder
             'email_verified_at' => Carbon::now(),
         ]);
         $user->assignRole('User');
+        // $user->givePermissionTo('read_product');
     }
 }

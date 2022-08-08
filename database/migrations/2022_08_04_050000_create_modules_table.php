@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('regions', function (Blueprint $table) {
+        Schema::create('modules', function (Blueprint $table) {
             $table->id()->unsigned();
-            $table->string('name')->nullable();
+            $table->string('module_name')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('regions');
+        Schema::dropIfExists('modules');
     }
 };
