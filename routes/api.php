@@ -21,7 +21,6 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ModulePermissionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
-use App\Models\Customer;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);

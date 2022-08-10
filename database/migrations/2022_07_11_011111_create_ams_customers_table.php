@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('ams_customers', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('customer_id');
+            $table->index('customer_id');
+            $table->foreign('customer_id')->references('id')->on('customer');
 
             $table->unsignedBigInteger('area_id');
             $table->index('area_id');

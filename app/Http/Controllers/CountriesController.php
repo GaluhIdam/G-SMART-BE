@@ -25,10 +25,10 @@ class CountriesController extends Controller
             $paginate = 10;
         }
 
-        $countries = Countries::with('region_id')->when($search, function ($query) use ($search) {
+        $countries = Countries::when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%$search%")
-                    ->orWhere('region_id', 'LIKE', "%$search%");
+                    ->orWhere('region_id', $search);
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);

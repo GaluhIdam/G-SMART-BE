@@ -10,8 +10,11 @@ class Region extends Model
     use HasFactory;
 
     protected $table = 'regions';
-    
     protected $fillable = [
         'name',
     ];
+    public function country_id()
+    {
+        return $this->hasMany(Countries::class, 'region_id');
+    }
 }

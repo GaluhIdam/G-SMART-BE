@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\AMSCustomer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class CustomerController extends Controller
@@ -52,15 +54,29 @@ class CustomerController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:customers|max:255',
-            'code' => 'required|unique:customers|max:255',
+            'name' => 'required',
+            'code' => 'required',
+            'country_id' => 'required',
+            'region_id' => 'required',
+            'ams_id' => 'required',
+            'area_id' => 'required',
         ]);
-
+        DB::beginTransaction();
         $customer = Customer::create($request->all());
+        foreach ($request->get('ams_id') as $value) {
+            return $value;
+            AMSCustomer::create([
+                'customer_id' => $customer->id,
+                'ams_id' => $value,
+                'area_id' => $value,
+            ]);
+        }
+        die;
+        DB::commit();
 
         return response()->json([
             'message' => 'Customer has been created successfully!',
-            'data' => $customer,
+            // 'data' => $customer,
         ], 201);
     }
 
@@ -82,8 +98,8 @@ class CustomerController extends Controller
     {
         if ($customer = Customer::find($id)) {
             $request->validate([
-                'name'        => 'required|unique:customers,name,' . $id . '|max:255',
-                'code'        => 'required|unique:customers,code,' . $id . '|max:255',
+                'name'        => 'required|max:255',
+                'code'        => 'required|max:255',
             ]);
 
             $customer->update($request->all());
