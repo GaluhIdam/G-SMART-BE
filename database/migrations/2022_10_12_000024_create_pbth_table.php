@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('prospect_pbth_seconds', function (Blueprint $table) {
+        Schema::create('pbth', function (Blueprint $table) {
             $table->id()->unsigned();
             $table->string('month')->nullable();
             $table->text('rate')->nullable();
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('prospect_pbth_seconds');
+        Schema::dropIfExists('pbth');
     }
 };

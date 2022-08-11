@@ -15,8 +15,8 @@ class Customer extends Model
         'country_id',
     ];
 
-    public function country_id()
+    public function country()
     {
-        return $this->hasMany(Countries::class, 'id');
+        return $this->belongsTo(Countries::class, 'country_id');
     }
 }

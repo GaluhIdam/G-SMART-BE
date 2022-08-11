@@ -28,7 +28,7 @@ class CustomerController extends Controller
             $paginate = 10;
         }
 
-        $customer = Customer::with('country_id.region_id')->when($search, function ($query) use ($search) {
+        $customer = Customer::with('country.regions')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%$search%")
                     ->orWhere('code', 'LIKE', "%$search%");
@@ -53,25 +53,30 @@ class CustomerController extends Controller
 
     public function create(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'code' => 'required',
-            'country_id' => 'required',
-            'region_id' => 'required',
-            'ams_id' => 'required',
-            'area_id' => 'required',
-        ]);
+        // $request->validate([
+        //     'name' => 'required',
+        //     'code' => 'required',
+        //     'country_id' => 'required',
+        //     'region_id' => 'required',
+        //     'area_ams' => 'required',
+        //     'area_id' => 'required',
+        // ], [
+        //     'country_id.required' => 'The Country field is required',
+        //     'region_id.required' => 'The Region field is required',
+        //     'area_ams.required' => 'The AMS field is required',
+        //     'area_id.required' => 'The Area field is required',
+        // ]);
         DB::beginTransaction();
         $customer = Customer::create($request->all());
-        foreach ($request->get('ams_id') as $value) {
-            return $value;
+
+        foreach ($request->get('area_ams') as $value) {
             AMSCustomer::create([
                 'customer_id' => $customer->id,
-                'ams_id' => $value,
-                'area_id' => $value,
+                'ams_id' => $value['ams']['id'],
+                'area_id' => $value['area']['id'],
             ]);
         }
-        die;
+
         DB::commit();
 
         return response()->json([
