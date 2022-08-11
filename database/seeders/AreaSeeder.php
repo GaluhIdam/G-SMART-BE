@@ -19,5 +19,17 @@ class AreaSeeder extends Seeder
             'name' => 'GIA11',
             'scope' => 'Garuda Indonesia',
         ]);
+        Area::create([
+            'name' => 'CTI21',
+            'scope' => 'Citilink',
+        ]);
+        Area::create([
+            'name' => 'ARS01',
+            'scope' => 'Air Asia',
+        ]);
+        Area::create([
+            'name' => 'LIR45',
+            'scope' => 'Lion Air',
+        ]);
     }
 }

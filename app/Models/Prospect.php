@@ -24,26 +24,26 @@ class Prospect extends Model
 
     public function transaction_type_id()
     {
-        return $this->hasMany(TransactionType::class, 'id');
+        return $this->belongsTo(TransactionType::class, 'transaction_type_id');
     }
 
     public function prospect_type_id()
     {
-        return $this->hasMany(ProspectType::class, 'id');
+        return $this->belongsTo(ProspectType::class, 'prospect_type_id');
     }
 
     public function strategic_initiative_id()
     {
-        return $this->hasMany(StrategicInitiatives::class, 'id');
+        return $this->belongsTo(StrategicInitiatives::class, 'strategic_initiative_id');
     }
 
     public function pm_id()
     {
-        return $this->hasMany(User::class, 'id');
+        return $this->belongsTo(User::class, 'pm_id');
     }
 
     public function customer_id()
     {
-        return $this->hasMany(Customer::class, 'id');
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 }

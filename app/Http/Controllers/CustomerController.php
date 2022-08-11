@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\AMSCustomer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class CustomerController extends Controller
@@ -26,7 +28,7 @@ class CustomerController extends Controller
             $paginate = 10;
         }
 
-        $customer = Customer::with('country_id.region_id')->when($search, function ($query) use ($search) {
+        $customer = Customer::with('country.regions')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%$search%")
                     ->orWhere('code', 'LIKE', "%$search%");
@@ -51,16 +53,35 @@ class CustomerController extends Controller
 
     public function create(Request $request)
     {
-        $request->validate([
-            'name' => 'required|unique:customers|max:255',
-            'code' => 'required|unique:customers|max:255',
-        ]);
-
+        // $request->validate([
+        //     'name' => 'required',
+        //     'code' => 'required',
+        //     'country_id' => 'required',
+        //     'region_id' => 'required',
+        //     'area_ams' => 'required',
+        //     'area_id' => 'required',
+        // ], [
+        //     'country_id.required' => 'The Country field is required',
+        //     'region_id.required' => 'The Region field is required',
+        //     'area_ams.required' => 'The AMS field is required',
+        //     'area_id.required' => 'The Area field is required',
+        // ]);
+        DB::beginTransaction();
         $customer = Customer::create($request->all());
+
+        foreach ($request->get('area_ams') as $value) {
+            AMSCustomer::create([
+                'customer_id' => $customer->id,
+                'ams_id' => $value['ams']['id'],
+                'area_id' => $value['area']['id'],
+            ]);
+        }
+
+        DB::commit();
 
         return response()->json([
             'message' => 'Customer has been created successfully!',
-            'data' => $customer,
+            // 'data' => $customer,
         ], 201);
     }
 
@@ -82,8 +103,8 @@ class CustomerController extends Controller
     {
         if ($customer = Customer::find($id)) {
             $request->validate([
-                'name'        => 'required|unique:customers,name,' . $id . '|max:255',
-                'code'        => 'required|unique:customers,code,' . $id . '|max:255',
+                'name'        => 'required|max:255',
+                'code'        => 'required|max:255',
             ]);
 
             $customer->update($request->all());

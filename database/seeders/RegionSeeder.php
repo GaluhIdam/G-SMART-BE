@@ -18,5 +18,14 @@ class RegionSeeder extends Seeder
         Region::create([
             'name' => 'South East Asia',
         ]);
+        Region::create([
+            'name' => 'East Asia',
+        ]);
+        Region::create([
+            'name' => 'Central Asia',
+        ]);
+        Region::create([
+            'name' => 'South Asia',
+        ]);
     }
 }

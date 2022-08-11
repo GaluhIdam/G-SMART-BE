@@ -19,5 +19,13 @@ class AMSSeeder extends Seeder
             'user_id' => 1,
             'initial' => 'ZMI',
         ]);
+        AMS::create([
+            'user_id' => 2,
+            'initial' => 'RJTI',
+        ]);
+        AMS::create([
+            'user_id' => 3,
+            'initial' => 'UJTI',
+        ]);
     }
 }
