@@ -14,4 +14,13 @@ class AMSCustomer extends Model
         'area_id',
         'ams_id',
     ];
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class, 'area_id');
+    }
+    public function ams()
+    {
+        return $this->belongsTo(AMS::class, 'ams_id');
+    }
 }

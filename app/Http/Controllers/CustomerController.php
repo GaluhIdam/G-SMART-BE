@@ -28,7 +28,7 @@ class CustomerController extends Controller
             $paginate = 10;
         }
 
-        $customer = Customer::with('country.regions')->when($search, function ($query) use ($search) {
+        $customer = Customer::with('country.regions')->with('amscustomer.area')->with('amscustomer.ams.user')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%$search%")
                     ->orWhere('code', 'LIKE', "%$search%");
@@ -53,19 +53,13 @@ class CustomerController extends Controller
 
     public function create(Request $request)
     {
-        // $request->validate([
-        //     'name' => 'required',
-        //     'code' => 'required',
-        //     'country_id' => 'required',
-        //     'region_id' => 'required',
-        //     'area_ams' => 'required',
-        //     'area_id' => 'required',
-        // ], [
-        //     'country_id.required' => 'The Country field is required',
-        //     'region_id.required' => 'The Region field is required',
-        //     'area_ams.required' => 'The AMS field is required',
-        //     'area_id.required' => 'The Area field is required',
-        // ]);
+        $request->validate([
+            'name' => 'required|max:255',
+            'code' => 'required|max:255',
+            'country_id' => 'required',
+            'region_id' => 'required',
+        ]);
+
         DB::beginTransaction();
         $customer = Customer::create($request->all());
 
@@ -76,12 +70,11 @@ class CustomerController extends Controller
                 'area_id' => $value['area']['id'],
             ]);
         }
-
         DB::commit();
 
         return response()->json([
             'message' => 'Customer has been created successfully!',
-            // 'data' => $customer,
+            'data' => $customer,
         ], 201);
     }
 
@@ -103,11 +96,24 @@ class CustomerController extends Controller
     {
         if ($customer = Customer::find($id)) {
             $request->validate([
-                'name'        => 'required|max:255',
-                'code'        => 'required|max:255',
+                'name' => 'required|max:255',
+                'code' => 'required|max:255',
+                'country_id' => 'required',
+                'region_id' => 'required',
             ]);
 
+            DB::beginTransaction();
             $customer->update($request->all());
+
+            AMSCustomer::where('customer_id', $customer->id)->delete();
+            foreach ($request->get('area_ams') as $value) {
+                AMSCustomer::create([
+                    'customer_id' => $customer->id,
+                    'ams_id' => $value['ams']['id'],
+                    'area_id' => $value['area']['id'],
+                ]);
+            }
+            DB::commit();
 
             return response()->json([
                 'message' => 'Customer has been updated successfully!',
@@ -122,8 +128,9 @@ class CustomerController extends Controller
 
     public function destroy($id)
     {
-        if ($customer = Customer::find($id)) {
+        if ($customer = Customer::with('amscustomer')->find($id)) {
             $customer->delete();
+            // AMSCustomer::find($customer->);
             return response()->json([
                 'message' => 'Customer has been deleted successfully!',
                 'data'    => $customer

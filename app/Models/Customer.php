@@ -19,4 +19,9 @@ class Customer extends Model
     {
         return $this->belongsTo(Countries::class, 'country_id');
     }
+
+    public function amscustomer()
+    {
+        return $this->hasMany(AMSCustomer::class, 'customer_id');
+    }
 }

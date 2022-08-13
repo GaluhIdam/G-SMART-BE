@@ -36,7 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('users-create', [UserController::class, 'create'])->middleware(['permission:create_users|manage_users']);
     Route::get('users-show/{id}', [UserController::class, 'show'])->middleware(['permission:show_users|manage_users']);
     Route::put('users-update/{id}', [UserController::class, 'update'])->middleware(['permission:update_users|manage_users']);
-    Route::delete('users-delete/{id}', [UserController::class, 'delete'])->middleware(['permission:delete_users|manage_users']);
+    Route::delete('users-delete/{id}', [UserController::class, 'destroy'])->middleware(['permission:delete_users|manage_users']);
 
     //Role Routes
     Route::get('role', [RoleController::class, 'index'])->middleware(['permission:read_role|manage_role']);

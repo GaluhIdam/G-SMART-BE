@@ -25,7 +25,7 @@ class RegionController extends Controller
             $paginate = 10;
         }
 
-        $region = Region::with('country_id')->when($search, function ($query) use ($search) {
+        $region = Region::with('countries')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%$search%");
             });
