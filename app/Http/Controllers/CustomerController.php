@@ -94,7 +94,7 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($customer = Customer::find($id)) {
+        if ($customer = Customer::with('amscustomer')->find($id)) {
             $request->validate([
                 'name' => 'required|max:255',
                 'code' => 'required|max:255',
