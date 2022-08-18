@@ -15,18 +15,18 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('username');
-            $table->string('nopeg')->unique();
-            $table->string('unit');
+            $table->string('name')->nullable();
+            $table->string('username')->nullable();
+            $table->string('nopeg')->unique()->nullable();
+            $table->string('unit')->nullable();
 
-            $table->unsignedBigInteger('role_id');
+            $table->unsignedBigInteger('role_id')->nullable();
             $table->index('role_id');
             $table->foreign('role_id')->references('id')->on('roles');
 
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->timestamps();
         });
     }

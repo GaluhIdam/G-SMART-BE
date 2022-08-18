@@ -63,19 +63,25 @@ class UserController extends Controller
     {
         $request->validate([
             'name'        => 'required|unique:users',
-            'username'    => 'required|unique:users',
+            // 'username'    => 'required|unique:users',
             'email'       => 'required|unique:users|email',
-            'password'    => 'required|min:8',
-            're_password' => 'required|same:password',
+            'nopeg'       => 'required|unique:users',
+            'unit'        => 'required',
+            // 'password'    => 'required|min:8',
+            // 're_password' => 'required|same:password',
+        ], [
+            'nopeg.required' => 'The employee number field is required.'
         ]);
-
-        $register = User::create([
-            'name'       => $request->get('name'),
-            'username'   => $request->get('username'),
-            'role_id'    => $request->get('role_id'),
-            'email'      => $request->get('email'),
-            'password'   => password_hash($request->get('password'), PASSWORD_DEFAULT),
-        ]);
+        $register = User::create($request->all());
+        // $register = User::create([
+        //     'name'       => $request->get('name'),
+        //     'nopeg'       => $request->get('nopeg'),
+        //     // 'username'   => $request->get('username'),
+        //     // 'role_id'    => $request->get('role_id'),
+        //     'email'      => $request->get('email'),
+        //     'unit'       => $request->get('unit'),
+        //     // 'password'   => password_hash($request->get('password'), PASSWORD_DEFAULT),
+        // ]);
 
         return response()->json([
             'message' => 'User created has successfully!',
@@ -102,9 +108,15 @@ class UserController extends Controller
         if ($user = User::find($id)) {
             $request->validate([
                 'name'        => 'required|unique:users,name,' . $id . '|max:255',
-                'username'    => 'required|unique:users,username,' . $id . '|max:255',
+                // 'username'    => 'required|unique:users,username,' . $id . '|max:255',
                 'email'       => 'required|unique:users,email,' . $id . '|max:255',
-                'password'    => 'required|min:8|max:255',
+                'nopeg'       => 'required|unique:users,nopeg,' . $id . '|max:255',
+                'unit'        => 'required',
+                // 'password'    => 'required|min:8|max:255',
+            ], [
+                'nopeg.required' => 'The employee number field is required.',
+                'nopeg.unique' => 'The employee number has already been taken.',
+                'nopeg.max' => 'The employee number must not be greater than 255 characters.',
             ]);
 
             $user->update($request->all());
