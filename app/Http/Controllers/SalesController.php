@@ -27,7 +27,8 @@ class SalesController extends Controller
 
         $user = auth()->user();
 
-        $sales = Sales::with(
+        // get all sales data
+        $all_sales = Sales::with([
             'customer',
             'prospect',
             'maintenance',
@@ -38,7 +39,21 @@ class SalesController extends Controller
             'component',
             'apu',
             'salesLevel'
-        )->when($search, function ($query) use ($search) {
+        ])->get();
+
+        // get user sales data
+        $sales_by_user = Sales::with([
+            'customer',
+            'prospect',
+            'maintenance',
+            'hangar',
+            'product',
+            'acType',
+            'engine',
+            'component',
+            'apu',
+            'salesLevel'
+        ])->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('customer', 'LIKE', "%$search%")
                     ->orWhere('prospect', 'LIKE', "%$search%")
@@ -51,6 +66,8 @@ class SalesController extends Controller
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
+        })->whereHas('prospect', function ($query) use ($user) {
+            $query->where('pm_id', $user->id);
         })->paginate($paginate);
 
         $query_string = [
@@ -59,14 +76,14 @@ class SalesController extends Controller
             'by'     => $by,
         ];
 
-        $sales->appends($query_string);
+        $sales_by_user->appends($query_string);
 
-        // define empty array untuk menampung data [tabel salesplan]
-        $data = [];
-        foreach ($sales as $item) {
+        // define empty array untuk menampung data [tabel salesplan user]
+        $user_salesplan = [];
+        foreach ($sales_by_user as $item) {
             $properties = $item->acType->name.'/'.$item->engine->name.'/'.$item->apu->name.'/'.$item->component->name; // kolom AC/ENG/APU/COMP di dashboard
 
-            $data[] = [
+            $user_salesplan[] = [
                 'customer' => $item->customer->name,
                 'product' => $item->product->name,
                 'properties' => $properties,
@@ -74,43 +91,57 @@ class SalesController extends Controller
                 'other' => $item->is_rkap ? 'RKAP' : 'NO-RKAP',
                 'type' => $item->prospect->transactionType->name,
                 'level' => $item->salesLevel->level->level,
-                'progress' => '50%', // kumaha ngitung na?
+                'progress' => 50, // kumaha ngitung na?
                 'status' => $item->status,
             ];
         }
 
-        // data untuk 5 overview card [ter-atas]
-        $total_target = auth()->user()->ams->ams_targets->sum('value'); // total [target]
-        $total_open = $sales->where('salesLevel.status', 1)->sum('value'); // total [open]
-        $total_closed = $sales->where('salesLevel.status', 2)->sum('value'); // total [closed]
-        $total_cancel = $sales->where('salesLevel.status', 4)->sum('value'); // total [cancel]
+        // data untuk 5 overview card [ter-atas] user sales
+        $user_target = auth()->user()->ams->ams_targets->sum('value'); // total user sales [target]
+        $user_open = $sales_by_user->where('salesLevel.status', 1)->sum('value'); // total user sales [open]
+        $user_closed = $sales_by_user->where('salesLevel.status', 2)->sum('value'); // total user sales [closed]
+        $user_cancel = $sales_by_user->where('salesLevel.status', 4)->sum('value'); // total user sales [cancel]
 
         // menampung overview data untuk [4 card level]
         for ($i = 1; $i <= 4; $i++){
-            $data_sales = $sales->where('salesLevel.level_id', $i); // get data sales [per-level]
+            $user_sales = $sales_by_user->where('salesLevel.level_id', $i); // get data user sales [per-level]
             ${"level$i"} = [ // level[1-4]
-                'total' => $data_sales->sum('value'), // total [all] sales 
-                'open' => $data_sales->where('salesLevel.status', 1)->sum('value'), // total [open] sales
-                'closed' => $data_sales->where('salesLevel.status', 2)->sum('value'), // total [closed] sales
-                'closeIn' => $data_sales->where('salesLevel.status', 3)->sum('value'), // total [close-in] sales
-                'cancel' => $data_sales->where('salesLevel.status', 4)->sum('value'), // total [cancel] sales
+                'total' => $user_sales->sum('value'), // user total [all] sales 
+                'open' => $user_sales->where('salesLevel.status', 1)->sum('value'), // user total [open] sales
+                'closed' => $user_sales->where('salesLevel.status', 2)->sum('value'), // user total [closed] sales
+                'closeIn' => $user_sales->where('salesLevel.status', 3)->sum('value'), // user total [close-in] sales
+                'cancel' => $user_sales->where('salesLevel.status', 4)->sum('value'), // user total [cancel] sales
             ];
         }
+
+        // overview data (all sales) untuk [modal salesplan total]
+        $all_open = $all_sales->where('salesLevel.status', 1)->sum('value'); // total all sales [open]
+        $all_closed = $all_sales->where('salesLevel.status', 2)->sum('value'); // total all sales [closed]
+        $all_cancel = $all_sales->where('salesLevel.status', 4)->sum('value'); // total all sales [cancel]
+        $all_salesplan = [
+            'totalOpen' => $all_open,
+            'totalClosed' => $all_closed,
+            'totalOpenClosed' => $all_open + $all_closed,
+            'totalCancel' => $all_cancel,
+        ];
 
         return response()->json([ 
             'success' => true,
             'message' => 'Retrieve data successfully',
             'data'    => [
-                'totalTarget' => $total_target,
-                'totalOpen' => $total_open,
-                'totalClosed' => $total_closed,
-                'totalOpenClosed' => $total_open + $total_closed,
-                'totalCancel' => $total_cancel,
-                'level4' => $level4,
-                'level3' => $level3,
-                'level2' => $level2,
-                'level1' => $level1,
-                'salesPlan' => $data,
+                'all' => $all_salesplan,
+                'user' => [
+                    'totalTarget' => $user_target,
+                    'totalOpen' => $user_open,
+                    'totalClosed' => $user_closed,
+                    'totalOpenClosed' => $user_open + $user_closed,
+                    'totalCancel' => $user_cancel,
+                    'level4' => $level4,
+                    'level3' => $level3,
+                    'level2' => $level2,
+                    'level1' => $level1,
+                    'salesPlan' => $user_salesplan,
+                ],
             ]
         ], 200);
     }
