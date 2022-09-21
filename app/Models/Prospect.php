@@ -22,28 +22,33 @@ class Prospect extends Model
         'customer_id',
     ];
 
-    public function transaction_type_id()
+    public function transactionType()
     {
         return $this->belongsTo(TransactionType::class, 'transaction_type_id');
     }
 
-    public function prospect_type_id()
+    public function prospectType()
     {
         return $this->belongsTo(ProspectType::class, 'prospect_type_id');
     }
 
-    public function strategic_initiative_id()
+    public function strategicInitiative()
     {
         return $this->belongsTo(StrategicInitiatives::class, 'strategic_initiative_id');
     }
 
-    public function pm_id()
+    public function pm()
     {
         return $this->belongsTo(User::class, 'pm_id');
     }
 
-    public function customer_id()
+    public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');
+    }
+    
+    public function ams_customer()
+    {
+        return $this->belongsTo(AMSCustomer::class, 'customer_id');
     }
 }

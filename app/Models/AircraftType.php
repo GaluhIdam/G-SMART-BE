@@ -10,8 +10,17 @@ class AircraftType extends Model
     use HasFactory;
 
     protected $table = 'ac_type_id';
-
     protected $fillable = [
         'name',
     ];
+
+    public function TMB()
+    {
+        return $this->hasMany(TMB::class);
+    }
+
+    public function sales()
+    {
+        return $this->hasMany(Sales::class);
+    }
 }

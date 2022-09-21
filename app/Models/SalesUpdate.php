@@ -5,18 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TransactionType extends Model
+class SalesUpdate extends Model
 {
     use HasFactory;
 
-    protected $table = 'transaction_types';
     protected $fillable = [
-        'name',
-        'description',
+        'sales_id',
+        'detail',
+        'reason',
     ];
 
-    public function prospect()
+    public function sales_id()
     {
-        return $this->hasMany(Prospect::class);
+        return $this->belongsTo(Sales::class, 'sales_id');
     }
 }

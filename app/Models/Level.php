@@ -5,18 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TransactionType extends Model
+class Level extends Model
 {
     use HasFactory;
-
-    protected $table = 'transaction_types';
     protected $fillable = [
-        'name',
+        'level',
         'description',
     ];
 
-    public function prospect()
+    public function sales()
     {
-        return $this->hasMany(Prospect::class);
+        return $this->hasMany(SalesLevel::class);
     }
 }

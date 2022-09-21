@@ -287,6 +287,193 @@ class RolePermissionSeeder extends Seeder
         ModulePermissions::create(['module_id' => $manage_product->id, 'permission_id' => $update_product->id],);
         ModulePermissions::create(['module_id' => $manage_product->id, 'permission_id' => $delete_product->id],);
 
+        //Approval Permission
+        $manage_approval = Module::create([
+            'module_name' => 'Manage Approval'
+        ]);
+
+        $read_approval = Permission::create(['name' => 'read_approval']);
+        $create_approval = Permission::create(['name' => 'create_approval']);
+        $show_approval = Permission::create(['name' => 'show_approval']);
+        $update_approval = Permission::create(['name' => 'update_approval']);
+        $delete_approval = Permission::create(['name' => 'delete_approval']);
+
+        ModulePermissions::create(['module_id' => $manage_approval->id, 'permission_id' => $read_approval->id],);
+        ModulePermissions::create(['module_id' => $manage_approval->id, 'permission_id' => $create_approval->id],);
+        ModulePermissions::create(['module_id' => $manage_approval->id, 'permission_id' => $show_approval->id],);
+        ModulePermissions::create(['module_id' => $manage_approval->id, 'permission_id' => $update_approval->id],);
+        ModulePermissions::create(['module_id' => $manage_approval->id, 'permission_id' => $delete_approval->id],);
+
+        //File Permission
+        $manage_file = Module::create([
+            'module_name' => 'Manage File'
+        ]);
+
+        $read_file = Permission::create(['name' => 'read_file']);
+        $create_file = Permission::create(['name' => 'create_file']);
+        $show_file = Permission::create(['name' => 'show_file']);
+        $update_file = Permission::create(['name' => 'update_file']);
+        $delete_file = Permission::create(['name' => 'delete_file']);
+
+        ModulePermissions::create(['module_id' => $manage_file->id, 'permission_id' => $read_file->id],);
+        ModulePermissions::create(['module_id' => $manage_file->id, 'permission_id' => $create_file->id],);
+        ModulePermissions::create(['module_id' => $manage_file->id, 'permission_id' => $show_file->id],);
+        ModulePermissions::create(['module_id' => $manage_file->id, 'permission_id' => $update_file->id],);
+        ModulePermissions::create(['module_id' => $manage_file->id, 'permission_id' => $delete_file->id],);
+
+        //Level Permission
+        $manage_level = Module::create([
+            'module_name' => 'Manage Level'
+        ]);
+
+        $read_level = Permission::create(['name' => 'read_level']);
+        $create_level = Permission::create(['name' => 'create_level']);
+        $show_level = Permission::create(['name' => 'show_level']);
+        $update_level = Permission::create(['name' => 'update_level']);
+        $delete_level = Permission::create(['name' => 'delete_level']);
+
+        ModulePermissions::create(['module_id' => $manage_level->id, 'permission_id' => $read_level->id],);
+        ModulePermissions::create(['module_id' => $manage_level->id, 'permission_id' => $create_level->id],);
+        ModulePermissions::create(['module_id' => $manage_level->id, 'permission_id' => $show_level->id],);
+        ModulePermissions::create(['module_id' => $manage_level->id, 'permission_id' => $update_level->id],);
+        ModulePermissions::create(['module_id' => $manage_level->id, 'permission_id' => $delete_level->id],);
+
+        //Requirement Permission
+        $manage_requirement = Module::create([
+            'module_name' => 'Manage Requirement'
+        ]);
+
+        $read_requirement = Permission::create(['name' => 'read_requirement']);
+        $create_requirement = Permission::create(['name' => 'create_requirement']);
+        $show_requirement = Permission::create(['name' => 'show_requirement']);
+        $update_requirement = Permission::create(['name' => 'update_requirement']);
+        $delete_requirement = Permission::create(['name' => 'delete_requirement']);
+
+        ModulePermissions::create(['module_id' => $manage_requirement->id, 'permission_id' => $read_requirement->id],);
+        ModulePermissions::create(['module_id' => $manage_requirement->id, 'permission_id' => $create_requirement->id],);
+        ModulePermissions::create(['module_id' => $manage_requirement->id, 'permission_id' => $show_requirement->id],);
+        ModulePermissions::create(['module_id' => $manage_requirement->id, 'permission_id' => $update_requirement->id],);
+        ModulePermissions::create(['module_id' => $manage_requirement->id, 'permission_id' => $delete_requirement->id],);
+
+        //Sales Permission
+        $manage_sales = Module::create([
+            'module_name' => 'Manage Sales'
+        ]);
+
+        $read_sales = Permission::create(['name' => 'read_sales']);
+        $create_sales = Permission::create(['name' => 'create_sales']);
+        $show_sales = Permission::create(['name' => 'show_sales']);
+        $update_sales = Permission::create(['name' => 'update_sales']);
+        $delete_sales = Permission::create(['name' => 'delete_sales']);
+
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $read_sales->id],);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $create_sales->id],);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $show_sales->id],);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $update_sales->id],);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $delete_sales->id],);
+
+        //Sales History Permission
+        $manage_sales_history = Module::create([
+            'module_name' => 'Manage Sales History'
+        ]);
+
+        $read_sales_history = Permission::create(['name' => 'read_sales_history']);
+        $create_sales_history = Permission::create(['name' => 'create_sales_history']);
+        $show_sales_history = Permission::create(['name' => 'show_sales_history']);
+        $update_sales_history = Permission::create(['name' => 'update_sales_history']);
+        $delete_sales_history = Permission::create(['name' => 'delete_sales_history']);
+
+        ModulePermissions::create(['module_id' => $manage_sales_history->id, 'permission_id' => $read_sales_history->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_history->id, 'permission_id' => $create_sales_history->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_history->id, 'permission_id' => $show_sales_history->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_history->id, 'permission_id' => $update_sales_history->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_history->id, 'permission_id' => $delete_sales_history->id],);
+
+        //Sales Level Permission
+        $manage_sales_level = Module::create([
+            'module_name' => 'Manage Sales Level'
+        ]);
+
+        $read_sales_level = Permission::create(['name' => 'read_sales_level']);
+        $create_sales_level = Permission::create(['name' => 'create_sales_level']);
+        $show_sales_level = Permission::create(['name' => 'show_sales_level']);
+        $update_sales_level = Permission::create(['name' => 'update_sales_level']);
+        $delete_sales_level = Permission::create(['name' => 'delete_sales_level']);
+
+        ModulePermissions::create(['module_id' => $manage_sales_level->id, 'permission_id' => $read_sales_level->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_level->id, 'permission_id' => $create_sales_level->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_level->id, 'permission_id' => $show_sales_level->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_level->id, 'permission_id' => $update_sales_level->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_level->id, 'permission_id' => $delete_sales_level->id],);
+
+        //Sales Reject Permission
+        $manage_sales_reject = Module::create([
+            'module_name' => 'Manage Sales Reject'
+        ]);
+
+        $read_sales_reject = Permission::create(['name' => 'read_sales_reject']);
+        $create_sales_reject = Permission::create(['name' => 'create_sales_reject']);
+        $show_sales_reject = Permission::create(['name' => 'show_sales_reject']);
+        $update_sales_reject = Permission::create(['name' => 'update_sales_reject']);
+        $delete_sales_reject = Permission::create(['name' => 'delete_sales_reject']);
+
+        ModulePermissions::create(['module_id' => $manage_sales_reject->id, 'permission_id' => $read_sales_reject->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_reject->id, 'permission_id' => $create_sales_reject->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_reject->id, 'permission_id' => $show_sales_reject->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_reject->id, 'permission_id' => $update_sales_reject->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_reject->id, 'permission_id' => $delete_sales_reject->id],);
+
+        //Sales Requirement Permission
+        $manage_sales_requirement = Module::create([
+            'module_name' => 'Manage Sales Requirement'
+        ]);
+
+        $read_sales_requirement = Permission::create(['name' => 'read_sales_requirement']);
+        $create_sales_requirement = Permission::create(['name' => 'create_sales_requirement']);
+        $show_sales_requirement = Permission::create(['name' => 'show_sales_requirement']);
+        $update_sales_requirement = Permission::create(['name' => 'update_sales_requirement']);
+        $delete_sales_requirement = Permission::create(['name' => 'delete_sales_requirement']);
+
+        ModulePermissions::create(['module_id' => $manage_sales_requirement->id, 'permission_id' => $read_sales_requirement->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_requirement->id, 'permission_id' => $create_sales_requirement->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_requirement->id, 'permission_id' => $show_sales_requirement->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_requirement->id, 'permission_id' => $update_sales_requirement->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_requirement->id, 'permission_id' => $delete_sales_requirement->id],);
+
+        //Sales Reschedule Permission
+        $manage_sales_reschedule = Module::create([
+            'module_name' => 'Manage Sales Reschedule'
+        ]);
+
+        $read_sales_reschedule = Permission::create(['name' => 'read_sales_reschedule']);
+        $create_sales_reschedule = Permission::create(['name' => 'create_sales_reschedule']);
+        $show_sales_reschedule = Permission::create(['name' => 'show_sales_reschedule']);
+        $update_sales_reschedule = Permission::create(['name' => 'update_sales_reschedule']);
+        $delete_sales_reschedule = Permission::create(['name' => 'delete_sales_reschedule']);
+
+        ModulePermissions::create(['module_id' => $manage_sales_reschedule->id, 'permission_id' => $read_sales_reschedule->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_reschedule->id, 'permission_id' => $create_sales_reschedule->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_reschedule->id, 'permission_id' => $show_sales_reschedule->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_reschedule->id, 'permission_id' => $update_sales_reschedule->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_reschedule->id, 'permission_id' => $delete_sales_reschedule->id],);
+
+        //Sales Update Permission
+        $manage_sales_update = Module::create([
+            'module_name' => 'Manage Sales Update'
+        ]);
+
+        $read_sales_update = Permission::create(['name' => 'read_sales_update']);
+        $create_sales_update = Permission::create(['name' => 'create_sales_update']);
+        $show_sales_update = Permission::create(['name' => 'show_sales_update']);
+        $update_sales_update = Permission::create(['name' => 'update_sales_update']);
+        $delete_sales_update = Permission::create(['name' => 'delete_sales_update']);
+
+        ModulePermissions::create(['module_id' => $manage_sales_update->id, 'permission_id' => $read_sales_update->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_update->id, 'permission_id' => $create_sales_update->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_update->id, 'permission_id' => $show_sales_update->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_update->id, 'permission_id' => $update_sales_update->id],);
+        ModulePermissions::create(['module_id' => $manage_sales_update->id, 'permission_id' => $delete_sales_update->id],);
+
         //Role Admin
         $admin = Role::create([
             'name' => 'Administrator',

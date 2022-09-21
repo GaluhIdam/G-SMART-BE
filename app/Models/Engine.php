@@ -10,8 +10,17 @@ class Engine extends Model
     use HasFactory;
 
     protected $table = 'engine_id';
-
     protected $fillable = [
         'name',
     ];
+
+    public function TMB()
+    {
+        return $this->hasMany(TMB::class);
+    }
+
+    public function sales()
+    {
+        return $this->hasMany(Sales::class);
+    }
 }
