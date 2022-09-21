@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\SalesReject;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Product;
 
-class ProductSeeder extends Seeder
+class SalesRejectSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,9 +15,10 @@ class ProductSeeder extends Seeder
      */
     public function run()
     {
-        Product::create([
-            'name' => 'Mesin Jet',
-            'description' => 'Lorem ipsum dolor sit amet'
+        SalesReject::create([
+            'sales_id'   => 1,
+            'category'   => 'Category 1',
+            'reason'     => 'Success',
         ]);
     }
 }

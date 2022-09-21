@@ -21,9 +21,20 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ModulePermissionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ApprovalController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\LevelController;
+use App\Http\Controllers\RequirementController;
+use App\Http\Controllers\SalesController;
+use App\Http\Controllers\SalesHistoryController;
+use App\Http\Controllers\SalesLevelController;
+use App\Http\Controllers\SalesRejectController;
+use App\Http\Controllers\SalesRequirementController;
+use App\Http\Controllers\SalesRescheduleController;
+use App\Http\Controllers\SalesUpdateController;
 
 Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
+Route::post('login', [AuthController::class, 'login'])->name('login');
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -154,4 +165,81 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('product-show/{id}', [ProductController::class, 'show'])->middleware(['permission:show_product|manage_product']);
     Route::put('product-update/{id}', [ProductController::class, 'update'])->middleware(['permission:update_product|manage_product']);
     Route::delete('product-delete/{id}', [ProductController::class, 'destroy'])->middleware(['permission:delete_product|manage_product']);
+    
+    //Approval
+    Route::get('approval', [ApprovalController::class, 'index'])->middleware(['permission:read_approval|manage_approval']);
+    Route::post('approval-create', [ApprovalController::class, 'create'])->middleware(['permission:create_approval|manage_approval']);
+    Route::get('approval-show/{id}', [ApprovalController::class, 'show'])->middleware(['permission:show_approval|manage_approval']);
+    Route::put('approval-update/{id}', [ApprovalController::class, 'update'])->middleware(['permission:update_approval|manage_approval']);
+    Route::delete('approval-delete/{id}', [ApprovalController::class, 'destroy'])->middleware(['permission:delete_approval|manage_approval']);
+    
+    //File
+    Route::get('file', [FileController::class, 'index'])->middleware(['permission:read_file|manage_file']);
+    Route::post('file-create', [FileController::class, 'create'])->middleware(['permission:create_file|manage_file']);
+    Route::get('file-show/{id}', [FileController::class, 'show'])->middleware(['permission:show_file|manage_file']);
+    Route::put('file-update/{id}', [FileController::class, 'update'])->middleware(['permission:update_file|manage_file']);
+    Route::delete('file-delete/{id}', [FileController::class, 'destroy'])->middleware(['permission:delete_file|manage_file']);
+    
+    //Level
+    Route::get('level', [LevelController::class, 'index'])->middleware(['permission:read_level|manage_level']);
+    Route::post('level-create', [LevelController::class, 'create'])->middleware(['permission:create_level|manage_level']);
+    Route::get('level-show/{id}', [LevelController::class, 'show'])->middleware(['permission:show_level|manage_level']);
+    Route::put('level-update/{id}', [LevelController::class, 'update'])->middleware(['permission:update_level|manage_level']);
+    Route::delete('level-delete/{id}', [LevelController::class, 'destroy'])->middleware(['permission:delete_level|manage_level']);
+    
+    //Requirement
+    Route::get('requirement', [RequirementController::class, 'index'])->middleware(['permission:read_requirement|manage_requirement']);
+    Route::post('requirement-create', [RequirementController::class, 'create'])->middleware(['permission:create_requirement|manage_requirement']);
+    Route::get('requirement-show/{id}', [RequirementController::class, 'show'])->middleware(['permission:show_requirement|manage_requirement']);
+    Route::put('requirement-update/{id}', [RequirementController::class, 'update'])->middleware(['permission:update_requirement|manage_requirement']);
+    Route::delete('requirement-delete/{id}', [RequirementController::class, 'destroy'])->middleware(['permission:delete_requirement|manage_requirement']);
+    
+    //Sales
+    Route::get('sales', [SalesController::class, 'index'])->middleware(['permission:read_sales|manage_sales']);
+    Route::post('sales-create', [SalesController::class, 'create'])->middleware(['permission:create_sales|manage_sales']);
+    Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales|manage_sales']);
+    Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
+    Route::delete('sales-delete/{id}', [SalesController::class, 'destroy'])->middleware(['permission:delete_sales|manage_sales']);
+    
+    //Sales History
+    Route::get('sales-history', [SalesHistoryController::class, 'index'])->middleware(['permission:read_sales_history|manage_sales_history']);
+    Route::post('sales-history-create', [SalesHistoryController::class, 'create'])->middleware(['permission:create_sales_history|manage_sales_history']);
+    Route::get('sales-history-show/{id}', [SalesHistoryController::class, 'show'])->middleware(['permission:show_sales_history|manage_sales_history']);
+    Route::put('sales-history-update/{id}', [SalesHistoryController::class, 'update'])->middleware(['permission:update_sales_history|manage_sales_history']);
+    Route::delete('sales-history-delete/{id}', [SalesHistoryController::class, 'destroy'])->middleware(['permission:delete_sales_history|manage_sales_history']);
+    
+    //Sales level
+    Route::get('sales-level', [SalesLevelController::class, 'index'])->middleware(['permission:read_sales_level|manage_sales_level']);
+    Route::post('sales-level-create', [SalesLevelController::class, 'create'])->middleware(['permission:create_sales_level|manage_sales_level']);
+    Route::get('sales-level-show/{id}', [SalesLevelController::class, 'show'])->middleware(['permission:show_sales_level|manage_sales_level']);
+    Route::put('sales-level-update/{id}', [SalesLevelController::class, 'update'])->middleware(['permission:update_sales_level|manage_sales_level']);
+    Route::delete('sales-level-delete/{id}', [SalesLevelController::class, 'destroy'])->middleware(['permission:delete_sales_level|manage_sales_level']);
+    
+    //Sales Reject
+    Route::get('sales-reject', [SalesRejectController::class, 'index'])->middleware(['permission:read_sales_reject|manage_sales_reject']);
+    Route::post('sales-reject-create', [SalesRejectController::class, 'create'])->middleware(['permission:create_sales_reject|manage_sales_reject']);
+    Route::get('sales-reject-show/{id}', [SalesRejectController::class, 'show'])->middleware(['permission:show_sales_reject|manage_sales_reject']);
+    Route::put('sales-reject-update/{id}', [SalesRejectController::class, 'update'])->middleware(['permission:update_sales_reject|manage_sales_reject']);
+    Route::delete('sales-reject-delete/{id}', [SalesRejectController::class, 'destroy'])->middleware(['permission:delete_sales_reject|manage_sales_reject']);
+    
+    //Sales Requirement
+    Route::get('sales-requirement', [SalesRequirementController::class, 'index'])->middleware(['permission:read_sales_requirement|manage_sales_requirement']);
+    Route::post('sales-requirement-create', [SalesRequirementController::class, 'create'])->middleware(['permission:create_sales_requirement|manage_sales_requirement']);
+    Route::get('sales-requirement-show/{id}', [SalesRequirementController::class, 'show'])->middleware(['permission:show_sales_requirement|manage_sales_requirement']);
+    Route::put('sales-requirement-update/{id}', [SalesRequirementController::class, 'update'])->middleware(['permission:update_sales_requirement|manage_sales_requirement']);
+    Route::delete('sales-requirement-delete/{id}', [SalesRequirementController::class, 'destroy'])->middleware(['permission:delete_sales_requirement|manage_sales_requirement']);
+    
+    //Sales Reschedule
+    Route::get('sales-reschedule', [SalesRescheduleController::class, 'index'])->middleware(['permission:read_sales_reschedule|manage_sales_reschedule']);
+    Route::post('sales-reschedule-create', [SalesRescheduleController::class, 'create'])->middleware(['permission:create_sales_reschedule|manage_sales_reschedule']);
+    Route::get('sales-reschedule-show/{id}', [SalesRescheduleController::class, 'show'])->middleware(['permission:show_sales_reschedule|manage_sales_reschedule']);
+    Route::put('sales-reschedule-update/{id}', [SalesRescheduleController::class, 'update'])->middleware(['permission:update_sales_reschedule|manage_sales_reschedule']);
+    Route::delete('sales-reschedule-delete/{id}', [SalesRescheduleController::class, 'destroy'])->middleware(['permission:delete_sales_reschedule|manage_sales_reschedule']);
+    
+    //Sales Update
+    Route::get('sales-update', [SalesUpdateController::class, 'index'])->middleware(['permission:read_sales_update|manage_sales_update']);
+    Route::post('sales-update-create', [SalesUpdateController::class, 'create'])->middleware(['permission:create_sales_update|manage_sales_update']);
+    Route::get('sales-update-show/{id}', [SalesUpdateController::class, 'show'])->middleware(['permission:show_sales_update|manage_sales_update']);
+    Route::put('sales-update-update/{id}', [SalesUpdateController::class, 'update'])->middleware(['permission:update_sales_update|manage_sales_update']);
+    Route::delete('sales-update-delete/{id}', [SalesUpdateController::class, 'destroy'])->middleware(['permission:delete_sales_update|manage_sales_update']);
 });
