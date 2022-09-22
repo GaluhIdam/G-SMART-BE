@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sales;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class SalesController extends Controller
 {
@@ -26,9 +27,9 @@ class SalesController extends Controller
             $paginate = 10;
         }
 
-        if ($request->get('startDate') && $request->get('endDate')) {
-            $start_date = new Carbon($request->get('startDate'));
-            $end_date = new Carbon($request->get('endDate'));
+        if ($request->get('start_date') && $request->get('end_date')) {
+            $start_date = new Carbon($request->get('start_date'));
+            $end_date = new Carbon($request->get('end_date'));
         } else {
             $start_date = false;
             $end_date = false;
@@ -57,7 +58,6 @@ class SalesController extends Controller
             'component',
             'apu',
             'salesLevel',
-            'prospect.transactionType'
         ])->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('customer', 'LIKE', "%$search%")
@@ -87,13 +87,14 @@ class SalesController extends Controller
         ];
 
         $sales_by_user->appends($query_string);
+        
+        // define empty collection untuk menampung data [tabel salesplan user]
+        $user_salesplan = new Collection();
 
-        // define empty array untuk menampung data [tabel salesplan user]
-        $user_salesplan = [];
         foreach ($sales_by_user as $item) {
             $properties = $item->acType->name.'/'.$item->engine->name.'/'.$item->apu->name.'/'.$item->component->name; // kolom AC/ENG/APU/COMP di dashboard
 
-            $user_salesplan[] = [
+            $user_salesplan->push((object)[
                 'customer' => $item->customer->name,
                 'product' => $item->product->name,
                 'properties' => $properties,
@@ -103,11 +104,13 @@ class SalesController extends Controller
                 'level' => $item->salesLevel->level->level,
                 'progress' => 50, // kumaha ngitung na?
                 'status' => $item->status,
-            ];
+            ]);
         }
 
+        $sales_by_user->setCollection($user_salesplan);
+
         // data untuk 5 overview card [ter-atas] user sales
-        $user_target = auth()->user()->ams->ams_targets->sum('value'); // total user sales [target]
+        $user_target = auth()->user()->ams->amsTargets->sum('value'); // total user sales [target]
         $user_open = $sales_by_user->where('salesLevel.status', 1)->sum('value'); // total user sales [open]
         $user_closed = $sales_by_user->where('salesLevel.status', 2)->sum('value'); // total user sales [closed]
         $user_cancel = $sales_by_user->where('salesLevel.status', 4)->sum('value'); // total user sales [cancel]
@@ -146,7 +149,7 @@ class SalesController extends Controller
                 'level3' => $level3,
                 'level2' => $level2,
                 'level1' => $level1,
-                'salesPlan' => $user_salesplan,
+                'salesPlan' => $sales_by_user,
             ]
         ];
 
