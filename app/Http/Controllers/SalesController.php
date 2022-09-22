@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sales;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class SalesController extends Controller
 {
@@ -25,21 +26,25 @@ class SalesController extends Controller
             $paginate = 10;
         }
 
+        if ($request->get('startDate') && $request->get('endDate')) {
+            $start_date = new Carbon($request->get('startDate'));
+            $end_date = new Carbon($request->get('endDate'));
+        } else {
+            $start_date = false;
+            $end_date = false;
+        }
+
+        if ($request->get('type')) {
+            $type = $request->get('type');
+        } else {
+            $type = false;
+        }
+
+        // get authenticated user info
         $user = auth()->user();
 
         // get all sales data
-        $all_sales = Sales::with([
-            'customer',
-            'prospect',
-            'maintenance',
-            'hangar',
-            'product',
-            'acType',
-            'engine',
-            'component',
-            'apu',
-            'salesLevel'
-        ])->get();
+        $all_sales = Sales::with('salesLevel')->get();
 
         // get user sales data
         $sales_by_user = Sales::with([
@@ -48,11 +53,11 @@ class SalesController extends Controller
             'maintenance',
             'hangar',
             'product',
-            'acType',
             'engine',
             'component',
             'apu',
-            'salesLevel'
+            'salesLevel',
+            'prospect.transactionType'
         ])->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('customer', 'LIKE', "%$search%")
@@ -66,6 +71,11 @@ class SalesController extends Controller
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
+        })->when(($start_date && $end_date), function ($query) use ($start_date, $end_date) {
+            $query->whereDate('start_date', '>=', $start_date->format('Y-m-d'))
+            ->whereDate('end_date', '<=', $end_date->format('Y-m-d'));
+        })->when($type, function ($query) use ($type) {
+            $query->whereRelation('prospect', 'transaction_type_id', $type);
         })->whereHas('prospect', function ($query) use ($user) {
             $query->where('pm_id', $user->id);
         })->paginate($paginate);
@@ -118,31 +128,32 @@ class SalesController extends Controller
         $all_open = $all_sales->where('salesLevel.status', 1)->sum('value'); // total all sales [open]
         $all_closed = $all_sales->where('salesLevel.status', 2)->sum('value'); // total all sales [closed]
         $all_cancel = $all_sales->where('salesLevel.status', 4)->sum('value'); // total all sales [cancel]
-        $all_salesplan = [
-            'totalOpen' => $all_open,
-            'totalClosed' => $all_closed,
-            'totalOpenClosed' => $all_open + $all_closed,
-            'totalCancel' => $all_cancel,
+
+        $data = [
+            'all' => [
+                'totalOpen' => $all_open,
+                'totalClosed' => $all_closed,
+                'totalOpenClosed' => $all_open + $all_closed,
+                'totalCancel' => $all_cancel,
+            ],
+            'user' => [
+                'totalTarget' => $user_target,
+                'totalOpen' => $user_open,
+                'totalClosed' => $user_closed,
+                'totalOpenClosed' => $user_open + $user_closed,
+                'totalCancel' => $user_cancel,
+                'level4' => $level4,
+                'level3' => $level3,
+                'level2' => $level2,
+                'level1' => $level1,
+                'salesPlan' => $user_salesplan,
+            ]
         ];
 
         return response()->json([ 
             'success' => true,
             'message' => 'Retrieve data successfully',
-            'data'    => [
-                'all' => $all_salesplan,
-                'user' => [
-                    'totalTarget' => $user_target,
-                    'totalOpen' => $user_open,
-                    'totalClosed' => $user_closed,
-                    'totalOpenClosed' => $user_open + $user_closed,
-                    'totalCancel' => $user_cancel,
-                    'level4' => $level4,
-                    'level3' => $level3,
-                    'level2' => $level2,
-                    'level1' => $level1,
-                    'salesPlan' => $user_salesplan,
-                ],
-            ]
+            'data'    => $data,
         ], 200);
     }
 }

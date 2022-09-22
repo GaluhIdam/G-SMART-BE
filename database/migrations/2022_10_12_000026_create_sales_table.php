@@ -56,6 +56,7 @@ return new class extends Migration
             $table->decimal('value');
             $table->integer('tat');
             $table->date('start_date');
+            $table->date('end_date');
             $table->string('so_number')->nullable();
             $table->boolean('is_rkap');
 
