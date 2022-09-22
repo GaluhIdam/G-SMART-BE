@@ -10,8 +10,14 @@ class ProspectType extends Model
     use HasFactory;
 
     protected $table = 'prospect_types';
+
     protected $fillable = [
         'name',
         'description',
     ];
+
+    public function prospects()
+    {
+        return $this->hasMany(Prospect::class);
+    }
 }

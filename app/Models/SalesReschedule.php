@@ -16,8 +16,13 @@ class SalesReschedule extends Model
         'tat',
     ];
 
-    public function sales_id()
+    public function sales()
     {
         return $this->belongsTo(Sales::class, 'sales_id');
+    }
+
+    public function hangar()
+    {
+        return $this->belongsTo(Hangar::class, 'hangar_id');
     }
 }

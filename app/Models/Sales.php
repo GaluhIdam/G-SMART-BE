@@ -8,6 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Sales extends Model
 {
     use HasFactory;
+
+    const STATUS_OPEN = 1;
+    const STATUS_CLOSED = 2;
+    const STATUS_CLOSE_IN = 3;
+    const STATUS_CANCEL = 4;
+
+    const STATUS_ARRAY = [
+        self::STATUS_OPEN => 'Open',
+        self::STATUS_CLOSED => 'Closed',
+        self::STATUS_CLOSE_IN => 'Close in',
+        self::STATUS_CANCEL => 'Cancel',
+    ];
+
     protected $fillable = [
         'customer_id',
         'prospect_id',
@@ -19,26 +32,38 @@ class Sales extends Model
         'so_number',
     ];
 
-    public function getStatusAttribute($status)
-    {
-        if ($this->salesLevel->status == 1){
-            $status = 'Open';
-        }else if ($this->salesLevel->status == 2){
-            $status = 'Closed';
-        }else if ($this->salesLevel->status == 3){
-            $status = 'Close in';
-        }else {
-            $status = 'Cancel';
-        }
+    protected $appends = [
+        'status'
+    ];
 
-        return $status;
+    public function getStatusAttribute()
+    {
+        return self::STATUS_ARRAY[$this->salesLevel->status];
     }
 
-    public function scopeOpens($query)
+    public function getProgressAttribute()
     {
-        $query->whereHas('salesLevel', function ($query) {
-            $query->where('status', 1);
-        });
+        // $this->salesRequirements->approvals->status
+    }
+
+    public function salesReschedules()
+    {
+        return $this->hasMany(SalesReschedule::class);
+    }
+
+    public function salesRequirements()
+    {
+        return $this->hasMany(SalesRequirement::class);
+    }
+
+    public function salesUpdates()
+    {
+        return $this->hasMany(SalesUpdate::class);
+    }
+
+    public function salesRejects()
+    {
+        return $this->hasMany(SalesReject::class);
     }
 
     public function customer()
@@ -56,7 +81,7 @@ class Sales extends Model
         return $this->belongsTo(Maintenance::class, 'maintenance_id');
     }
 
-    public function histories()
+    public function salesHistories()
     {
         return $this->hasMany(SalesHistory::class);
     }

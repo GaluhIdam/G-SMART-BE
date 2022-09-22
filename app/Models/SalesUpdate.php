@@ -15,7 +15,7 @@ class SalesUpdate extends Model
         'reason',
     ];
 
-    public function sales_id()
+    public function sales()
     {
         return $this->belongsTo(Sales::class, 'sales_id');
     }

@@ -50,4 +50,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(AMS::class);
     }
+
+    public function prospects()
+    {
+        return $this->hasMany(Prospect::class);
+    }
+
+    public function approvals()
+    {
+        return $this->hasMany(Approval::class);
+    }
 }

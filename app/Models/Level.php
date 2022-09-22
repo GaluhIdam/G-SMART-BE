@@ -8,13 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Level extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'level',
         'description',
     ];
 
-    public function sales()
+    public function salesLevels()
     {
         return $this->hasMany(SalesLevel::class);
+    }
+
+    public function requirements()
+    {
+        return $this->hasMany(Requirement::class);
     }
 }

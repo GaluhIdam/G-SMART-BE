@@ -42,13 +42,23 @@ class Prospect extends Model
         return $this->belongsTo(User::class, 'pm_id');
     }
 
-    public function customer()
+    public function sales()
     {
-        return $this->belongsTo(Customer::class, 'customer_id');
+        return $this->hasMany(Sales::class);
     }
     
-    public function ams_customer()
+    public function amsCustomer()
     {
-        return $this->belongsTo(AMSCustomer::class, 'customer_id');
+        return $this->belongsTo(AMSCustomer::class, 'ams_customer_id');
+    }
+
+    public function prospectTMB()
+    {
+        return $this->hasMany(ProspectTMB::class);
+    }
+
+    public function prospectPBTH()
+    {
+        return $this->hasMany(ProspectPBTH::class);
     }
 }

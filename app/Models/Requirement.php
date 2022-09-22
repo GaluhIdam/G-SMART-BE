@@ -14,8 +14,13 @@ class Requirement extends Model
         'requirement',
     ];
 
-    public function level_id()
+    public function level()
     {
         return $this->belongsTo(Level::class, 'level_id');
+    }
+
+    public function salesRequirements()
+    {
+        return $this->hasMany(SalesRequirement::class);
     }
 }

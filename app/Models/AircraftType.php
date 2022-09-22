@@ -23,4 +23,9 @@ class AircraftType extends Model
     {
         return $this->hasMany(Sales::class);
     }
+
+    public function prospectPBTH()
+    {
+        return $this->hasMany(ProspectPBTH::class);
+    }
 }

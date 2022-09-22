@@ -16,12 +16,12 @@ class Approval extends Model
         'sequence',
     ];
 
-    public function sales_requirement_id()
+    public function salesRequirement()
     {
         return $this->belongsTo(Sales::class, 'sales_requirement_id');
     }
     
-    public function user_id()
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }

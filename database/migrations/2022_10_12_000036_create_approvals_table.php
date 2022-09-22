@@ -20,7 +20,10 @@ return new class extends Migration
             $table->index('sales_requirement_id');
             $table->foreign('sales_requirement_id')->references('id')->on('sales_requirements')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->integer('user_id');
+            $table->unsignedBigInteger('user_id');
+            $table->index('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+
             $table->string('status');
             $table->integer('sequence');
             $table->timestamps();

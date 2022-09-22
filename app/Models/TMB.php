@@ -22,38 +22,38 @@ class TMB extends Model
         'maintenance_id',
     ];
 
-    public function products()
+    public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
 
-    public function acTypeID()
+    public function acType()
     {
         return $this->belongsTo(ACTypeId::class, 'ac_type_id');
     }
 
-    public function componentID()
+    public function component()
     {
         return $this->belongsTo(Component::class, 'component_id');
     }
 
-    public function engineID()
+    public function engine()
     {
         return $this->belongsTo(Engine::class, 'engine_id');
     }
 
-    public function apuID()
+    public function apu()
     {
         return $this->belongsTo(Apu::class, 'apu_id');
     }
 
-    public function maintenanceID()
+    public function maintenance()
     {
         return $this->belongsTo(Maintenance::class, 'maintenance_id');
     }
     
     public function prospectTMB()
     {
-        return $this->hasMany(ProspectTMB::class, 'id');
+        return $this->hasMany(ProspectTMB::class);
     }
 }

@@ -13,8 +13,8 @@ class File extends Model
         'path',
     ];
 
-    public function sales_requirement_id()
+    public function salesRequirement()
     {
-        return $this->hasMany(SalesRequirement::class, 'sales_requirement_id');
+        return $this->belongsTo(SalesRequirement::class, 'sales_requirement_id');
     }
 }

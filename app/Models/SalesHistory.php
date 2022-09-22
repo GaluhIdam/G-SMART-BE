@@ -13,7 +13,7 @@ class SalesHistory extends Model
         'detail',
     ];
 
-    public function sales_id()
+    public function sales()
     {
         return $this->belongsTo(Sales::class, 'sales_id');
     }

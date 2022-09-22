@@ -16,8 +16,8 @@ class CustomerSeeder extends Seeder
     public function run()
     {
         Customer::create([
-            'name'       => 'Ricky Yanuardi',
-            'code'       => 'RY001',
+            'name'       => 'Garuda Indonesia',
+            'code'       => 'GA001',
             'country_id' => 1,
         ]);
     }
