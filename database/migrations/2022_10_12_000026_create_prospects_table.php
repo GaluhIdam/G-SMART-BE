@@ -33,9 +33,9 @@ return new class extends Migration
             $table->index('pm_id');
             $table->foreign('pm_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->unsignedBigInteger('customer_id')->nullable();
-            $table->index('customer_id');
-            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('ams_customer_id')->nullable();
+            $table->index('ams_customer_id');
+            $table->foreign('ams_customer_id')->references('id')->on('ams_customers')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }

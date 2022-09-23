@@ -19,7 +19,8 @@ return new class extends Migration
             $table->integer('ac_type_id')->nullable();
             $table->integer('component_id')->nullable();
             $table->integer('engine_id')->nullable();
-            $table->decimal('apu_id')->nullable();
+            $table->integer('apu_id')->nullable();
+            $table->decimal('market_share')->nullable();
             $table->text('remarks')->nullable();
             $table->text('maintenance_id')->nullable();
             $table->timestamps();
