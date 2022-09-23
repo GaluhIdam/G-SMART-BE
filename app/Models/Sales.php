@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Sales extends Model
 {
@@ -13,12 +14,19 @@ class Sales extends Model
     const STATUS_CLOSED = 2;
     const STATUS_CLOSE_IN = 3;
     const STATUS_CANCEL = 4;
+    const IS_RKAP = 1;
+    const NOT_RKAP = 0;
 
     const STATUS_ARRAY = [
         self::STATUS_OPEN => 'Open',
         self::STATUS_CLOSED => 'Closed',
         self::STATUS_CLOSE_IN => 'Close in',
         self::STATUS_CANCEL => 'Cancel',
+    ];
+
+    const RKAP_ARRAY = [
+        self::IS_RKAP => 'RKAP',
+        self::NOT_RKAP => 'NOT-RKAP',
     ];
 
     protected $fillable = [
@@ -30,10 +38,15 @@ class Sales extends Model
         'tat',
         'start_date',
         'so_number',
+        'is_rkap',
     ];
 
     protected $appends = [
-        'status'
+        'status',
+        'other',
+        'tmb_properties',
+        'type',
+        'level',
     ];
 
     public function getStatusAttribute()
@@ -41,9 +54,114 @@ class Sales extends Model
         return self::STATUS_ARRAY[$this->salesLevel->status];
     }
 
+    public function getOtherAttribute()
+    {
+        return self::RKAP_ARRAY[$this->is_rkap];
+    }
+
+    public function getTMBPropertiesAttribute()
+    {
+        return $this->acType->name.'/'.$this->engine->name.'/'.$this->apu->name.'/'.$this->component->name;
+    }
+
+    public function getTypeAttribute()
+    {
+        return $this->prospect->transactionType->name;
+    }
+
+    public function getLevelAttribute()
+    {
+        return $this->salesLevel->level->level;
+    }
+
     public function getProgressAttribute()
     {
-        // $this->salesRequirements->approvals->status
+        // $this->salesRequirements->approvals->status KUMAHA!?
+    }
+
+    // query untuk global search tabel salesplan
+    public function scopeSearch($query, $search)
+    {
+        $query->when($search, function ($query) use ($search) {
+            $query->whereRelation('customer', 'name', 'LIKE', "%$search%")
+                ->orWhereRelation('product', 'name', 'LIKE', "%$search%")
+                ->orWhereRelation('acType', 'name', 'LIKE', "%$search%")
+                ->orWhereRelation('engine', 'name', 'LIKE', "%$search%")
+                ->orWhereRelation('apu', 'name', 'LIKE', "%$search%")
+                ->orWhereRelation('component', 'name', 'LIKE', "%$search%")
+                ->orWhere('ac_reg', 'LIKE', "%$search%")
+                ->orWhere('value', 'LIKE', "%$search%");
+                // ->orWhereIn('other', [$search])
+                // ->orWhereIn('type', [$search])
+                // ->orWhereIn('level', [$search])
+                // ->orWhereIn('status', [$search]);
+        });
+    }
+
+    // query untuk filtering data tabel salesplan
+    public function scopeFilter($query, array $filters)
+    {
+        $start_date = $filters[0];
+        $end_date = $filters[1];
+        $type = $filters[2];
+
+        $query->when(($start_date && $end_date), function ($query) use ($start_date, $end_date) {
+            $query->whereDate('start_date', '>=', Carbon::parse($start_date)->format('Y-m-d'))
+                ->whereDate('end_date', '<=', Carbon::parse($end_date)->format('Y-m-d'));
+        });
+        
+        $query->when($type, function ($query) use ($type) {
+            $query->whereRelation('prospect', 'transaction_type_id', $type);
+        });
+    }
+
+    // query untuk get data salesplan by user
+    public function scopeUser($query, $user)
+    {
+        $query->whereHas('prospect', function ($query) use ($user) {
+            $query->where('pm_id', $user);
+        });
+    }
+
+    // query untuk ordering data tabel salesplan
+    public function scopeOrder($query, array $orders)
+    {
+        $order = $orders[0];
+        $by = $orders[1];
+
+        $query->when(($order && $by), function ($query) use ($order, $by) {
+            if ($order == 'customer') {
+                $query->withAggregate('customer', 'name')
+                    ->orderBy('customer_name', $by);
+            } else if ($order == 'product') {
+                $query->withAggregate('product', 'name')
+                    ->orderBy('product_name', $by);
+            } else if ($order == 'properties') {
+                $query->withAggregate('acType', 'name')
+                    ->withAggregate('engine', 'name')
+                    ->withAggregate('apu', 'name')
+                    ->withAggregate('component', 'name')
+                    ->orderBy('ac_type_name', $by)
+                    ->orderBy('engine_name', $by)
+                    ->orderBy('apu_name', $by)
+                    ->orderBy('component_name', $by);
+            } else if ($order == 'registration') {
+                $query->orderBy('ac_reg', $by);
+            } else if ($order == 'other') {
+                $query->orderBy('is_rkap', $by);
+            } else if ($order == 'type') {
+                $query->withAggregate('prospect', 'transaction_type_id')
+                    ->orderBy('prospect_transaction_type_id', $by);
+            } else if ($order == 'level') {
+                $query->withAggregate('salesLevel', 'level_id')
+                    ->orderBy('sales_level_level_id', $by);
+            } else if ($order == 'status') {
+                $query->withAggregate('salesLevel', 'status')
+                    ->orderBy('sales_level_status', $by);
+            } else if ($order == 'id') {
+                $query->orderBy('id', $by);
+            }
+        });
     }
 
     public function salesReschedules()

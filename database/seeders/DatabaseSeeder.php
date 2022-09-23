@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             AircraftTypeSeeder::class,
             CountriesSeeder::class,
             CustomerSeeder::class,
+            AMSCustomerSeeder::class,
             ProspectSeeder::class,
             HangarSeeder::class,
             SalesSeeder::class,

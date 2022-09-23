@@ -15,8 +15,15 @@ return new class extends Migration
     {
         Schema::create('prospect_tmb', function (Blueprint $table) {
             $table->id()->unsigned();
-            $table->string('prospect_id')->nullable();
-            $table->text('tmb_id')->nullable();
+
+            $table->unsignedBigInteger('prospect_id')->nullable();
+            $table->index('prospect_id');
+            $table->foreign('prospect_id')->references('id')->on('prospects')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('tmb_id')->nullable();
+            $table->index('tmb_id');
+            $table->foreign('tmb_id')->references('id')->on('tmb')->onDelete('cascade')->onUpdate('cascade');
+            
             $table->timestamps();
         });
     }

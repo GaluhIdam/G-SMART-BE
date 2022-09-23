@@ -12,6 +12,9 @@ class SalesController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+        $type = $request->get('type');
 
         if ($request->get('order') && $request->get('by')) {
             $order = $request->get('order');
@@ -27,27 +30,12 @@ class SalesController extends Controller
             $paginate = 10;
         }
 
-        if ($request->get('start_date') && $request->get('end_date')) {
-            $start_date = new Carbon($request->get('start_date'));
-            $end_date = new Carbon($request->get('end_date'));
-        } else {
-            $start_date = false;
-            $end_date = false;
-        }
-
-        if ($request->get('type')) {
-            $type = $request->get('type');
-        } else {
-            $type = false;
-        }
-
         // get authenticated user info
         $user = auth()->user();
 
         // get all sales data
         $all_sales = Sales::with('salesLevel')->get();
 
-        // get user sales data
         $sales_by_user = Sales::with([
             'customer',
             'prospect',
@@ -58,56 +46,48 @@ class SalesController extends Controller
             'component',
             'apu',
             'salesLevel',
-        ])->when($search, function ($query) use ($search) {
-            $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('customer', 'LIKE', "%$search%")
-                    ->orWhere('prospect', 'LIKE', "%$search%")
-                    ->orWhere('maintenance', 'LIKE', "%$search%")
-                    ->orWhere('ac_reg', 'LIKE', "%$search%")
-                    ->orWhere('apu', 'LIKE', "%$search%")
-                    ->orWhere('component', 'LIKE', "%$search%")
-                    ->orWhere('hangar', 'LIKE', "%$search%")
-                    ->orWhere('engine', 'LIKE', "%$search%");
-            });
-        })->when(($order && $by), function ($query) use ($order, $by) {
-            $query->orderBy($order, $by);
-        })->when(($start_date && $end_date), function ($query) use ($start_date, $end_date) {
-            $query->whereDate('start_date', '>=', $start_date->format('Y-m-d'))
-            ->whereDate('end_date', '<=', $end_date->format('Y-m-d'));
-        })->when($type, function ($query) use ($type) {
-            $query->whereRelation('prospect', 'transaction_type_id', $type);
-        })->whereHas('prospect', function ($query) use ($user) {
-            $query->where('pm_id', $user->id);
-        })->paginate($paginate);
+        ])->search($search)
+        ->filter([$start_date, $end_date, $type])
+        ->user($user->id)
+        ->order([$order, $by])
+        ->paginate($paginate);
+
+        if ($start_date) Carbon::parse($start_date)->format('Y-m-d');
+        if ($end_date) Carbon::parse($end_date)->format('Y-m-d');
 
         $query_string = [
             'search' => $search,
-            'order'  => $order,
-            'by'     => $by,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'type' => $type,
+            'order' => $order,
+            'by' => $by,
         ];
 
+        // menambahkan query string sebagai parameter [pagination]
         $sales_by_user->appends($query_string);
         
         // define empty collection untuk menampung data [tabel salesplan user]
         $user_salesplan = new Collection();
 
         foreach ($sales_by_user as $item) {
-            $properties = $item->acType->name.'/'.$item->engine->name.'/'.$item->apu->name.'/'.$item->component->name; // kolom AC/ENG/APU/COMP di dashboard
-
+            $progress = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
             $user_salesplan->push((object)[
                 'customer' => $item->customer->name,
                 'product' => $item->product->name,
-                'properties' => $properties,
+                'properties' => $item->tmb_properties,
                 'registration' => $item->ac_reg,
-                'other' => $item->is_rkap ? 'RKAP' : 'NO-RKAP',
-                'type' => $item->prospect->transactionType->name,
-                'level' => $item->salesLevel->level->level,
-                'progress' => 50, // kumaha ngitung na?
+                'other' => $item->other,
+                'type' => $item->type,
+                'level' => $item->level,
+                'progress' => $progress[rand(0,9)], // dummy data (statis) sementara
                 'status' => $item->status,
+                'location' => $item->hangar->name,
+                'maintenance' => $item->maintenance->description,
+                'startDate' => Carbon::parse($item->start_date)->format('Y-m-d'),
+                'endDate' => Carbon::parse($item->end_date)->format('Y-m-d'),
             ]);
         }
-
-        $sales_by_user->setCollection($user_salesplan);
 
         // data untuk 5 overview card [ter-atas] user sales
         $user_target = auth()->user()->ams->amsTargets->sum('value'); // total user sales [target]
@@ -124,8 +104,15 @@ class SalesController extends Controller
                 'closed' => $user_sales->where('salesLevel.status', 2)->sum('value'), // user total [closed] sales
                 'closeIn' => $user_sales->where('salesLevel.status', 3)->sum('value'), // user total [close-in] sales
                 'cancel' => $user_sales->where('salesLevel.status', 4)->sum('value'), // user total [cancel] sales
+                'countOpen' => $user_sales->where('salesLevel.status', 1)->count(), // user [open] sales count
+                'countClosed' => $user_sales->where('salesLevel.status', 2)->count(), // user [closed] sales count
+                'countCloseIn' => $user_sales->where('salesLevel.status', 3)->count(), // user [close-in] sales count
+                'countCancel' => $user_sales->where('salesLevel.status', 4)->count(), // user [cancel] sales count
             ];
         }
+
+        // modifikasi data pagination
+        $sales_by_user->setCollection($user_salesplan);
 
         // overview data (all sales) untuk [modal salesplan total]
         $all_open = $all_sales->where('salesLevel.status', 1)->sum('value'); // total all sales [open]

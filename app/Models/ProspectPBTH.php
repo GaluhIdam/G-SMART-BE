@@ -35,6 +35,6 @@ class ProspectPBTH extends Model
 
     public function acType()
     {
-        return $this->belongsTo(ACType::class, 'ac_type_id');
+        return $this->belongsTo(AircraftType::class, 'ac_type_id');
     }
 }

@@ -21,7 +21,7 @@ class ProspectSeeder extends Seeder
             'prospect_type_id'        => 1,
             'strategic_initiative_id' => 1,
             'pm_id'                   => 1,
-            'customer_id'             => 1,
+            'ams_customer_id'         => 1,
         ]);
         Prospect::create([
             'year'                    => 2021,
@@ -29,7 +29,7 @@ class ProspectSeeder extends Seeder
             'prospect_type_id'        => 1,
             'strategic_initiative_id' => 1,
             'pm_id'                   => 1,
-            'customer_id'             => 1,
+            'ams_customer_id'         => 1,
         ]);
     }
 }
