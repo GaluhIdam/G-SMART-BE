@@ -186,6 +186,14 @@ class Sales extends Model
             } else if ($order == 'level') {
                 $query->withAggregate('salesLevel', 'level_id')
                     ->orderBy('sales_level_level_id', $by);
+            } else if ($order == 'progress') {
+                if (!strcasecmp($by, 'asc')) {
+                    $query->withAggregate('salesLevel', 'level_id')
+                        ->orderBy('sales_level_level_id', 'desc');
+                } else if (!strcasecmp($by, 'desc')) {
+                    $query->withAggregate('salesLevel', 'level_id')
+                        ->orderBy('sales_level_level_id', 'asc');
+                }
             } else if ($order == 'status') {
                 $query->withAggregate('salesLevel', 'status')
                     ->orderBy('sales_level_status', $by);
