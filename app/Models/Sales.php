@@ -16,6 +16,10 @@ class Sales extends Model
     const STATUS_CANCEL = 4;
     const IS_RKAP = 1;
     const NOT_RKAP = 0;
+    const LEVEL_1 = 1;
+    const LEVEL_2 = 2;
+    const LEVEL_3 = 3;
+    const LEVEL_4 = 4;
 
     const STATUS_ARRAY = [
         self::STATUS_OPEN => 'Open',
@@ -27,6 +31,13 @@ class Sales extends Model
     const RKAP_ARRAY = [
         self::IS_RKAP => 'RKAP',
         self::NOT_RKAP => 'NOT-RKAP',
+    ];
+
+    const LEVEL_ARRAY = [
+        self::LEVEL_1 => 100,
+        self::LEVEL_2 => 75,
+        self::LEVEL_3 => 50,
+        self::LEVEL_4 => 25,
     ];
 
     protected $fillable = [
@@ -47,6 +58,7 @@ class Sales extends Model
         'tmb_properties',
         'type',
         'level',
+        'progress',
     ];
 
     public function getStatusAttribute()
@@ -76,25 +88,44 @@ class Sales extends Model
 
     public function getProgressAttribute()
     {
-        // $this->salesRequirements->approvals->status KUMAHA!?
+        return self::LEVEL_ARRAY[$this->salesLevel->level_id];
     }
 
     // query untuk global search tabel salesplan
     public function scopeSearch($query, $search)
     {
         $query->when($search, function ($query) use ($search) {
-            $query->whereRelation('customer', 'name', 'LIKE', "%$search%")
-                ->orWhereRelation('product', 'name', 'LIKE', "%$search%")
-                ->orWhereRelation('acType', 'name', 'LIKE', "%$search%")
-                ->orWhereRelation('engine', 'name', 'LIKE', "%$search%")
-                ->orWhereRelation('apu', 'name', 'LIKE', "%$search%")
-                ->orWhereRelation('component', 'name', 'LIKE', "%$search%")
-                ->orWhere('ac_reg', 'LIKE', "%$search%")
-                ->orWhere('value', 'LIKE', "%$search%");
-                // ->orWhereIn('other', [$search])
-                // ->orWhereIn('type', [$search])
-                // ->orWhereIn('level', [$search])
-                // ->orWhereIn('status', [$search]);
+            if (str_contains(strtolower($search), 'rkap')) {
+                $query->where('is_rkap', 1);
+            } else if (!strcasecmp($search, 'open')) {
+                $query->whereRelation('salesLevel', 'status', 1);
+            } else if (!strcasecmp($search, 'cancel')) {
+                $query->whereRelation('salesLevel', 'status', 4);
+            } else if (str_contains(strtolower($search), 'close')) {
+                if (!strcasecmp($search, 'closed')) {
+                    $query->whereRelation('salesLevel', 'status', 2);
+                } else if (!strcasecmp($search, 'close in')) {
+                    $query->whereRelation('salesLevel', 'status', 3);
+                } else {
+                    $query->whereRelation('salesLevel', 'status', 2)
+                        ->orWhereRelation('salesLevel', 'status', 3);
+                }
+            } else {
+                $query->whereRelation('customer', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('product', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('acType', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('engine', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('apu', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('component', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('salesLevel', 'level_id', 'LIKE', '%'.substr($search, -1).'%')
+                    ->orWhere('ac_reg', 'LIKE', "%$search%")
+                    ->orWhere('value', 'LIKE', "%$search%")
+                    ->orWhereHas('prospect', function ($query) use ($search) {
+                        $query->whereHas('transactionType', function ($query) use ($search) {
+                            $query->where('name', 'LIKE', "%$search%");
+                        });
+                    });
+            }
         });
     }
 

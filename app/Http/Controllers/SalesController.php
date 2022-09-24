@@ -71,8 +71,8 @@ class SalesController extends Controller
         $user_salesplan = new Collection();
 
         foreach ($sales_by_user as $item) {
-            $progress = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
             $user_salesplan->push((object)[
+                'id' => $item->id,
                 'customer' => $item->customer->name,
                 'product' => $item->product->name,
                 'properties' => $item->tmb_properties,
@@ -80,7 +80,7 @@ class SalesController extends Controller
                 'other' => $item->other,
                 'type' => $item->type,
                 'level' => $item->level,
-                'progress' => $progress[rand(0,9)], // dummy data (statis) sementara
+                'progress' => $item->progress,
                 'status' => $item->status,
                 'location' => $item->hangar->name,
                 'maintenance' => $item->maintenance->description,
