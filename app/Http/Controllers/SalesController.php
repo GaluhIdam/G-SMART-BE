@@ -50,22 +50,8 @@ class SalesController extends Controller
         ->filter([$start_date, $end_date, $type])
         ->user($user->id)
         ->order([$order, $by])
-        ->paginate($paginate);
-
-        if ($start_date) Carbon::parse($start_date)->format('Y-m-d');
-        if ($end_date) Carbon::parse($end_date)->format('Y-m-d');
-
-        $query_string = [
-            'search' => $search,
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-            'type' => $type,
-            'order' => $order,
-            'by' => $by,
-        ];
-
-        // menambahkan query string sebagai parameter [pagination]
-        $sales_by_user->appends($query_string);
+        ->paginate($paginate)
+        ->withQueryString();
         
         // define empty collection untuk menampung data [tabel salesplan user]
         $user_salesplan = new Collection();

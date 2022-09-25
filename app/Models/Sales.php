@@ -154,7 +154,7 @@ class Sales extends Model
         });
     }
 
-    // query untuk ordering data tabel salesplan
+    // query untuk sorting data tabel salesplan
     public function scopeOrder($query, array $orders)
     {
         $order = $orders[0];
