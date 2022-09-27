@@ -196,10 +196,11 @@ Route::middleware('auth:sanctum')->group(function () {
     
     //Sales
     Route::get('sales', [SalesController::class, 'index'])->middleware(['permission:read_sales|manage_sales']);
-    Route::post('sales-create', [SalesController::class, 'create'])->middleware(['permission:create_sales|manage_sales']);
-    Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales|manage_sales']);
-    Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
-    Route::delete('sales-delete/{id}', [SalesController::class, 'destroy'])->middleware(['permission:delete_sales|manage_sales']);
+    Route::get('sales/{id}', [SalesController::class, 'show']);
+    // Route::post('sales-create', [SalesController::class, 'create'])->middleware(['permission:create_sales|manage_sales']);
+    // Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales|manage_sales']);
+    // Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
+    // Route::delete('sales-delete/{id}', [SalesController::class, 'destroy'])->middleware(['permission:delete_sales|manage_sales']);
     
     //Sales History
     Route::get('sales-history', [SalesHistoryController::class, 'index'])->middleware(['permission:read_sales_history|manage_sales_history']);

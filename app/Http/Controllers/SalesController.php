@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sales;
+use App\Models\ContactPerson;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -129,7 +130,91 @@ class SalesController extends Controller
         return response()->json([ 
             'success' => true,
             'message' => 'Retrieve data successfully',
-            'data'    => $data,
+            'data' => $data,
+        ], 200);
+    }
+
+    public function show($id)
+    {
+        $sales = Sales::find($id);
+
+        if (!$sales) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data not found',
+            ], 400);
+        }
+
+        $all_cp = ContactPerson::all();
+        
+        $customer_cp = ContactPerson::whereHas('customer', function ($query) use ($sales) {
+            $query->where('id', $sales->customer->id);
+        })->paginate(10);
+
+        $total_sales = $sales->value;
+        if ($sales->prospect->transaction_type_id != 2) {
+            $market_share = $sales->prospect->market_share;
+            $deviasi = $market_share - $total_sales;
+        } else {
+            $market_share = null;
+            $deviasi = null;
+        }
+
+        if ($sales->salesReschedule) {
+            $sales_reschedule = [
+                'id' => $sales->salesReschedule->id,
+                'hangar' => $sales->hangar->name,
+                'registration' => $sales->tmb_properties,
+                'cboDate' => Carbon::parse($sales->salesReschedule->start_date)->format('d-m-Y'),
+                'endDate' => Carbon::parse($sales->salesReschedule->end_date)->format('d-m-Y'),
+                'tat' => $sales->salesReschedule->tat,
+                'currentDate' => Carbon::now()->format('d-m-Y'),
+                'salesMonth' => Carbon::parse($sales->start_date)->format('F'),
+            ];
+        }
+
+        if ($sales->salesReject) {
+            $sales_reject = [
+                'id' => $sales->salesReject->id,
+                'category' => $sales->salesReject->category,
+                'reason' => $sales->salesReject->reason,
+            ];
+        }
+
+        $data = collect([
+            'user' => auth()->user(),
+            'salesDetail' => [
+                'id' => $sales->id,
+                'customer' => $sales->customer->name,
+                'registration' => $sales->ac_reg,
+                'properties' => $sales->tmb_properties,
+                'level' => $sales->level,
+                'status' => $sales->status,
+                'other' => $sales->other,
+                'type' => $sales->type,
+                'progress' => $sales->progress,
+                'monthSales' => Carbon::parse($sales->start_date)->format('F'),
+                'tat' => $sales->tat,
+                'year' => $sales->prospect->year,
+                'startDate' => Carbon::parse($sales->start_date)->format('d-m-Y'),
+                'endDate' => Carbon::parse($sales->end_date)->format('d-m-Y'),
+                'location' => $sales->hangar->name,
+                'product' => $sales->product->name,
+                'maintenance' => $sales->maintenance->description,
+                'marketShare' => $market_share,
+                'totalSales' => $total_sales,
+                'deviasi' => $deviasi,
+            ],
+            'salesReschedule' => $sales_reschedule ?? null,
+            'salesReject' => $sales_reject ?? null,
+            'customerContactPersons' => $customer_cp,
+            'allContactPersons' => $all_cp,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data successfully',
+            'data' => $data,
         ], 200);
     }
 }

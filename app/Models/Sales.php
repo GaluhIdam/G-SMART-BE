@@ -203,9 +203,9 @@ class Sales extends Model
         });
     }
 
-    public function salesReschedules()
+    public function salesReschedule()
     {
-        return $this->hasMany(SalesReschedule::class);
+        return $this->hasOne(SalesReschedule::class);
     }
 
     public function salesRequirements()
@@ -218,9 +218,9 @@ class Sales extends Model
         return $this->hasMany(SalesUpdate::class);
     }
 
-    public function salesRejects()
+    public function salesReject()
     {
-        return $this->hasMany(SalesReject::class);
+        return $this->hasOne(SalesReject::class);
     }
 
     public function customer()
