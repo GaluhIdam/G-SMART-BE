@@ -21,6 +21,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'fulan@example.com',
             'address' => 'Jalanin aja dulu No.1',
             'customer_id' => 1,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'John Doe',
@@ -28,6 +30,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'doe@example.com',
             'address' => 'Jalanin aja dulu No.99',
             'customer_id' => 1,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Muhammad Sumbul',
@@ -35,6 +39,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'sumbul@example.com',
             'address' => 'Jalanin aja dulu No.65',
             'customer_id' => 1,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Jane Doe',
@@ -42,6 +48,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'jane@example.com',
             'address' => 'Jalanin aja dulu No.19',
             'customer_id' => 2,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Farhan Hadi Lutfi',
@@ -49,6 +57,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'farhan@example.com',
             'address' => 'Jalanin aja dulu No.81',
             'customer_id' => 2,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Rizky Ibrahim',
@@ -56,6 +66,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'rizky@example.com',
             'address' => 'Jalanin aja dulu No.42',
             'customer_id' => 1,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Surya Intan Permana',
@@ -63,6 +75,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'surya@example.com',
             'address' => 'Jalanin aja dulu No.68',
             'customer_id' => 3,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Okitora Winnetou',
@@ -70,6 +84,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'tora@example.com',
             'address' => 'Jalanin aja dulu No.91',
             'customer_id' => 3,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Galuh Idam',
@@ -77,6 +93,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'idaman@example.com',
             'address' => 'Jalanin aja dulu No.7',
             'customer_id' => 4,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Dawney Johnson',
@@ -84,6 +102,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'johnson@example.com',
             'address' => 'Jalanin aja dulu No.35',
             'customer_id' => 4,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Scarlet Johansson',
@@ -91,6 +111,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'scarlet@example.com',
             'address' => 'Jalanin aja dulu No.80',
             'customer_id' => 5,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Naruto Uzumaki',
@@ -98,6 +120,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'nartoo@example.com',
             'address' => 'Jalanin aja dulu No.76',
             'customer_id' => 5,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Uchiha Sasuke',
@@ -105,6 +129,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'saskee@example.com',
             'address' => 'Jalanin aja dulu No.12',
             'customer_id' => 6,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Monkey D Luffy',
@@ -112,6 +138,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'luffy@example.com',
             'address' => 'Jalanin aja dulu No.62',
             'customer_id' => 7,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Pevita Pearce',
@@ -119,6 +147,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'pevpearce@example.com',
             'address' => 'Jalanin aja dulu No.3',
             'customer_id' => 8,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Chelsea Islan',
@@ -126,6 +156,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'chislan@example.com',
             'address' => 'Jalanin aja dulu No.26',
             'customer_id' => 9,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Jalaludin Rumi',
@@ -133,6 +165,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'rumi@example.com',
             'address' => 'Jalanin aja dulu No.95',
             'customer_id' => 10,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
         CP::create([
             'name' => 'Nur Cahaya',
@@ -140,6 +174,8 @@ class ContactPersonSeeder extends Seeder
             'email' => 'nurajah@example.com',
             'address' => 'Jalanin aja dulu No.72',
             'customer_id' => 10,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'status' => rand(0,1),
         ]);
     }
 }

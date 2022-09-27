@@ -53,7 +53,7 @@ class Prospect extends Model
 
     public function sales()
     {
-        return $this->hasOne(Sales::class);
+        return $this->hasMany(Sales::class);
     }
     
     public function amsCustomer()

@@ -33,6 +33,7 @@ class SalesSeeder extends Seeder
             'engine_id' => rand(1,5),
             'apu_id' => rand(1,5),
             'is_rkap' => rand(0,1),
+            'ams_id' => rand(1,3),
         ]);
 
         Sales::create([
@@ -52,6 +53,7 @@ class SalesSeeder extends Seeder
             'engine_id' => rand(1,5),
             'apu_id' => rand(1,5),
             'is_rkap' => rand(0,1),
+            'ams_id' => rand(1,3),
         ]);
 
         Sales::create([
@@ -71,6 +73,7 @@ class SalesSeeder extends Seeder
             'engine_id' => rand(1,5),
             'apu_id' => rand(1,5),
             'is_rkap' => rand(0,1),
+            'ams_id' => rand(1,3),
         ]);
 
         Sales::create([
@@ -90,6 +93,7 @@ class SalesSeeder extends Seeder
             'engine_id' => rand(1,5),
             'apu_id' => rand(1,5),
             'is_rkap' => rand(0,1),
+            'ams_id' => rand(1,3),
         ]);
 
         Sales::create([
@@ -109,6 +113,7 @@ class SalesSeeder extends Seeder
             'engine_id' => rand(1,5),
             'apu_id' => rand(1,5),
             'is_rkap' => rand(0,1),
+            'ams_id' => rand(1,3),
         ]);
 
         Sales::create([
@@ -128,6 +133,7 @@ class SalesSeeder extends Seeder
             'engine_id' => rand(1,5),
             'apu_id' => rand(1,5),
             'is_rkap' => rand(0,1),
+            'ams_id' => rand(1,3),
         ]);
 
         Sales::create([
@@ -147,6 +153,7 @@ class SalesSeeder extends Seeder
             'engine_id' => rand(1,5),
             'apu_id' => rand(1,5),
             'is_rkap' => rand(0,1),
+            'ams_id' => rand(1,3),
         ]);
 
         Sales::create([
@@ -166,6 +173,7 @@ class SalesSeeder extends Seeder
             'engine_id' => rand(1,5),
             'apu_id' => rand(1,5),
             'is_rkap' => rand(0,1),
+            'ams_id' => rand(1,3),
         ]);
 
         Sales::create([
@@ -185,6 +193,7 @@ class SalesSeeder extends Seeder
             'engine_id' => rand(1,5),
             'apu_id' => rand(1,5),
             'is_rkap' => rand(0,1),
+            'ams_id' => rand(1,3),
         ]);
 
         Sales::create([
@@ -204,6 +213,7 @@ class SalesSeeder extends Seeder
             'engine_id' => rand(1,5),
             'apu_id' => rand(1,5),
             'is_rkap' => rand(0,1),
+            'ams_id' => rand(1,3),
         ]);
     }
 }

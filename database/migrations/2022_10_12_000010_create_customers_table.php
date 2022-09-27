@@ -22,6 +22,8 @@ return new class extends Migration
             $table->index('country_id');
             $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade')->onUpdate('cascade');
 
+            $table->string('logo_path');
+
             $table->timestamps();
         });
     }

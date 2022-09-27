@@ -54,6 +54,8 @@ class SalesController extends Controller
         ->paginate($paginate)
         ->withQueryString();
         
+        // TODO: check level status & approval status to get  progress dynamically
+        
         // define empty collection untuk menampung data [tabel salesplan user]
         $user_salesplan = new Collection();
 
@@ -160,6 +162,8 @@ class SalesController extends Controller
             $deviasi = null;
         }
 
+        $sales->level;
+
         if ($sales->salesReschedule) {
             $sales_reschedule = [
                 'id' => $sales->salesReschedule->id,
@@ -216,5 +220,19 @@ class SalesController extends Controller
             'message' => 'Retrieve data successfully',
             'data' => $data,
         ], 200);
+    }
+
+    public function update($id)
+    {
+        $sales = Sales::find($id);
+
+        if (!$sales) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data not found',
+            ], 400);
+        }
+
+
     }
 }

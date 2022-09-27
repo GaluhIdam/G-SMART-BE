@@ -52,6 +52,10 @@ return new class extends Migration
             $table->index('apu_id');
             $table->foreign('apu_id')->references('id')->on('apu_id')->onDelete('cascade')->onUpdate('cascade');
 
+            $table->unsignedBigInteger('ams_id');
+            $table->index('ams_id');
+            $table->foreign('ams_id')->references('id')->on('ams')->onDelete('cascade')->onUpdate('cascade');
+
             $table->string('ac_reg');
             $table->decimal('value');
             $table->integer('tat');
