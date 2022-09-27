@@ -14,7 +14,7 @@ class Engine extends Model
         'name',
     ];
 
-    public function TMB()
+    public function tmb()
     {
         return $this->hasMany(TMB::class);
     }

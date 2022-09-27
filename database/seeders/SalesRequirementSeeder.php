@@ -16,9 +16,104 @@ class SalesRequirementSeeder extends Seeder
     public function run()
     {
         SalesRequirement::create([
-            'sales_id'       => 1,
-            'requirement_id' => 1,
-            'status'         => 1,
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
+        ]);
+        SalesRequirement::create([
+            'sales_id' => rand(1,10),
+            'requirement_id' => rand(1,10),
+            'status' => rand(0,1),
         ]);
     }
 }

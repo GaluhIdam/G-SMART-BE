@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ContactPersoon extends Model
+class ContactPerson extends Model
 {
     use HasFactory;
 
@@ -14,6 +14,6 @@ class ContactPersoon extends Model
 
     public function customer()
     {
-        return $this->belongsTi(Customer::class, 'customer_id');
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 }

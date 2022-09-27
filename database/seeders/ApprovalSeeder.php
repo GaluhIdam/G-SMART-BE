@@ -15,11 +15,11 @@ class ApprovalSeeder extends Seeder
      */
     public function run()
     {
-        Approval::create([
-            'sales_requirement_id' => 1,
-            'user_id'              => 1,
-            'status'               => 1,
-            'sequence'             => 1,
-        ]);
+        // Approval::create([
+        //     'sales_requirement_id' => 1,
+        //     'user_id'              => 1,
+        //     'status'               => 1,
+        //     'sequence'             => 1,
+        // ]);
     }
 }

@@ -17,7 +17,23 @@ class MaintenanceSeeder extends Seeder
     {
         Maintenance::create([
             'name' => 'Engineering',
-            'description' => 'Installation',
+            'description' => 'Lorem ipsum dolor sit amet',
+        ]);
+        Maintenance::create([
+            'name' => 'Preparation',
+            'description' => 'Lorem ipsum dolor sit amet',
+        ]);
+        Maintenance::create([
+            'name' => 'Verifying',
+            'description' => 'Lorem ipsum dolor sit amet',
+        ]);
+        Maintenance::create([
+            'name' => 'Maintenance',
+            'description' => 'Lorem ipsum dolor sit amet',
+        ]);
+        Maintenance::create([
+            'name' => 'Testing',
+            'description' => 'Lorem ipsum dolor sit amet',
         ]);
     }
 }

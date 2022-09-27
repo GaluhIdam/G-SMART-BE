@@ -14,7 +14,7 @@ class AircraftType extends Model
         'name',
     ];
 
-    public function TMB()
+    public function tmb()
     {
         return $this->hasMany(TMB::class);
     }
@@ -24,7 +24,7 @@ class AircraftType extends Model
         return $this->hasMany(Sales::class);
     }
 
-    public function prospectPBTH()
+    public function prospectPbth()
     {
         return $this->hasMany(ProspectPBTH::class);
     }

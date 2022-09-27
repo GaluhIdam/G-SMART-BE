@@ -16,8 +16,44 @@ class RequirementSeeder extends Seeder
     public function run()
     {
         Requirement::create([
-            'level_id'       => 1,
-            'requirement' => 'This is requirement',
+            'level_id' => 1,
+            'requirement' => 'Attachment of WO/PO number Customer Document',
+        ]);
+        Requirement::create([
+            'level_id' => 1,
+            'requirement' => 'Input SO number',
+        ]);
+        Requirement::create([
+            'level_id' => 2,
+            'requirement' => 'Attachment of Customer Approval (SOW Signed / Proposal Approved)',
+        ]);
+        Requirement::create([
+            'level_id' => 2,
+            'requirement' => 'Hangar slot request',
+        ]);
+        Requirement::create([
+            'level_id' => 3,
+            'requirement' => 'Attachment of Financial Assesment Form (optional)',
+        ]);
+        Requirement::create([
+            'level_id' => 3,
+            'requirement' => 'Attachment of Maintenance Proposal for Customer',
+        ]);
+        Requirement::create([
+            'level_id' => 3,
+            'requirement' => 'Attachment of Profitability Analysis Form Signed',
+        ]);
+        Requirement::create([
+            'level_id' => 4,
+            'requirement' => 'Fill in Contact Person of Customer',
+        ]);
+        Requirement::create([
+            'level_id' => 4,
+            'requirement' => 'Upload Attachment RFQ or Email Request',
+        ]);
+        Requirement::create([
+            'level_id' => 4,
+            'requirement' => 'Upload Attachment Workscope',
         ]);
     }
 }

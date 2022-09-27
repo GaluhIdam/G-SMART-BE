@@ -15,7 +15,7 @@ class Product extends Model
         'description',
     ];
 
-    public function TMB()
+    public function tmb()
     {
         return $this->hasMany(TMB::class);
     }
@@ -23,5 +23,10 @@ class Product extends Model
     public function sales()
     {
         return $this->hasMany(Sales::class);
+    }
+
+    public function prospectPbth()
+    {
+        return $this->hasMany(ProspectPBTH::class);
     }
 }

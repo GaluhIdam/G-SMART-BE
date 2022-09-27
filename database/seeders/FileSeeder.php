@@ -16,9 +16,9 @@ class FileSeeder extends Seeder
      */
     public function run()
     {
-        File::create([
-            'sales_requirement_id' => 1,
-            'path'                => 'This is path',
-        ]);
+        // File::create([
+        //     'sales_requirement_id' => 1,
+        //     'path'                => 'This is path',
+        // ]);
     }
 }

@@ -52,7 +52,7 @@ class TMB extends Model
         return $this->belongsTo(Maintenance::class, 'maintenance_id');
     }
     
-    public function prospectTMB()
+    public function prospectTmb()
     {
         return $this->hasMany(ProspectTMB::class);
     }

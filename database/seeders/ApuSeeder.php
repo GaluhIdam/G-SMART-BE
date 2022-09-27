@@ -18,5 +18,17 @@ class ApuSeeder extends Seeder
         Apu::create([
             'name' => 'GTCP85',
         ]);
+        Apu::create([
+            'name' => 'GPXR19',
+        ]);
+        Apu::create([
+            'name' => 'ZTEE65',
+        ]);
+        Apu::create([
+            'name' => 'RRQH90',
+        ]);
+        Apu::create([
+            'name' => 'OPEQ01',
+        ]);
     }
 }

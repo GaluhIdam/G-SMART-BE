@@ -22,6 +22,15 @@ class Prospect extends Model
         'customer_id',
     ];
 
+    protected $appends = [
+        'market_share',
+    ];
+
+    public function getMarketShareAttribute()
+    {
+        return $this->prospectTmb->sum('tmb.market_share');
+    }
+
     public function transactionType()
     {
         return $this->belongsTo(TransactionType::class, 'transaction_type_id');
@@ -44,7 +53,7 @@ class Prospect extends Model
 
     public function sales()
     {
-        return $this->hasMany(Sales::class);
+        return $this->hasOne(Sales::class);
     }
     
     public function amsCustomer()
@@ -52,12 +61,12 @@ class Prospect extends Model
         return $this->belongsTo(AMSCustomer::class, 'ams_customer_id');
     }
 
-    public function prospectTMB()
+    public function prospectTmb()
     {
         return $this->hasMany(ProspectTMB::class);
     }
 
-    public function prospectPBTH()
+    public function prospectPbth()
     {
         return $this->hasMany(ProspectPBTH::class);
     }

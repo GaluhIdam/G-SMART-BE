@@ -12,8 +12,8 @@ class PBTH extends Model
     protected $table = 'pbth';
     protected $guarded = ['id'];
 
-    public function prospectPBTH()
+    public function prospectPbth()
     {
-        return $this->hasMany(PBTH::class);
+        return $this->hasMany(ProspectPBTH::class);
     }
 }

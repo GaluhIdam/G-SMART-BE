@@ -17,22 +17,22 @@ class LevelSeeder extends Seeder
     {
         Level::create([
             'level'       => 1,
-            'description' => 'This is description',
+            'description' => 'Contract Signing',
         ]);
 
         Level::create([
             'level'       => 2,
-            'description' => 'This is description',
+            'description' => 'Attractive Proposal',
         ]);
 
         Level::create([
             'level'       => 3,
-            'description' => 'This is description',
+            'description' => 'Opportunity',
         ]);
 
         Level::create([
             'level'       => 4,
-            'description' => 'This is description',
+            'description' => 'Awareness',
         ]);
     }
 }

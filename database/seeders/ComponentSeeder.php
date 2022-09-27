@@ -18,5 +18,20 @@ class ComponentSeeder extends Seeder
         Component::create([
             'name' => 'Wheel & Brake',
         ]);
+        Component::create([
+            'name' => 'Fuselag',
+        ]);
+        Component::create([
+            'name' => 'Wing',
+        ]);
+        Component::create([
+            'name' => 'Landing Gear',
+        ]);
+        Component::create([
+            'name' => 'Kokpit',
+        ]);
+        Component::create([
+            'name' => 'Tail',
+        ]);
     }
 }
