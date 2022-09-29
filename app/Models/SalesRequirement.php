@@ -14,6 +14,11 @@ class SalesRequirement extends Model
         'requirement_id',
         'detail',
     ];
+    
+    public function latestFile()
+    {
+        return $this->hasOne(File::class)->latest('updated_at');
+    }
 
     public function sales()
     {

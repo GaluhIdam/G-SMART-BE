@@ -24,7 +24,7 @@ return new class extends Migration
             $table->index('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->string('status');
+            $table->boolean('status');
             $table->integer('sequence');
             $table->timestamps();
         });

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sales;
-use App\Models\ContactPerson;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -50,11 +49,9 @@ class SalesController extends Controller
         ])->search($search)
         ->filter([$start_date, $end_date, $type])
         ->user($user->id)
-        ->order([$order, $by])
+        ->sort([$order, $by])
         ->paginate($paginate)
         ->withQueryString();
-        
-        // TODO: check level status & approval status to get  progress dynamically
         
         // define empty collection untuk menampung data [tabel salesplan user]
         $user_salesplan = new Collection();
@@ -147,22 +144,14 @@ class SalesController extends Controller
             ], 400);
         }
 
-        $all_cp = ContactPerson::all();
-        
-        $customer_cp = ContactPerson::whereHas('customer', function ($query) use ($sales) {
-            $query->where('id', $sales->customer->id);
-        })->paginate(10);
-
-        $total_sales = $sales->value;
-        if ($sales->prospect->transaction_type_id != 2) {
+        $total_sales = (int)$sales->value;
+        if (str_contains($sales->type, 'TMB')) {
             $market_share = $sales->prospect->market_share;
             $deviasi = $market_share - $total_sales;
         } else {
             $market_share = null;
             $deviasi = null;
         }
-
-        $sales->level;
 
         if ($sales->salesReschedule) {
             $sales_reschedule = [
@@ -208,11 +197,13 @@ class SalesController extends Controller
                 'marketShare' => $market_share,
                 'totalSales' => $total_sales,
                 'deviasi' => $deviasi,
-            ],
+            ], 
             'salesReschedule' => $sales_reschedule ?? null,
             'salesReject' => $sales_reject ?? null,
-            'customerContactPersons' => $customer_cp,
-            'allContactPersons' => $all_cp,
+            'level4' => $sales->level4,
+            'level3' => $sales->level3,
+            'level2' => $sales->level2,
+            'level1' => $sales->level1,
         ]);
 
         return response()->json([

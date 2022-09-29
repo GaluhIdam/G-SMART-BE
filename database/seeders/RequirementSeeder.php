@@ -16,20 +16,16 @@ class RequirementSeeder extends Seeder
     public function run()
     {
         Requirement::create([
-            'level_id' => 1,
-            'requirement' => 'Attachment of WO/PO number Customer Document',
+            'level_id' => 4,
+            'requirement' => 'Fill in Contact Person of Customer',
         ]);
         Requirement::create([
-            'level_id' => 1,
-            'requirement' => 'Input SO number',
+            'level_id' => 4,
+            'requirement' => 'Upload Attachment RFQ or Email Request',
         ]);
         Requirement::create([
-            'level_id' => 2,
-            'requirement' => 'Attachment of Customer Approval (SOW Signed / Proposal Approved)',
-        ]);
-        Requirement::create([
-            'level_id' => 2,
-            'requirement' => 'Hangar slot request',
+            'level_id' => 4,
+            'requirement' => 'Upload Attachment Workscope',
         ]);
         Requirement::create([
             'level_id' => 3,
@@ -44,16 +40,20 @@ class RequirementSeeder extends Seeder
             'requirement' => 'Attachment of Profitability Analysis Form Signed',
         ]);
         Requirement::create([
-            'level_id' => 4,
-            'requirement' => 'Fill in Contact Person of Customer',
+            'level_id' => 2,
+            'requirement' => 'Attachment of Customer Approval (SOW Signed / Proposal Approved)',
         ]);
         Requirement::create([
-            'level_id' => 4,
-            'requirement' => 'Upload Attachment RFQ or Email Request',
+            'level_id' => 2,
+            'requirement' => 'Hangar slot request',
         ]);
         Requirement::create([
-            'level_id' => 4,
-            'requirement' => 'Upload Attachment Workscope',
+            'level_id' => 1,
+            'requirement' => 'Attachment of WO/PO number Customer Document',
+        ]);
+        Requirement::create([
+            'level_id' => 1,
+            'requirement' => 'Input SO number',
         ]);
     }
 }

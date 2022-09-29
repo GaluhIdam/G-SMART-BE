@@ -32,6 +32,7 @@ use App\Http\Controllers\SalesRejectController;
 use App\Http\Controllers\SalesRequirementController;
 use App\Http\Controllers\SalesRescheduleController;
 use App\Http\Controllers\SalesUpdateController;
+use App\Http\Controllers\ContactPersonController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -197,6 +198,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //Sales
     Route::get('sales', [SalesController::class, 'index'])->middleware(['permission:read_sales|manage_sales']);
     Route::get('sales/{id}', [SalesController::class, 'show']);
+    // Route::put('sales/{id}', [SalesController::class], 'update'); // TODO: sales plan update
     // Route::post('sales-create', [SalesController::class, 'create'])->middleware(['permission:create_sales|manage_sales']);
     // Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales|manage_sales']);
     // Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);

@@ -5,14 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+
+use App\Models\SalesRequirement;
 
 class Sales extends Model
 {
     use HasFactory;
 
     const STATUS_OPEN = 1;
-    const STATUS_CLOSED = 2;
-    const STATUS_CLOSE_IN = 3;
+    const STATUS_CLOSE_IN = 2;
+    const STATUS_CLOSED_SALES = 3;
     const STATUS_CANCEL = 4;
     const IS_RKAP = 1;
     const NOT_RKAP = 0;
@@ -23,21 +26,14 @@ class Sales extends Model
 
     const STATUS_ARRAY = [
         self::STATUS_OPEN => 'Open',
-        self::STATUS_CLOSED => 'Closed',
         self::STATUS_CLOSE_IN => 'Close in',
+        self::STATUS_CLOSED_SALES => 'Closed Sales',
         self::STATUS_CANCEL => 'Cancel',
     ];
 
     const RKAP_ARRAY = [
         self::IS_RKAP => 'RKAP',
         self::NOT_RKAP => 'NOT-RKAP',
-    ];
-
-    const LEVEL_ARRAY = [
-        self::LEVEL_1 => 100,
-        self::LEVEL_2 => 75,
-        self::LEVEL_3 => 50,
-        self::LEVEL_4 => 25,
     ];
 
     protected $fillable = [
@@ -59,6 +55,11 @@ class Sales extends Model
         'type',
         'level',
         'progress',
+        'contact_persons',
+        'level4',
+        'level3',
+        'level2',
+        'level1',
     ];
 
     public function getStatusAttribute()
@@ -88,7 +89,155 @@ class Sales extends Model
 
     public function getProgressAttribute()
     {
-        return self::LEVEL_ARRAY[$this->salesLevel->level_id];
+        $progress = 0;
+
+        $levels = [
+            $this->level4,
+            $this->level3,
+            $this->level2,
+            $this->level1,
+        ];
+
+        foreach ($levels as $level) {
+            foreach ($level as $requirement) {
+                if ($requirement->status == 1) $progress += 10;
+            }
+        }
+
+        return $progress;
+    }
+
+    public function getContactPersonsAttribute()
+    {
+        return $this->customer->contactPersons;
+    }
+
+    public function getLevel4Attribute()
+    {
+        $requirements = $this->salesRequirements->whereIn('requirement_id', [1, 2, 3]);
+        $level4 = new Collection();
+        
+        foreach ($requirements as $item) {
+            if ($item->requirement->id == 1) {
+                $data = $this->contact_persons->where('status', 1);
+                if ($data->isNotEmpty()) {
+                    $last_update = Carbon::parse($this->customer->latestCP->updated_at)->format('Y-m-d H:i');
+                } else {
+                    $last_update = null;
+                }
+            } else {
+                $data = $item->files;
+                if ($data->isNotEmpty()) {
+                    $last_update = Carbon::parse($item->latestFile->updated_at)->format('Y-m-d H:i');
+                } else {
+                    $last_update = null;
+                }
+            }
+
+            $level4->push((object)[
+                'sequence' => $item->requirement->id,
+                'name' => $item->requirement->requirement,
+                'status' => $item->status,
+                'lastUpdate' => $last_update,
+                'data' => $data,
+            ]);
+        }
+
+        return $level4;
+    }
+
+    public function getLevel3Attribute()
+    {
+        $requirements = $this->salesRequirements->whereIn('requirement_id', [4, 5, 6]);
+        $level3 = new Collection();
+        
+        foreach ($requirements as $item) {;
+            $data = $item->files;
+            if ($data->isNotEmpty()) {
+                $last_update = Carbon::parse($item->lastFile->updated_at)->format('Y-m-d H:i');
+            } else {
+                $last_update = null;
+            }
+
+            $level3->push((object)[
+                'sequence' => $item->requirement->id,
+                'name' => $item->requirement->requirement,
+                'status' => $item->status,
+                'lastUpdate' => $last_update,
+                'data' => $data,
+            ]);
+        }
+
+        return $level3;
+    }
+
+    public function getLevel2Attribute()
+    {
+        $requirements = $this->salesRequirements->whereIn('requirement_id', [7, 8]);
+        $level2 = new Collection();
+        
+        foreach ($requirements as $item) {;
+            if ($item->requirement->id == 8) {
+                $data = $this->hangar;
+                if ($data) {
+                    // TODO: perlu confirm -> requirement slot hangar dapet dari mana?
+                    $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
+                } else {
+                    $last_update = null;
+                }
+            } else {
+                $data = $item->files;
+                if ($data->isNotEmpty()) {
+                    $last_update = Carbon::parse($item->lastFile->updated_at)->format('Y-m-d H:i');
+                } else {
+                    $last_update = null;
+                }
+            }
+
+            $level2->push((object)[
+                'sequence' => $item->requirement->id,
+                'name' => $item->requirement->requirement,
+                'status' => $item->status,
+                'lastUpdate' => $last_update,
+                'data' => $data,
+            ]);
+        }
+
+        return $level2;
+    }
+
+    public function getLevel1Attribute()
+    {
+        $requirements = $this->salesRequirements->whereIn('requirement_id', [9, 10]);
+        $level1 = new Collection();
+
+        foreach ($requirements as $item) {;
+            if ($item->requirement->id == 10) {
+                $data = $this->so_number;
+                if ($data) {
+                    $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
+                } else {
+                    $last_update = null;
+                }
+            } else {
+                $data = $item->files;
+                if ($data->isNotEmpty()) {
+                    $last_update = Carbon::parse($item->latestFile->updated_at)->format('Y-m-d H:i');
+                } else {
+                    $last_update = null;
+                }
+            }
+
+            $level1->push((object)[
+                'sequence' => $item->requirement->id,
+                'name' => $item->requirement->requirement,
+                'status' => $item->status,
+                'lastUpdate' => $last_update,
+                'data' => $data,
+            ]);
+        }
+
+        return $level1;
     }
 
     // query untuk global search tabel salesplan
@@ -102,10 +251,10 @@ class Sales extends Model
             } else if (!strcasecmp($search, 'cancel')) {
                 $query->whereRelation('salesLevel', 'status', 4);
             } else if (str_contains(strtolower($search), 'close')) {
-                if (!strcasecmp($search, 'closed')) {
-                    $query->whereRelation('salesLevel', 'status', 2);
-                } else if (!strcasecmp($search, 'close in')) {
+                if (!strcasecmp($search, 'closed sales')) {
                     $query->whereRelation('salesLevel', 'status', 3);
+                } else if (!strcasecmp($search, 'close in')) {
+                    $query->whereRelation('salesLevel', 'status', 2);
                 } else {
                     $query->whereRelation('salesLevel', 'status', 2)
                         ->orWhereRelation('salesLevel', 'status', 3);
@@ -155,7 +304,7 @@ class Sales extends Model
     }
 
     // query untuk sorting data tabel salesplan
-    public function scopeOrder($query, array $orders)
+    public function scopeSort($query, array $orders)
     {
         $order = $orders[0];
         $by = $orders[1];

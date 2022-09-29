@@ -24,7 +24,7 @@ return new class extends Migration
             $table->index('requirement_id');
             $table->foreign('requirement_id')->references('id')->on('requirements')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->string('status');
+            $table->boolean('status')->default(0);
             $table->timestamps();
         });
     }
