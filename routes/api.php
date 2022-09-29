@@ -206,8 +206,8 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Contact Person
     route::get('contact-person', [ContactPersonController::class, 'index']);
-    route::post('contact-person', [ContactPersonController::class, 'store']);
-    route::delete('contact-person/{id}', [ContactPersonController::class, 'destroy']);
+    route::post('contact-person-create', [ContactPersonController::class, 'store']);
+    route::delete('contact-person-delete/{id}', [ContactPersonController::class, 'destroy']);
 
     //Sales History
     Route::get('sales-history', [SalesHistoryController::class, 'index'])->middleware(['permission:read_sales_history|manage_sales_history']);
