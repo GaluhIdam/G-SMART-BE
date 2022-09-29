@@ -34,4 +34,9 @@ class Customer extends Model
     {
         return $this->hasMany(ContactPerson::class);
     }
+
+    public function sales()
+    {
+        return $this->hasMany(Sales::class);
+    }
 }

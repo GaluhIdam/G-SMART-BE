@@ -118,8 +118,8 @@ class Sales extends Model
         $level4 = new Collection();
         
         foreach ($requirements as $item) {
-            if ($item->requirement->id == 1) {
-                $data = $this->contact_persons->where('status', 1);
+            if ($item->requirement_id == 1) {
+                $data = $this->contact_persons->where('status', 1)->values();
                 if ($data->isNotEmpty()) {
                     $last_update = Carbon::parse($this->customer->latestCP->updated_at)->format('Y-m-d H:i');
                 } else {
@@ -135,7 +135,7 @@ class Sales extends Model
             }
 
             $level4->push((object)[
-                'sequence' => $item->requirement->id,
+                'sequence' => $item->requirement_id,
                 'name' => $item->requirement->requirement,
                 'status' => $item->status,
                 'lastUpdate' => $last_update,
@@ -160,7 +160,7 @@ class Sales extends Model
             }
 
             $level3->push((object)[
-                'sequence' => $item->requirement->id,
+                'sequence' => $item->requirement_id,
                 'name' => $item->requirement->requirement,
                 'status' => $item->status,
                 'lastUpdate' => $last_update,
@@ -177,7 +177,7 @@ class Sales extends Model
         $level2 = new Collection();
         
         foreach ($requirements as $item) {;
-            if ($item->requirement->id == 8) {
+            if ($item->requirement_id == 8) {
                 $data = $this->hangar;
                 if ($data) {
                     // TODO: perlu confirm -> requirement slot hangar dapet dari mana?
@@ -195,7 +195,7 @@ class Sales extends Model
             }
 
             $level2->push((object)[
-                'sequence' => $item->requirement->id,
+                'sequence' => $item->requirement_id,
                 'name' => $item->requirement->requirement,
                 'status' => $item->status,
                 'lastUpdate' => $last_update,
@@ -212,7 +212,7 @@ class Sales extends Model
         $level1 = new Collection();
 
         foreach ($requirements as $item) {;
-            if ($item->requirement->id == 10) {
+            if ($item->requirement_id == 10) {
                 $data = $this->so_number;
                 if ($data) {
                     $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
@@ -229,7 +229,7 @@ class Sales extends Model
             }
 
             $level1->push((object)[
-                'sequence' => $item->requirement->id,
+                'sequence' => $item->requirement_id,
                 'name' => $item->requirement->requirement,
                 'status' => $item->status,
                 'lastUpdate' => $last_update,

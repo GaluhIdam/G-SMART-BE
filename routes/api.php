@@ -204,6 +204,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
     // Route::delete('sales-delete/{id}', [SalesController::class, 'destroy'])->middleware(['permission:delete_sales|manage_sales']);
     
+    // Contact Person
+    route::get('contact-person', [ContactPersonController::class, 'index']);
+    route::post('contact-person', [ContactPersonController::class, 'store']);
+    route::delete('contact-person/{id}', [ContactPersonController::class, 'destroy']);
+
     //Sales History
     Route::get('sales-history', [SalesHistoryController::class, 'index'])->middleware(['permission:read_sales_history|manage_sales_history']);
     Route::post('sales-history-create', [SalesHistoryController::class, 'create'])->middleware(['permission:create_sales_history|manage_sales_history']);
