@@ -12,11 +12,6 @@ use Illuminate\Database\QueryException;
 
 class ContactPersonController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         $customer_id = $request->get('customer');
@@ -36,12 +31,6 @@ class ContactPersonController extends Controller
         ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -87,16 +76,14 @@ class ContactPersonController extends Controller
                 $requirement->requirement_id = 1;
                 $requirement->status = $active_cp->isNotEmpty() ?? 0;
                 $requirement->save();
-            } else if ($requirement->count() > 1) {
-                foreach ($requirement as $item) {
-                    if ($requirement->count() > 1) {
-                        $item->delete();
+            } else {
+                if ($requirement->count() > 1) {
+                    foreach ($requirement as $item) {
+                        if ($requirement->count() > 1) {
+                            $item->delete();
+                        }
                     }
                 }
-                $requirement = $requirement->first();
-                $requirement->status = $active_cp->isNotEmpty() ?? 0;
-                $requirement->push();
-            } else {
                 $requirement = $requirement->first();
                 $requirement->status = $active_cp->isNotEmpty() ?? 0;
                 $requirement->push();
@@ -119,12 +106,6 @@ class ContactPersonController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ContactPerson  $contactPerson
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id, Request $request)
     {
         $contact_person = ContactPerson::find($id);

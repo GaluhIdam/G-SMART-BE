@@ -3,92 +3,114 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
+use App\Models\Sales;
+use App\Models\SalesRequirement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Collection;
 
 class FileController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->get('search');
+        $requirement = $request->requirement;
 
-        if ($request->get('order') && $request->get('by')) {
-            $order = $request->get('order');
-            $by = $request->get('by');
-        } else {
-            $order = 'id';
-            $by = 'desc';
-        }
-
-        if ($request->get('paginate')) {
-            $paginate = $request->get('paginate');
-        } else {
-            $paginate = 10;
-        }
-
-        $file = File::with('sales_requirement_id')->when($search, function ($query) use ($search) {
-            $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('sales_requirment_id', 'LIKE', "%$search%")
-                    ->orWhere('path', 'LIKE', "%$search%");
-            });
-        })->when(($order && $by), function ($query) use ($order, $by) {
-            $query->orderBy($order, $by);
-        })->paginate($paginate);
-
-        $query_string = [
-            'search' => $search,
-            'order'  => $order,
-            'by'     => $by,
-        ];
-
-        $file->appends($query_string);
+        $files = File::when($requirement, function ($query) use ($requirement) {
+                            $query->where('sales_requirement_id', $requirement);
+                        })->get();
 
         return response()->json([
-            'message' => 'Success!',
-            'data'    => $file,
+            'success' => true,
+            'message' => 'Retrieve data successfully',
+            'data' => $files,
         ], 200);
     }
 
     public function create(Request $request)
     {
-        $request->validate([
-            'sales_requirment_id' => 'required|numeric',
-            'path' => 'required',
+        $validator = Validator::make($request->all(), [
+            'files' => 'required|array',
+            'files.*' => 'required|file|mimes:jpeg,jpg,png,pdf,eml|max:5120',
+            'sales_id' => 'required|integer|exists:sales,id',
+            'requirement_id' => 'required|integer|exists:requirements,id',
         ]);
 
-        $file = File::create($request->all());
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors(),
+            ], 400);
+        }
 
-        return response()->json([
-            'message' => 'File has been created successfully!',
-            'data' => $file,
-        ], 201);
+        try {
+            DB::beginTransaction();
+
+            $sales = Sales::find($request->sales_id);
+            $requirement = $sales->salesRequirements->where('requirement_id', $request->requirement_id);
+            $files = $request->file('files'); 
+            $temp_paths = [];
+            $temp_files = [];
+            
+            if ($requirement->isEmpty()) {
+                $requirement = new SalesRequirement;
+                $requirement->sales_id = $sales->id;
+                $requirement->requirement_id = $request->requirement_id;
+                $requirement->status = 1;
+                $requirement->save();
+            } else {
+                if ($requirement->count() > 1) {
+                    foreach ($requirement as $item) {
+                        if ($requirement->count() > 1) {
+                            $item->delete();
+                        }
+                    }
+                }
+                $requirement = $requirement->first();
+                $requirement->status = 1;
+                $requirement->push();
+            }
+            
+            foreach ($files as $file) {
+                $file_path = Storage::disk('public')->putFile('attachment', $file);
+                $temp_paths[] = $file_path;
+
+                $new_file = new File;
+                $new_file->sales_requirement_id = $requirement->id;
+                $new_file->path = $file_path;
+                $new_file->save();
+
+                $temp_files[] = $new_file;
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'File uploaded successfully',
+                'data' => $temp_files,
+            ], 200);
+        } catch (QueryException $e) {
+            DB::rollback();
+
+            for ($i = 0; $i < count($temp_paths); $i++) {
+                Storage::disk('public')->delete($temp_paths[$i]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
+        }
     }
 
-    public function show($id)
+    public function show($id) // TODO download/preview uploaded file
     {
         if ($file = File::find($id)) {
             return response()->json([
                 'message' => 'Success!',
-                'data'    => $file
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Data not found!',
-            ], 404);
-        }
-    }
-
-    public function update(Request $request, $id)
-    {
-        if ($file = File::find($id)) {
-            $request->validate([
-                'sales_requirment_id' => 'required|unique:files,sales_requirment_id,' . $id . '',
-                'path'                => 'required',
-            ]);
-
-            $file->update($request->all());
-
-            return response()->json([
-                'message' => 'File has been updated successfully!',
                 'data'    => $file,
             ], 200);
         } else {
@@ -100,16 +122,29 @@ class FileController extends Controller
 
     public function destroy($id)
     {
-        if ($file = File::find($id)) {
-            $file->delete();
+        $file = File::find($id);
+        
+        if (!$file) {
             return response()->json([
-                'message' => 'File has been deleted successfully!',
-                'data'    => $file
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Data not found!',
-            ], 404);
+                'success' => false,
+                'message' => 'Data not found',
+            ], 400);
         }
+
+        $requirement = $file->salesRequirement;
+        $files = $requirement->files;
+
+        if (Storage::disk('public')->exists($file->path)) {
+            Storage::disk('public')->delete($file->path);
+        }
+        $file->delete();
+        
+        $requirement->status = $files->isNotEmpty() ?? 0;
+        $requirement->push();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'File deleted successfully',
+        ], 200);
     }
 }

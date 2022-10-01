@@ -143,7 +143,7 @@ class Sales extends Model
             ]);
         }
 
-        return $level4;
+        return collect($level4)->sortBy('sequence')->values();
     }
 
     public function getLevel3Attribute()
@@ -168,7 +168,7 @@ class Sales extends Model
             ]);
         }
 
-        return $level3;
+        return collect($level3)->sortBy('sequence')->values();
     }
 
     public function getLevel2Attribute()
@@ -180,7 +180,7 @@ class Sales extends Model
             if ($item->requirement_id == 8) {
                 $data = $this->hangar;
                 if ($data) {
-                    // TODO: perlu confirm -> requirement slot hangar dapet dari mana?
+                    // TODO: perlu konfirmasi -> requirement slot hangar dapet dari mana?
                     $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
                 } else {
                     $last_update = null;
@@ -203,7 +203,7 @@ class Sales extends Model
             ]);
         }
 
-        return $level2;
+        return collect($level2)->sortBy('sequence')->values();
     }
 
     public function getLevel1Attribute()
@@ -237,7 +237,7 @@ class Sales extends Model
             ]);
         }
 
-        return $level1;
+        return collect($level1)->sortBy('sequence')->values();
     }
 
     // query untuk global search tabel salesplan
@@ -424,6 +424,6 @@ class Sales extends Model
 
     public function salesLevel()
     {
-        return $this->hasOne(SalesLevel::class);
+        return $this->hasOne(SalesLevel::class); // TODO perlu konfirmasi (diskusi)
     }
 }

@@ -177,8 +177,8 @@ Route::middleware('auth:sanctum')->group(function () {
     //File
     Route::get('file', [FileController::class, 'index'])->middleware(['permission:read_file|manage_file']);
     Route::post('file-create', [FileController::class, 'create'])->middleware(['permission:create_file|manage_file']);
-    Route::get('file-show/{id}', [FileController::class, 'show'])->middleware(['permission:show_file|manage_file']);
-    Route::put('file-update/{id}', [FileController::class, 'update'])->middleware(['permission:update_file|manage_file']);
+    // Route::get('file-show/{id}', [FileController::class, 'show'])->middleware(['permission:show_file|manage_file']);
+    // Route::put('file-update/{id}', [FileController::class, 'update'])->middleware(['permission:update_file|manage_file']);
     Route::delete('file-delete/{id}', [FileController::class, 'destroy'])->middleware(['permission:delete_file|manage_file']);
     
     //Level
