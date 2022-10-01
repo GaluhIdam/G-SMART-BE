@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class FileController extends Controller
 {
@@ -106,18 +107,26 @@ class FileController extends Controller
         }
     }
 
-    public function show($id) // TODO download/preview uploaded file
+    public function show($id)
     {
-        if ($file = File::find($id)) {
+        $file = File::find($id);
+
+        if (!$file) {
             return response()->json([
-                'message' => 'Success!',
-                'data'    => $file,
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Data not found!',
-            ], 404);
+                'success' => false,
+                'message' => 'Data not found',
+            ], 400);
         }
+
+        // TODO perlu konfirmasi -> format penamaan file yg akan didownload user
+        $filename = Str::remove('attachment/', $file->path);
+
+        $headers = [
+            'Content-Type'        => 'image/png',            
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ];
+
+        return \Response::make(Storage::disk('public')->get($file->path), 200, $headers);
     }
 
     public function destroy($id)

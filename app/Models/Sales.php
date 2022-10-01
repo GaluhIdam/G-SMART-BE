@@ -180,7 +180,7 @@ class Sales extends Model
             if ($item->requirement_id == 8) {
                 $data = $this->hangar;
                 if ($data) {
-                    // TODO: perlu konfirmasi -> requirement slot hangar dapet dari mana?
+                    // TODO perlu konfirmasi -> requirement slot hangar dapet dari mana?
                     $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
                 } else {
                     $last_update = null;

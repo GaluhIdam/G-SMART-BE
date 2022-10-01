@@ -37,6 +37,8 @@ use App\Http\Controllers\ContactPersonController;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
 
+// TODO route untuk testing tanpe perlu autentikasi
+// Route::get('test/{id}', [FileController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -177,8 +179,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //File
     Route::get('file', [FileController::class, 'index'])->middleware(['permission:read_file|manage_file']);
     Route::post('file-create', [FileController::class, 'create'])->middleware(['permission:create_file|manage_file']);
-    // Route::get('file-show/{id}', [FileController::class, 'show'])->middleware(['permission:show_file|manage_file']);
-    // Route::put('file-update/{id}', [FileController::class, 'update'])->middleware(['permission:update_file|manage_file']);
+    Route::get('file-show/{id}', [FileController::class, 'show'])->middleware(['permission:show_file|manage_file']);
     Route::delete('file-delete/{id}', [FileController::class, 'destroy'])->middleware(['permission:delete_file|manage_file']);
     
     //Level
@@ -197,11 +198,10 @@ Route::middleware('auth:sanctum')->group(function () {
     
     //Sales
     Route::get('sales', [SalesController::class, 'index'])->middleware(['permission:read_sales|manage_sales']);
-    Route::get('sales/{id}', [SalesController::class, 'show']);
-    // Route::put('sales/{id}', [SalesController::class], 'update'); // TODO: sales plan update
+    Route::get('sales-show/{id}', [SalesController::class, 'show']);
     // Route::post('sales-create', [SalesController::class, 'create'])->middleware(['permission:create_sales|manage_sales']);
     // Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales|manage_sales']);
-    // Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
+    // Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']); // TODO sales plan update
     // Route::delete('sales-delete/{id}', [SalesController::class, 'destroy'])->middleware(['permission:delete_sales|manage_sales']);
     
     // Contact Person

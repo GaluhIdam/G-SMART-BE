@@ -36,7 +36,7 @@ class ContactPersonController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:50',
-            // 'email' => 'required|string|email:rfc,dns|unique:contact_persons,email', // TODO confirmation needed
+            // 'email' => 'required|string|email:rfc,dns|unique:contact_persons,email', // TODO perlu konfirmasi
             'email' => 'required|string|email|unique:contact_persons,email',
             'address' => 'required|string|max:255',
             'title' => 'required|string|max:255',
