@@ -122,7 +122,7 @@ class FileController extends Controller
         $filename = Str::remove('attachment/', $file->path);
 
         $headers = [
-            'Content-Type'        => 'image/png',            
+            'Content-Type' => $file->content_type,            
             'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
