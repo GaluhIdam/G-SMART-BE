@@ -51,7 +51,7 @@ class Sales extends Model
     protected $appends = [
         'status',
         'other',
-        'tmb_properties',
+        'registration',
         'type',
         'level',
         'progress',
@@ -72,9 +72,14 @@ class Sales extends Model
         return self::RKAP_ARRAY[$this->is_rkap];
     }
 
-    public function getTMBPropertiesAttribute()
+    public function getRegistrationAttribute()
     {
-        return $this->acType->name.'/'.$this->engine->name.'/'.$this->apu->name.'/'.$this->component->name;
+        $ac_type = $this->acType ? $this->acType->name : '-';
+        $engine = $this->engine ? $this->engine->name : '-';
+        $apu = $this->apu ? $this->apu->name : '-';
+        $component = $this->component ? $this->component->name : '-';
+
+        return "{$ac_type}/{$engine}/{$apu}/{$component}";
     }
 
     public function getTypeAttribute()

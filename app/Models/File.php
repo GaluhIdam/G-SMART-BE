@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class File extends Model
 {
@@ -29,8 +30,15 @@ class File extends Model
     ];
 
     protected $appends = [
+        'file_name',
         'content_type',
     ];
+
+    public function getFileNameAttribute()
+    {
+        // TODO perlu konfirmasi -> format penamaan file yg akan didownload user
+        return Str::remove('attachment/', $this->path);
+    }
 
     public function getContentTypeAttribute()
     {

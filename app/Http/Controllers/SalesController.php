@@ -61,8 +61,8 @@ class SalesController extends Controller
                 'id' => $item->id,
                 'customer' => $item->customer->name,
                 'product' => $item->product->name,
-                'properties' => $item->tmb_properties,
-                'registration' => $item->ac_reg,
+                'registration' => $item->registration,
+                'acReg' => $item->ac_reg,
                 'other' => $item->other,
                 'type' => $item->type,
                 'level' => $item->level,
@@ -157,7 +157,7 @@ class SalesController extends Controller
             $sales_reschedule = [
                 'id' => $sales->salesReschedule->id,
                 'hangar' => $sales->hangar->name,
-                'registration' => $sales->tmb_properties,
+                'registration' => $sales->registration,
                 'cboDate' => Carbon::parse($sales->salesReschedule->start_date)->format('d-m-Y'),
                 'endDate' => Carbon::parse($sales->salesReschedule->end_date)->format('d-m-Y'),
                 'tat' => $sales->salesReschedule->tat,
@@ -179,8 +179,8 @@ class SalesController extends Controller
             'salesDetail' => [
                 'id' => $sales->id,
                 'customer' => $sales->customer->name,
-                'registration' => $sales->ac_reg,
-                'properties' => $sales->tmb_properties,
+                'acReg' => $sales->ac_reg,
+                'registration' => $sales->registration,
                 'level' => $sales->level,
                 'status' => $sales->status,
                 'other' => $sales->other,
@@ -213,6 +213,7 @@ class SalesController extends Controller
         ], 200);
     }
 
+    // TODO perlu konfirmasi -> field sales apa aja yg bisa diupdate datanya
     public function update($id)
     {
         $sales = Sales::find($id);

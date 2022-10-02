@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 class FileController extends Controller
 {
@@ -30,7 +29,7 @@ class FileController extends Controller
         ], 200);
     }
 
-    public function create(Request $request)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'files' => 'required|array',
@@ -118,12 +117,9 @@ class FileController extends Controller
             ], 400);
         }
 
-        // TODO perlu konfirmasi -> format penamaan file yg akan didownload user
-        $filename = Str::remove('attachment/', $file->path);
-
         $headers = [
             'Content-Type' => $file->content_type,            
-            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+            'Content-Disposition' => 'attachment; filename="'.$file->file_name.'"',
         ];
 
         return \Response::make(Storage::disk('public')->get($file->path), 200, $headers);
@@ -141,13 +137,14 @@ class FileController extends Controller
         }
 
         $requirement = $file->salesRequirement;
-        $files = $requirement->files;
-
+        
         if (Storage::disk('public')->exists($file->path)) {
             Storage::disk('public')->delete($file->path);
         }
+
         $file->delete();
-        
+
+        $files = $requirement->files;
         $requirement->status = $files->isNotEmpty() ?? 0;
         $requirement->push();
 
