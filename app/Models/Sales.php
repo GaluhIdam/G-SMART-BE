@@ -159,7 +159,7 @@ class Sales extends Model
         foreach ($requirements as $item) {;
             $data = $item->files;
             if ($data->isNotEmpty()) {
-                $last_update = Carbon::parse($item->lastFile->updated_at)->format('Y-m-d H:i');
+                $last_update = Carbon::parse($item->latestFile->updated_at)->format('Y-m-d H:i');
             } else {
                 $last_update = null;
             }
@@ -193,7 +193,7 @@ class Sales extends Model
             } else {
                 $data = $item->files;
                 if ($data->isNotEmpty()) {
-                    $last_update = Carbon::parse($item->lastFile->updated_at)->format('Y-m-d H:i');
+                    $last_update = Carbon::parse($item->latestFile->updated_at)->format('Y-m-d H:i');
                 } else {
                     $last_update = null;
                 }

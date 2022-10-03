@@ -14,7 +14,7 @@ class ContactPersonController extends Controller
 {
     public function index(Request $request)
     {
-        $customer_id = $request->get('customer');
+        $customer_id = $request->customer;
 
         if ($customer_id) {
             $contact_persons = ContactPerson::byCustomer($customer_id)
@@ -102,7 +102,7 @@ class ContactPersonController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-            ], 400);
+            ], 500);
         }
     }
 
@@ -115,7 +115,7 @@ class ContactPersonController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Data not found',
-            ], 400);
+            ], 404);
         }
 
         $contact_person->delete();

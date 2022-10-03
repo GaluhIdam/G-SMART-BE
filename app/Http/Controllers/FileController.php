@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
 
 class FileController extends Controller
 {
@@ -102,7 +103,7 @@ class FileController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-            ], 400);
+            ], 500);
         }
     }
 
@@ -114,7 +115,7 @@ class FileController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Data not found',
-            ], 400);
+            ], 404);
         }
 
         $headers = [
@@ -133,7 +134,7 @@ class FileController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Data not found',
-            ], 400);
+            ], 404);
         }
 
         $requirement = $file->salesRequirement;

@@ -141,7 +141,7 @@ class SalesController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Data not found',
-            ], 400);
+            ], 404);
         }
 
         $total_sales = (int)$sales->value;
