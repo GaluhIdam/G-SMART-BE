@@ -126,6 +126,58 @@ class FileController extends Controller
         return \Response::make(Storage::disk('public')->get($file->path), 200, $headers);
     }
 
+    public function history($sales_id, Request $request)
+    {
+        $sales = Sales::find($sales_id);
+        $filter = $request->filter;
+
+        if (!$sales) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data not found',
+            ], 404);
+        }
+
+        $requirements = $sales->salesRequirements->whereNotIn('requirement_id', [1, 8, 10]);
+        $requirement_ids = [];
+        
+        foreach ($requirements as $item) {
+            $requirement_ids[] = $item->id;
+        }
+
+        $files = File::whereIn('sales_requirement_id', $requirement_ids)
+                        ->when($filter, function ($query) use ($filter) {
+                            $query->whereMonth("updated_at", $filter);
+                        })
+                        ->get()
+                        ->groupBy(function ($item) {
+                            return $item->updated_at->format('d F Y');
+                        });
+
+        $file_histories = [];
+        foreach ($files as $key => $file) {
+            $date = $key;
+            $file_histories[] = [
+                'uploadedAt' => $date,
+                'totalFiles' => $file->count(),
+                'files' => $file,
+            ];
+        }
+
+        $month = Carbon::create()->day(1)->month($filter)->year(Carbon::now()->format('Y'));
+
+        $data = collect([
+            'month' => $month->format('F Y'),
+            'history' => $file_histories,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data successfully',
+            'data' => $data,
+        ], 200);
+    }
+
     public function destroy($id)
     {
         $file = File::find($id);

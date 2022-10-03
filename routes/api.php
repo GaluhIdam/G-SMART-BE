@@ -180,6 +180,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('file', [FileController::class, 'index'])->middleware(['permission:read_file|manage_file']);
     Route::post('file-create', [FileController::class, 'store'])->middleware(['permission:create_file|manage_file']);
     Route::get('file-show/{id}', [FileController::class, 'show'])->middleware(['permission:show_file|manage_file']);
+    Route::get('file-history/{sales_id}', [FileController::class, 'history']);
     Route::delete('file-delete/{id}', [FileController::class, 'destroy'])->middleware(['permission:delete_file|manage_file']);
     
     //Level

@@ -15,105 +15,27 @@ class SalesLevelSeeder extends Seeder
      */
     public function run()
     {
-        SalesLevel::create([
-            'sales_id'  => 1,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 2,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 3,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 4,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 5,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 6,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 7,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 8,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 9,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 10,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 1,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 2,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 3,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 4,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 5,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 6,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 7,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 8,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 9,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
-        SalesLevel::create([
-            'sales_id'  => 10,
-            'level_id'  => rand(1,4),
-            'status' => rand(1,4),
-        ]);
+        for ($i = 1; $i <= 10; $i++) {
+            SalesLevel::create([
+                'sales_id' => 1,
+                'level_id' => $i,
+                'status' => 1,
+            ]);
+            SalesLevel::create([
+                'sales_id' => 2,
+                'level_id' => $i,
+                'status' => 1,
+            ]);
+            SalesLevel::create([
+                'sales_id' => 3,
+                'level_id' => $i,
+                'status' => 1,
+            ]);
+            SalesLevel::create([
+                'sales_id' => 4,
+                'level_id' => $i,
+                'status' => 1,
+            ]);
+        }
     }
 }
