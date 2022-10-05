@@ -18,23 +18,23 @@ class LineSeeder extends Seeder
         for ($i = 1; $i <= 10; $i++) {
             Line::create([
                 'hangar_id' => 1,
-                'code' => 'LN'.$i,
-                'name' => 'Line '.$i,
+                'code' => "H1L{$i}",
+                'name' => "Hangar 1 Line {$i}",
             ]);
             Line::create([
                 'hangar_id' => 2,
-                'code' => 'LN'.$i,
-                'name' => 'Line '.$i,
+                'code' => "H2L{$i}",
+                'name' => "Hangar 2 Line {$i}",
             ]);
             Line::create([
                 'hangar_id' => 3,
-                'code' => 'LN'.$i,
-                'name' => 'Line '.$i,
+                'code' => "H3L{$i}",
+                'name' => "Hangar 3 Line {$i}",
             ]);
             Line::create([
                 'hangar_id' => 4,
-                'code' => 'LN'.$i,
-                'name' => 'Line '.$i,
+                'code' => "H4L{$i}",
+                'name' => "Hangar 4 Line {$i}",
             ]);
         }
     }

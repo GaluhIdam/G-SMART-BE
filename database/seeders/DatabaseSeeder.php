@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             TMBSeeder::class,
             ProspectTMBSeeder::class,
             HangarSeeder::class,
+            LineSeeder::class,
             SalesSeeder::class,
             SalesHistorySeeder::class,
             SalesRejectSeeder::class,

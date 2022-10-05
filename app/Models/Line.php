@@ -10,11 +10,11 @@ class Line extends Model
     use HasFactory;
 
     protected $table = 'lines';
-    protected $guarded = [];
+    protected $guarded = ['id'];
 
     public function hangar()
     {
-        return $this->belongsTo(Hangar::class, 'hangar_id')
+        return $this->belongsTo(Hangar::class, 'hangar_id');
     }
 
     public function sales()
