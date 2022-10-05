@@ -33,7 +33,7 @@ class Sales extends Model
 
     const RKAP_ARRAY = [
         self::IS_RKAP => 'RKAP',
-        self::NOT_RKAP => 'NOT-RKAP',
+        self::NOT_RKAP => 'Additional',
     ];
 
     protected $fillable = [
