@@ -13,6 +13,9 @@ class File extends Model
     const FILE_PNG = 'png';
     const FILE_JPG = 'jpg';
     const FILE_JPEG = 'jpeg';
+    const FILE_XLSX = 'xlsx';
+    const FILE_DOCX = 'docx';
+    const FILE_DOC = 'doc';
     const FILE_PDF = 'pdf';
     const FILE_EML = 'eml';
 
@@ -20,6 +23,9 @@ class File extends Model
         self::FILE_PNG => 'image/png',
         self::FILE_JPG => 'image/jpg',
         self::FILE_JPEG => 'image/jpeg',
+        self::FILE_XLSX => 'application/xlsx',
+        self::FILE_DOCX => 'application/docx',
+        self::FILE_DOC => 'application/doc',
         self::FILE_PDF => 'application/pdf',
         self::FILE_EML => 'application/eml',
     ];
@@ -36,7 +42,6 @@ class File extends Model
 
     public function getFileNameAttribute()
     {
-        // TODO perlu konfirmasi -> format penamaan file yg akan didownload user
         return Str::remove('attachment/', $this->path);
     }
 

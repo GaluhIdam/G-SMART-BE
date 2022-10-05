@@ -6,7 +6,6 @@ use App\Models\File;
 use App\Models\Sales;
 use App\Models\SalesRequirement;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\QueryException;
@@ -32,19 +31,12 @@ class FileController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'files' => 'required|array',
-            'files.*' => 'required|file|mimes:jpeg,jpg,png,pdf,eml|max:5120',
+            'files.*' => 'required|file|mimes:jpeg,jpg,png,pdf,doc,docx,xlsx,eml|max:5120',
             'sales_id' => 'required|integer|exists:sales,id',
             'requirement_id' => 'required|integer|exists:requirements,id',
         ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors(),
-            ], 400);
-        }
 
         try {
             DB::beginTransaction();
@@ -75,7 +67,8 @@ class FileController extends Controller
             }
             
             foreach ($files as $file) {
-                $file_path = Storage::disk('public')->putFile('attachment', $file);
+                $file_name = Carbon::now()->format('dmyHis').'_'.$file->getClientOriginalName();
+                $file_path = Storage::disk('public')->putFileAs('attachment', $file, $file_name);
                 $temp_paths[] = $file_path;
 
                 $new_file = new File;

@@ -6,7 +6,6 @@ use App\Models\ContactPerson;
 use App\Models\Sales;
 use App\Models\SalesRequirement;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
 
@@ -33,7 +32,7 @@ class ContactPersonController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $requst->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:50',
             // 'email' => 'required|string|email:rfc,dns|unique:contact_persons,email', // TODO perlu konfirmasi
@@ -43,13 +42,6 @@ class ContactPersonController extends Controller
             'status' => 'required|boolean',
             'sales_id' => 'required|integer|exists:sales,id',
         ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors(),
-            ], 400);
-        }
 
         try {
             DB::beginTransaction();
