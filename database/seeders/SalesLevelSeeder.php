@@ -17,23 +17,23 @@ class SalesLevelSeeder extends Seeder
     {
         for ($i = 1; $i <= 10; $i++) {
             SalesLevel::create([
-                'sales_id' => 1,
-                'level_id' => $i,
+                'sales_id' => $i,
+                'level_id' => 1,
                 'status' => 1,
             ]);
             SalesLevel::create([
-                'sales_id' => 2,
-                'level_id' => $i,
+                'sales_id' => $i,
+                'level_id' => 2,
                 'status' => 1,
             ]);
             SalesLevel::create([
-                'sales_id' => 3,
-                'level_id' => $i,
+                'sales_id' => $i,
+                'level_id' => 3,
                 'status' => 1,
             ]);
             SalesLevel::create([
-                'sales_id' => 4,
-                'level_id' => $i,
+                'sales_id' => $i,
+                'level_id' => 4,
                 'status' => 1,
             ]);
         }
