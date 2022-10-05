@@ -56,6 +56,12 @@ return new class extends Migration
             $table->index('ams_id');
             $table->foreign('ams_id')->references('id')->on('ams')->onDelete('cascade')->onUpdate('cascade');
 
+            // $table->unsignedBigInteger('line_id');
+            // $table->index('line_id');
+            // $table->foreign('line_id')->references('id')->on('lines')->nullable()->onDelete('cascade')->onUpdate('cascade');
+
+            $table->foreignId('line_id')->nullable()->constrained();
+
             $table->string('ac_reg');
             $table->decimal('value');
             $table->integer('tat');

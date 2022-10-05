@@ -431,4 +431,14 @@ class Sales extends Model
     {
         return $this->hasOne(SalesLevel::class); // TODO perlu konfirmasi (diskusi)
     }
+
+    public function ams()
+    {
+        return $this->belongsTo(AMS::class, 'ams_id');
+    }
+
+    public function line()
+    {
+        return $this->belongsTo(Line::class, 'line_id');
+    }
 }

@@ -42,6 +42,7 @@ class SalesSeeder extends Seeder
                 'apu_id' => rand(1,5),
                 'is_rkap' => rand(0,1),
                 'ams_id' => rand(1,3),
+                'line_id' => null,
             ]);
         }
     }

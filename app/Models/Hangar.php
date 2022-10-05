@@ -20,4 +20,9 @@ class Hangar extends Model
     {
         return $this->hasMany(SalesReschedule::class);
     }
+
+    public function lines()
+    {
+        return $this->hasMany(Line::class);
+    }
 }

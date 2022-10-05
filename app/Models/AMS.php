@@ -30,4 +30,9 @@ class AMS extends Model
     {
         return $this->hasMany(AMSTarget::class, 'ams_id');
     }
+
+    public function sales()
+    {
+        return $this->hasMany(Sales::class);
+    }
 }
