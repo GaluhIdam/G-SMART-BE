@@ -80,7 +80,8 @@ class ContactPersonController extends Controller
                 $requirement->push();
             }
 
-            // TODO recheck status level
+            $level_id = $requirement->requirement->level_id;
+            $sales->checkLevelStatus($level_id);
 
             DB::commit();
 
@@ -119,7 +120,8 @@ class ContactPersonController extends Controller
         $requirement->status = $active_cp->isNotEmpty() ?? 0;
         $requirement->push();
 
-        // TODO recheck status level
+        $level_id = $requirement->requirement->level_id;
+        $sales->checkLevelStatus($level_id);
 
         return response()->json([
             'success' => true,

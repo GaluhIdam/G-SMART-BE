@@ -80,23 +80,8 @@ class FileController extends Controller
                 $temp_files[] = $new_file;
             }
 
-            // $level_id = $requirement->requirement->level_id;
-            // $sales->checkLevelStatus($level_id);
-
-            $requirements = $sales->salesRequirements;
-            $sales_level = $sales->salesLevel->firstWhere('level_id', $requirement->requirement->level_id);
-
-            $requirement_done = 0;
-            foreach ($requirements as $requirement) {
-                if ($requirement->status == 1) {
-                    $requirement_done += 1;
-                }
-            }
-
-            if ($requirement_done == $requirements->count()) {
-                $sales_level->status = 3;
-                $sales_level->push();
-            }
+            $level_id = $requirement->requirement->level_id;
+            $sales->checkLevelStatus($level_id);
 
             DB::commit();
 
@@ -213,7 +198,9 @@ class FileController extends Controller
         $requirement->status = $files->isNotEmpty() ?? 0;
         $requirement->push();
 
-        // TODO recheck status level
+        $sales = $requirement->sales;;
+        $level_id = $requirement->requirement->level_id;
+        $sales->checkLevelStatus($level_id);
 
         return response()->json([
             'success' => true,

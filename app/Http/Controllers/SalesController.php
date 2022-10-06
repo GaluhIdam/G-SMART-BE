@@ -199,7 +199,7 @@ class SalesController extends Controller
                 'deviasi' => $deviasi,
             ], 
             'salesReschedule' => $sales_reschedule ?? null,
-            'salesReject' => $sales_reject ?? null, // TODO close/reject all sales activity where sales was canceled
+            'salesReject' => $sales_reject ?? null, // TODO close/reject all activity where sales status was canceled
             'level4' => $sales->level4,
             'level3' => $sales->level3,
             'level2' => $sales->level2,

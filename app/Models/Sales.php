@@ -60,6 +60,23 @@ class Sales extends Model
         'level1',
     ];
 
+    public function checkLevelStatus($level_id)
+    {
+        $sales_level = $this->salesLevel->firstWhere('level_id', $level_id);
+        $requirement_ids = $sales_level->level->requirements->pluck('id');
+        $requirements = $this->salesRequirements->whereIn('requirement_id', $requirement_ids);
+
+        $requirement_done = 0;
+        foreach ($requirements as $requirement) {
+            if ($requirement->status == 1) {
+                $requirement_done += 1;
+            }
+        }
+
+        $sales_level->status = ($requirement_done == $requirements->count()) ? 3 : 1;
+        $sales_level->push();
+    }
+
     public function getStatusAttribute()
     {
         $level = $this->salesLevel->firstWhere('level_id', $this->level);
@@ -203,8 +220,8 @@ class Sales extends Model
                     ];
                     $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
                 } else {
-                    // TODO confirmation needed
-                    // $data = Line::where('hangar_id', $this->hangar->id)->get();
+                    // TODO perlu konfirmasi -> ambil dari list line yg berelasi dengan hangar saja atau seluruh line
+                    $data = Line::where('hangar_id', $this->hangar->id)->get();
                     $last_update = null;
                 }
             } else {
