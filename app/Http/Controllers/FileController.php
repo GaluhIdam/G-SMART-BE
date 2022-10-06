@@ -65,6 +65,8 @@ class FileController extends Controller
                 $requirement->status = 1;
                 $requirement->push();
             }
+
+            // TODO recheck status level 
             
             foreach ($files as $file) {
                 $file_name = Carbon::now()->format('dmyHis').'_'.$file->getClientOriginalName();
@@ -193,6 +195,8 @@ class FileController extends Controller
         $files = $requirement->files;
         $requirement->status = $files->isNotEmpty() ?? 0;
         $requirement->push();
+
+        // TODO recheck status level
 
         return response()->json([
             'success' => true,

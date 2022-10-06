@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 use App\Models\SalesRequirement;
+use App\Models\SalesLevel;
 
 class Sales extends Model
 {
@@ -18,11 +19,7 @@ class Sales extends Model
     const STATUS_CLOSED_SALES = 3;
     const STATUS_CANCEL = 4;
     const IS_RKAP = 1;
-    const NOT_RKAP = 0;
-    const LEVEL_1 = 1;
-    const LEVEL_2 = 2;
-    const LEVEL_3 = 3;
-    const LEVEL_4 = 4;
+    const ADDITIONAL = 0;
 
     const STATUS_ARRAY = [
         self::STATUS_OPEN => 'Open',
@@ -33,7 +30,7 @@ class Sales extends Model
 
     const RKAP_ARRAY = [
         self::IS_RKAP => 'RKAP',
-        self::NOT_RKAP => 'Additional',
+        self::ADDITIONAL => 'Additional',
     ];
 
     protected $fillable = [
@@ -64,7 +61,11 @@ class Sales extends Model
 
     public function getStatusAttribute()
     {
-        return self::STATUS_ARRAY[$this->salesLevel->status];
+        $level = SalesLevel::where('sales_id', $this->id)
+                            ->where('level_id', $this->level)
+                            ->first();
+
+        return self::STATUS_ARRAY[$level->status];
     }
 
     public function getOtherAttribute()
@@ -89,7 +90,16 @@ class Sales extends Model
 
     public function getLevelAttribute()
     {
-        return $this->salesLevel->level->level;
+        $levels = SalesLevel::where('sales_id', $this->id)
+                            ->orderBy('level_id', 'DESC')
+                            ->get();
+
+        foreach ($levels as $item) {
+            // TODO must check if status sales closed in level 1
+            if ($item->status != 3) {
+                return $item->level_id;
+            }
+        }
     }
 
     public function getProgressAttribute()
@@ -183,9 +193,16 @@ class Sales extends Model
         
         foreach ($requirements as $item) {;
             if ($item->requirement_id == 8) {
-                $data = $this->hangar;
+                $data = $this->line;
                 if ($data) {
-                    // TODO perlu konfirmasi -> requirement slot hangar dapet dari mana?
+                    $data = [
+                        'hangar' => $this->hangar->name,
+                        'line' => $this->line->name,
+                        'tat' => $this->tat,
+                        'registration' => $this->registration,
+                        'startDate' => Carbon::parse($this->start_date)->format('d-m-Y'),
+                        'startDate' => Carbon::parse($this->end_date)->format('d-m-Y'),
+                    ];
                     $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
                 } else {
                     $last_update = null;
@@ -247,10 +264,12 @@ class Sales extends Model
 
     // query untuk global search tabel salesplan
     public function scopeSearch($query, $search)
-    {
+    {   // TODO fixing query
         $query->when($search, function ($query) use ($search) {
             if (str_contains(strtolower($search), 'rkap')) {
                 $query->where('is_rkap', 1);
+            } else if (!strcasecmp($search, 'additional')) {
+                $query->where('is_rkap', 2);
             } else if (!strcasecmp($search, 'open')) {
                 $query->whereRelation('salesLevel', 'status', 1);
             } else if (!strcasecmp($search, 'cancel')) {
@@ -310,7 +329,7 @@ class Sales extends Model
 
     // query untuk sorting data tabel salesplan
     public function scopeSort($query, array $orders)
-    {
+    {   // TODO fixing query
         $order = $orders[0];
         $by = $orders[1];
 
@@ -429,7 +448,7 @@ class Sales extends Model
 
     public function salesLevel()
     {
-        return $this->hasOne(SalesLevel::class); // TODO perlu konfirmasi (diskusi)
+        return $this->hasMany(SalesLevel::class);
     }
 
     public function ams()

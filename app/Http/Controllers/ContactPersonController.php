@@ -35,7 +35,6 @@ class ContactPersonController extends Controller
         $requst->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:50',
-            // 'email' => 'required|string|email:rfc,dns|unique:contact_persons,email', // TODO perlu konfirmasi
             'email' => 'required|string|email|unique:contact_persons,email',
             'address' => 'required|string|max:255',
             'title' => 'required|string|max:255',
@@ -81,6 +80,8 @@ class ContactPersonController extends Controller
                 $requirement->push();
             }
 
+            // TODO recheck status level
+
             DB::commit();
 
             return response()->json([
@@ -117,6 +118,8 @@ class ContactPersonController extends Controller
         $requirement = $sales->salesRequirements->where('requirement_id', 1)->first();
         $requirement->status = $active_cp->isNotEmpty() ?? 0;
         $requirement->push();
+
+        // TODO recheck status level
 
         return response()->json([
             'success' => true,

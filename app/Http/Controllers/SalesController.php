@@ -78,7 +78,7 @@ class SalesController extends Controller
         // data untuk 5 overview card [ter-atas] user sales
         $user_target = auth()->user()->ams->amsTargets->sum('value'); // total user sales [target]
         $user_open = $sales_by_user->where('salesLevel.status', 1)->sum('value'); // total user sales [open]
-        $user_closed = $sales_by_user->where('salesLevel.status', 2)->sum('value'); // total user sales [closed]
+        $user_closed = $sales_by_user->where('salesLevel.status', 3)->sum('value'); // total user sales [closed]
         $user_cancel = $sales_by_user->where('salesLevel.status', 4)->sum('value'); // total user sales [cancel]
 
         // menampung overview data untuk [4 card level]
@@ -87,12 +87,12 @@ class SalesController extends Controller
             ${"level$i"} = [ // level[1-4]
                 'total' => $user_sales->sum('value'), // user total [all] sales 
                 'open' => $user_sales->where('salesLevel.status', 1)->sum('value'), // user total [open] sales
-                'closed' => $user_sales->where('salesLevel.status', 2)->sum('value'), // user total [closed] sales
-                'closeIn' => $user_sales->where('salesLevel.status', 3)->sum('value'), // user total [close-in] sales
+                'closeIn' => $user_sales->where('salesLevel.status', 2)->sum('value'), // user total [close-in] sales
+                'closed' => $user_sales->where('salesLevel.status', 3)->sum('value'), // user total [closed] sales
                 'cancel' => $user_sales->where('salesLevel.status', 4)->sum('value'), // user total [cancel] sales
                 'countOpen' => $user_sales->where('salesLevel.status', 1)->count(), // user [open] sales count
-                'countClosed' => $user_sales->where('salesLevel.status', 2)->count(), // user [closed] sales count
-                'countCloseIn' => $user_sales->where('salesLevel.status', 3)->count(), // user [close-in] sales count
+                'countCloseIn' => $user_sales->where('salesLevel.status', 2)->count(), // user [close-in] sales count
+                'countClosed' => $user_sales->where('salesLevel.status', 3)->count(), // user [closed] sales count
                 'countCancel' => $user_sales->where('salesLevel.status', 4)->count(), // user [cancel] sales count
             ];
         }
@@ -102,7 +102,7 @@ class SalesController extends Controller
 
         // overview data (all sales) untuk [modal salesplan total]
         $all_open = $all_sales->where('salesLevel.status', 1)->sum('value'); // total all sales [open]
-        $all_closed = $all_sales->where('salesLevel.status', 2)->sum('value'); // total all sales [closed]
+        $all_closed = $all_sales->where('salesLevel.status', 3)->sum('value'); // total all sales [closed]
         $all_cancel = $all_sales->where('salesLevel.status', 4)->sum('value'); // total all sales [cancel]
 
         $data = [
@@ -178,7 +178,7 @@ class SalesController extends Controller
             'user' => auth()->user(),
             'salesDetail' => [
                 'id' => $sales->id,
-                'customer' => $sales->customer->name,
+                'customer' => $sales->customer->only(['id', 'name']),
                 'acReg' => $sales->ac_reg,
                 'registration' => $sales->registration,
                 'level' => $sales->level,
