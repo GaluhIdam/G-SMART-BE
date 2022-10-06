@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\File;
 use App\Models\Sales;
 use App\Models\SalesRequirement;
+use App\Models\SalesLevel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -43,7 +44,7 @@ class FileController extends Controller
 
             $sales = Sales::find($request->sales_id);
             $requirement = $sales->salesRequirements->where('requirement_id', $request->requirement_id);
-            $files = $request->file('files'); 
+            $files = $request->file('files');
             $temp_paths = [];
             $temp_files = [];
             
@@ -66,8 +67,6 @@ class FileController extends Controller
                 $requirement->push();
             }
 
-            // TODO recheck status level 
-            
             foreach ($files as $file) {
                 $file_name = Carbon::now()->format('dmyHis').'_'.$file->getClientOriginalName();
                 $file_path = Storage::disk('public')->putFileAs('attachment', $file, $file_name);
@@ -79,6 +78,24 @@ class FileController extends Controller
                 $new_file->save();
 
                 $temp_files[] = $new_file;
+            }
+
+            // $level_id = $requirement->requirement->level_id;
+            // $sales->checkLevelStatus($level_id);
+
+            $requirements = $sales->salesRequirements;
+            $sales_level = $sales->salesLevel->firstWhere('level_id', $requirement->requirement->level_id);
+
+            $requirement_done = 0;
+            foreach ($requirements as $requirement) {
+                if ($requirement->status == 1) {
+                    $requirement_done += 1;
+                }
+            }
+
+            if ($requirement_done == $requirements->count()) {
+                $sales_level->status = 3;
+                $sales_level->push();
             }
 
             DB::commit();

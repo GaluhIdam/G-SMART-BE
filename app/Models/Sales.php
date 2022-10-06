@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 
 use App\Models\SalesRequirement;
 use App\Models\SalesLevel;
+use App\Models\Line;
 
 class Sales extends Model
 {
@@ -61,9 +62,7 @@ class Sales extends Model
 
     public function getStatusAttribute()
     {
-        $level = SalesLevel::where('sales_id', $this->id)
-                            ->where('level_id', $this->level)
-                            ->first();
+        $level = $this->salesLevel->firstWhere('level_id', $this->level);
 
         return self::STATUS_ARRAY[$level->status];
     }
@@ -95,7 +94,6 @@ class Sales extends Model
                             ->get();
 
         foreach ($levels as $item) {
-            // TODO must check if status sales closed in level 1
             if ($item->status != 3) {
                 return $item->level_id;
             }
@@ -201,10 +199,12 @@ class Sales extends Model
                         'tat' => $this->tat,
                         'registration' => $this->registration,
                         'startDate' => Carbon::parse($this->start_date)->format('d-m-Y'),
-                        'startDate' => Carbon::parse($this->end_date)->format('d-m-Y'),
+                        'endDate' => Carbon::parse($this->end_date)->format('d-m-Y'),
                     ];
                     $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
                 } else {
+                    // TODO confirmation needed
+                    // $data = Line::where('hangar_id', $this->hangar->id)->get();
                     $last_update = null;
                 }
             } else {

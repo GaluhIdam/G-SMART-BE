@@ -32,7 +32,7 @@ class ContactPersonController extends Controller
 
     public function store(Request $request)
     {
-        $requst->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:50',
             'email' => 'required|string|email|unique:contact_persons,email',
