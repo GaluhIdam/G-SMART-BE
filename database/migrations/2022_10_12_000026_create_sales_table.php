@@ -23,52 +23,24 @@ return new class extends Migration
             $table->unsignedBigInteger('prospect_id');
             $table->index('prospect_id');
             $table->foreign('prospect_id')->references('id')->on('prospects')->onDelete('cascade')->onUpdate('cascade');
-            
-            $table->unsignedBigInteger('maintenance_id');
-            $table->index('maintenance_id');
-            $table->foreign('maintenance_id')->references('id')->on('maintenances')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->unsignedBigInteger('hangar_id');
-            $table->index('hangar_id');
-            $table->foreign('hangar_id')->references('id')->on('hangars')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('maintenance_id')->nullable()->constrained('maintenances');
+            $table->foreignId('hangar_id')->nullable()->constrained('hangars');
+            $table->foreignId('product_id')->nullable()->constrained('products');
+            $table->foreignId('ac_type_id')->nullable()->constrained('ac_type_id');
+            $table->foreignId('component_id')->nullable()->constrained('component_id');
+            $table->foreignId('engine_id')->nullable()->constrained('engine_id');
+            $table->foreignId('apu_id')->nullable()->constrained('apu_id');
+            $table->foreignId('ams_id')->nullable()->constrained('ams');
+            $table->foreignId('line_id')->nullable()->constrained('lines');
 
-            $table->unsignedBigInteger('product_id');
-            $table->index('product_id');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->unsignedBigInteger('ac_type_id');
-            $table->index('ac_type_id');
-            $table->foreign('ac_type_id')->references('id')->on('ac_type_id')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->unsignedBigInteger('component_id');
-            $table->index('component_id');
-            $table->foreign('component_id')->references('id')->on('component_id')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->unsignedBigInteger('engine_id');
-            $table->index('engine_id');
-            $table->foreign('engine_id')->references('id')->on('engine_id')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->unsignedBigInteger('apu_id');
-            $table->index('apu_id');
-            $table->foreign('apu_id')->references('id')->on('apu_id')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->unsignedBigInteger('ams_id');
-            $table->index('ams_id');
-            $table->foreign('ams_id')->references('id')->on('ams')->onDelete('cascade')->onUpdate('cascade');
-
-            // $table->unsignedBigInteger('line_id');
-            // $table->index('line_id');
-            // $table->foreign('line_id')->references('id')->on('lines')->nullable()->onDelete('cascade')->onUpdate('cascade');
-
-            $table->foreignId('line_id')->nullable()->constrained();
-
-            $table->string('ac_reg');
+            $table->string('ac_reg')->nullable();
             $table->decimal('value');
             $table->integer('tat');
             $table->date('start_date');
-            $table->date('end_date');
+            $table->date('end_date')->nullable();
             $table->string('so_number')->nullable();
-            $table->boolean('is_rkap');
+            $table->boolean('is_rkap')->nullable();
 
             $table->timestamps();
         });
