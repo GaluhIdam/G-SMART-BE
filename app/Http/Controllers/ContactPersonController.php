@@ -16,7 +16,6 @@ class ContactPersonController extends Controller
         $customer_id = $request->customer ?? false;
 
         $contact_persons = ContactPerson::byCustomer($customer_id)
-                                        ->active()
                                         ->paginate(10)
                                         ->withQueryString();
 
@@ -35,7 +34,6 @@ class ContactPersonController extends Controller
             'email' => 'required|string|email|unique:contact_persons,email',
             'address' => 'required|string|max:255',
             'title' => 'required|string|max:255',
-            'status' => 'required|boolean',
             'sales_id' => 'required|integer|exists:sales,id',
         ]);
 
@@ -52,17 +50,15 @@ class ContactPersonController extends Controller
             $customer_cp->address = $request->address;
             $customer_cp->customer_id = $customer->id;
             $customer_cp->title = $request->title;
-            $customer_cp->status = $request->status;
             $customer_cp->save();
 
-            $active_cp = $sales->contact_persons->where('status', 1);
             $requirement = $sales->salesRequirements->where('requirement_id', 1);
 
             if ($requirement->isEmpty()) {
                 $requirement = new SalesRequirement;
                 $requirement->sales_id = $sales->id;
                 $requirement->requirement_id = 1;
-                $requirement->status = $active_cp->isNotEmpty() ?? 0;
+                $requirement->status = 1;
                 $requirement->save();
             } else {
                 if ($requirement->count() > 1) {
@@ -73,7 +69,7 @@ class ContactPersonController extends Controller
                     }
                 }
                 $requirement = $requirement->first();
-                $requirement->status = $active_cp->isNotEmpty() ?? 0;
+                $requirement->status = 1;
                 $requirement->push();
             }
 
@@ -111,10 +107,10 @@ class ContactPersonController extends Controller
 
         $contact_person->delete();
         
-        $active_cp = $sales->contact_persons->where('status', 1);
+        $customer_cp = $sales->contact_persons;
 
         $requirement = $sales->salesRequirements->where('requirement_id', 1)->first();
-        $requirement->status = $active_cp->isNotEmpty() ?? 0;
+        $requirement->status = $customer_cp->isNotEmpty() ?? 0;
         $requirement->push();
 
         $level_id = $requirement->requirement->level_id;

@@ -25,7 +25,6 @@ return new class extends Migration
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('title');
-            $table->boolean('status');
 
             $table->timestamps();
         });
