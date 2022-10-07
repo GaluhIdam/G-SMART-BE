@@ -12,9 +12,16 @@ class ContactPerson extends Model
     protected $table = 'contact_persons';
     protected $guarded = ['id'];
 
+    public function scopeActive($query)
+    {
+        $query->where('status', 1);
+    }
+
     public function scopeByCustomer($query, $customer)
     {
-        $query->where('customer_id', $customer)->where('status', 1);
+        $query->when($customer, function ($query) use ($customer) {
+            $query->where('customer_id', $customer);
+        });
     }
 
     public function customer()

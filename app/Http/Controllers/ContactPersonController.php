@@ -13,15 +13,12 @@ class ContactPersonController extends Controller
 {
     public function index(Request $request)
     {
-        $customer_id = $request->customer;
+        $customer_id = $request->customer ?? false;
 
-        if ($customer_id) {
-            $contact_persons = ContactPerson::byCustomer($customer_id)
-                                            ->paginate(10)
-                                            ->withQueryString();
-        } else {
-            $contact_persons = ContactPerson::all();
-        }
+        $contact_persons = ContactPerson::byCustomer($customer_id)
+                                        ->active()
+                                        ->paginate(10)
+                                        ->withQueryString();
 
         return response()->json([
             'success' => true,
