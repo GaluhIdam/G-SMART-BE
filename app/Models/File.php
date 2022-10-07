@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class File extends Model
 {
@@ -38,6 +39,7 @@ class File extends Model
     protected $appends = [
         'file_name',
         'content_type',
+        'full_path',
     ];
 
     public function getFileNameAttribute()
@@ -52,6 +54,11 @@ class File extends Model
         $extension = strtolower($get_extension[1]);
 
         return self::CONTENT_TYPES[$extension];
+    }
+
+    public function getFullPathAttribute()
+    {
+        return Storage::disk('public')->url($this->path);
     }
 
     public function salesRequirement()
