@@ -107,34 +107,27 @@ class Sales extends Model
     public function getLevelAttribute()
     {
         $levels = SalesLevel::where('sales_id', $this->id)
-                            ->orderBy('level_id', 'DESC')
+                            ->orderBy('level_id', 'ASC')
                             ->get();
 
         foreach ($levels as $item) {
-            if ($item->status != 3) {
+            if ($item->status == 4) {
                 return $item->level_id;
+            } else if ($item->status == 3) {
+                return ($item->level_id == 1) ? $item->level_id : $item->level_id-1;
+            } else {
+                if ($item->level_id != 4) {
+                    continue;
+                } else {
+                    return $item->level_id;
+                }
             }
         }
     }
 
     public function getProgressAttribute()
     {
-        $progress = 0;
-
-        $levels = [
-            $this->level4,
-            $this->level3,
-            $this->level2,
-            $this->level1,
-        ];
-
-        foreach ($levels as $level) {
-            foreach ($level as $requirement) {
-                if ($requirement->status == 1) $progress += 10;
-            }
-        }
-
-        return $progress;
+        return $this->requirementDone()->count() * 10;
     }
 
     public function getContactPersonsAttribute()
@@ -149,7 +142,7 @@ class Sales extends Model
         
         foreach ($requirements as $item) {
             if ($item->requirement_id == 1) {
-                $data = $this->contact_persons->where('status', 1)->values();
+                $data = $this->contact_persons->values();
                 if ($data->isNotEmpty()) {
                     $last_update = Carbon::parse($this->customer->latestCP->updated_at)->format('Y-m-d H:i');
                 } else {
@@ -212,7 +205,7 @@ class Sales extends Model
                 if ($data) {
                     $data = [
                         'hangar' => $this->hangar->name,
-                        'line' => $this->line->name,
+                        'line' => $this->line,
                         'tat' => $this->tat,
                         'registration' => $this->registration,
                         'startDate' => Carbon::parse($this->start_date)->format('d-m-Y'),
@@ -220,7 +213,6 @@ class Sales extends Model
                     ];
                     $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
                 } else {
-                    // TODO perlu konfirmasi -> ambil dari list line yg berelasi dengan hangar saja atau seluruh line
                     $data = Line::where('hangar_id', $this->hangar->id)->get();
                     $last_update = null;
                 }
@@ -281,12 +273,12 @@ class Sales extends Model
 
     // query untuk global search tabel salesplan
     public function scopeSearch($query, $search)
-    {   // TODO fixing query
+    {
         $query->when($search, function ($query) use ($search) {
             if (str_contains(strtolower($search), 'rkap')) {
                 $query->where('is_rkap', 1);
-            } else if (!strcasecmp($search, 'additional')) {
-                $query->where('is_rkap', 2);
+            } else if (str_contains(strtolower($search), 'additional')) {
+                $query->where('is_rkap', 0);
             } else if (!strcasecmp($search, 'open')) {
                 $query->whereRelation('salesLevel', 'status', 1);
             } else if (!strcasecmp($search, 'cancel')) {
@@ -300,6 +292,8 @@ class Sales extends Model
                     $query->whereRelation('salesLevel', 'status', 2)
                         ->orWhereRelation('salesLevel', 'status', 3);
                 }
+            } else if (str_contains(strtolower($search), 'level')) {
+                $query->whereRelation('salesLevel', 'level_id', substr($search, -1));
             } else {
                 $query->whereRelation('customer', 'name', 'LIKE', "%$search%")
                     ->orWhereRelation('product', 'name', 'LIKE', "%$search%")
@@ -346,7 +340,7 @@ class Sales extends Model
 
     // query untuk sorting data tabel salesplan
     public function scopeSort($query, array $orders)
-    {   // TODO fixing query
+    {
         $order = $orders[0];
         $by = $orders[1];
 
@@ -377,13 +371,8 @@ class Sales extends Model
                 $query->withAggregate('salesLevel', 'level_id')
                     ->orderBy('sales_level_level_id', $by);
             } else if ($order == 'progress') {
-                if (!strcasecmp($by, 'asc')) {
-                    $query->withAggregate('salesLevel', 'level_id')
-                        ->orderBy('sales_level_level_id', 'desc');
-                } else if (!strcasecmp($by, 'desc')) {
-                    $query->withAggregate('salesLevel', 'level_id')
-                        ->orderBy('sales_level_level_id', 'asc');
-                }
+                $query->withCount('requirementDone')
+                    ->orderBy('requirement_done_count', $by);
             } else if ($order == 'status') {
                 $query->withAggregate('salesLevel', 'status')
                     ->orderBy('sales_level_status', $by);
@@ -391,6 +380,11 @@ class Sales extends Model
                 $query->orderBy('id', $by);
             }
         });
+    }
+
+    public function requirementDone()
+    {
+        return $this->hasMany(SalesRequirement::class)->where('status', 1);
     }
 
     public function salesReschedule()
