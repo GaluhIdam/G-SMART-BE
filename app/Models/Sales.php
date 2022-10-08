@@ -86,7 +86,7 @@ class Sales extends Model
 
     public function getOtherAttribute()
     {
-        return self::RKAP_ARRAY[$this->is_rkap];
+        return self::RKAP_ARRAY[$this->is_rkap ?? 0];
     }
 
     public function getRegistrationAttribute()

@@ -200,7 +200,8 @@ Route::middleware('auth:sanctum')->group(function () {
     //Sales
     Route::get('sales', [SalesController::class, 'index'])->middleware(['permission:read_sales|manage_sales']);
     Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales|manage_sales']);
-    // Route::post('sales-create', [SalesController::class, 'create'])->middleware(['permission:create_sales|manage_sales']);
+    Route::post('sales-create-tmb', [SalesController::class, 'createTmb'])->middleware(['permission:create_sales|manage_sales']);
+    // Route::post('sales-create-pbth', [SalesController::class, 'createPbth'])->middleware(['permission:create_sales|manage_sales']);
     // Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']); // TODO sales plan update
     // Route::delete('sales-delete/{id}', [SalesController::class, 'destroy'])->middleware(['permission:delete_sales|manage_sales']);
     

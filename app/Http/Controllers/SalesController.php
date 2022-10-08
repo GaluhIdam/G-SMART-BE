@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sales;
+use App\Models\SalesLevel;
+use App\Models\SalesRequirement;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class SalesController extends Controller
 {
@@ -60,7 +63,7 @@ class SalesController extends Controller
             $user_salesplan->push((object)[
                 'id' => $item->id,
                 'customer' => $item->customer->name,
-                'product' => $item->product->name,
+                'product' => $item->product ? $item->product->name : null,
                 'registration' => $item->registration,
                 'acReg' => $item->ac_reg,
                 'other' => $item->other,
@@ -68,8 +71,8 @@ class SalesController extends Controller
                 'level' => $item->level,
                 'progress' => $item->progress,
                 'status' => $item->status,
-                'location' => $item->hangar->name,
-                'maintenance' => $item->maintenance->description,
+                'location' => $item->hangar ? $item->hangar->name : null,
+                'maintenance' => $item->maintenance ? $item->maintenance->description : null,
                 'startDate' => Carbon::parse($item->start_date)->format('Y-m-d'),
                 'endDate' => Carbon::parse($item->end_date)->format('Y-m-d'),
             ]);
@@ -133,6 +136,79 @@ class SalesController extends Controller
         ], 200);
     }
 
+    public function createTmb(Request $request)
+    {
+        $request->validate([
+            'customer_id' => 'required|integer|exists:customers,id',
+            'prospect_id' => 'required|integer|exists:prospects,id',
+            'maintenance_id' => 'required|integer|exists:maintenances,id',
+            'hangar_id' => 'required|integer|exists:hangars,id',
+            'acreg' => 'required|string',
+            'value' => 'required|integer',
+            'tat' => 'required|integer',
+            'start_date' => 'required|date',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $start_date = Carbon::parse($request->start_date);
+            $tat = $request->tat;
+            $end_date = Carbon::parse($request->start_date)->addDays($tat);
+
+            $sales = new Sales;
+            $sales->customer_id = $request->customer_id;
+            $sales->prospect_id = $request->prospect_id;
+            $sales->ac_reg = $request->acreg;
+            $sales->value = $request->value;
+            $sales->maintenance_id = $request->maintenance_id;
+            $sales->hangar_id = $request->hangar_id;
+            $sales->tat = $tat;
+            $sales->start_date = $start_date->format('Y-m-d');
+            $sales->end_date = $end_date->format('Y-m-d');
+            $sales->save();
+
+            for ($i = 1; $i <= 4; $i++) { 
+                $level = new SalesLevel;
+                $level->level_id = $i;
+                $level->sales_id = $sales->id;
+                $level->status = 1;
+                $level->save();
+            }
+
+            for ($i = 1; $i <= 10; $i++) { 
+                $requirement = new SalesRequirement;
+                $requirement->sales_id = $sales->id;
+                $requirement->requirement_id = $i;
+                if ($i == 1) {
+                    $customer_cp = $sales->contact_persons;
+                    $requirement->status = $customer_cp->isNotEmpty() ?? 0;
+                }
+                $requirement->save();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Salesplan created successfully',
+                'data' => $sales,
+            ], 200);
+        } catch (QueryException $e) {
+            DB::rollback();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function createPBTH(Request $request)
+    {
+        // TODO store new salesplan (PBTH type)
+    }
+
     public function show($id)
     {
         $sales = Sales::find($id);
@@ -191,9 +267,9 @@ class SalesController extends Controller
                 'year' => $sales->prospect->year,
                 'startDate' => Carbon::parse($sales->start_date)->format('d-m-Y'),
                 'endDate' => Carbon::parse($sales->end_date)->format('d-m-Y'),
-                'location' => $sales->hangar->name,
-                'product' => $sales->product->name,
-                'maintenance' => $sales->maintenance->description,
+                'location' => $sales->hangar ? $sales->hangar->name : null,
+                'product' => $sales->product ? $sales->product->name : null,
+                'maintenance' => $sales->maintenance ? $sales->maintenance->description : null,
                 'marketShare' => $market_share,
                 'totalSales' => $total_sales,
                 'deviasi' => $deviasi,
@@ -213,18 +289,8 @@ class SalesController extends Controller
         ], 200);
     }
 
-    // TODO perlu konfirmasi -> field sales apa aja yg bisa diupdate datanya
     public function update($id)
     {
-        $sales = Sales::find($id);
-
-        if (!$sales) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data not found',
-            ], 400);
-        }
-
-
+        // TODO perlu konfirmasi -> field apa saja yang datanya bisa diubah
     }
 }
