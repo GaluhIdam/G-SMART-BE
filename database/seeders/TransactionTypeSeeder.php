@@ -23,9 +23,5 @@ class TransactionTypeSeeder extends Seeder
             'name'        => 'PBTH',
             'description' => 'Power By The Hours',
         ]);
-        TransactionType::create([
-            'name'        => 'TMB, PBTH',
-            'description' => 'Mixed',
-        ]);
     }
 }

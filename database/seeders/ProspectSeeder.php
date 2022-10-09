@@ -49,7 +49,7 @@ class ProspectSeeder extends Seeder
         ]);
         Prospect::create([
             'year'                    => 2021,
-            'transaction_type_id'     => 3,
+            'transaction_type_id'     => 2,
             'prospect_type_id'        => 2,
             'strategic_initiative_id' => 1,
             'pm_id'                   => 2,
@@ -57,7 +57,7 @@ class ProspectSeeder extends Seeder
         ]);
         Prospect::create([
             'year'                    => 2020,
-            'transaction_type_id'     => 3,
+            'transaction_type_id'     => 1,
             'prospect_type_id'        => 1,
             'strategic_initiative_id' => 2,
             'pm_id'                   => 3,
