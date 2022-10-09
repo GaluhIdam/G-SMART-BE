@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Sales;
 use App\Models\SalesLevel;
 use App\Models\SalesRequirement;
+use App\Models\Customer;
+use App\Models\Prospect;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -55,7 +57,7 @@ class SalesController extends Controller
         ->sort([$order, $by])
         ->paginate($paginate)
         ->withQueryString();
-        
+
         // define empty collection untuk menampung data [tabel salesplan user]
         $user_salesplan = new Collection();
 
@@ -65,7 +67,7 @@ class SalesController extends Controller
                 'customer' => $item->customer->name,
                 'product' => $item->product ? $item->product->name : null,
                 'registration' => $item->registration,
-                'acReg' => $item->ac_reg,
+                'acReg' => $item->ac_reg ?? null,
                 'other' => $item->other,
                 'type' => $item->type,
                 'level' => $item->level,
@@ -79,34 +81,43 @@ class SalesController extends Controller
         }
 
         // data untuk 5 overview card [ter-atas] user sales
-        $user_target = auth()->user()->ams->amsTargets->sum('value'); // total user sales [target]
-        $user_open = $sales_by_user->where('salesLevel.status', 1)->sum('value'); // total user sales [open]
-        $user_closed = $sales_by_user->where('salesLevel.status', 3)->sum('value'); // total user sales [closed]
-        $user_cancel = $sales_by_user->where('salesLevel.status', 4)->sum('value'); // total user sales [cancel]
+        $user_target = $user->ams->amsTargets->sum('target'); // total user sales [target]
+        $user_open = $sales_by_user->where('status', 'Open')->sum('value'); // total user sales [open]
+        $user_closed = $sales_by_user->where('status', 'Closed')->sum('value'); // total user sales [closed]
+        $user_cancel = $sales_by_user->where('status', 'Cancel')->sum('value'); // total user sales [cancel]
 
         // menampung overview data untuk [4 card level]
         for ($i = 1; $i <= 4; $i++){
-            $user_sales = $sales_by_user->where('salesLevel.level_id', $i); // get data user sales [per-level]
+            $user_sales = $sales_by_user->where('level', $i); // get data user sales [per-level]
             ${"level$i"} = [ // level[1-4]
                 'total' => $user_sales->sum('value'), // user total [all] sales 
-                'open' => $user_sales->where('salesLevel.status', 1)->sum('value'), // user total [open] sales
-                'closeIn' => $user_sales->where('salesLevel.status', 2)->sum('value'), // user total [close-in] sales
-                'closed' => $user_sales->where('salesLevel.status', 3)->sum('value'), // user total [closed] sales
-                'cancel' => $user_sales->where('salesLevel.status', 4)->sum('value'), // user total [cancel] sales
-                'countOpen' => $user_sales->where('salesLevel.status', 1)->count(), // user [open] sales count
-                'countCloseIn' => $user_sales->where('salesLevel.status', 2)->count(), // user [close-in] sales count
-                'countClosed' => $user_sales->where('salesLevel.status', 3)->count(), // user [closed] sales count
-                'countCancel' => $user_sales->where('salesLevel.status', 4)->count(), // user [cancel] sales count
+                'open' => $user_sales->where('status', 'Open')->sum('value'), // user total [open] sales
+                'closeIn' => $user_sales->where('status', 'Close in')->sum('value'), // user total [close-in] sales
+                'closed' => $user_sales->where('status', 'Closed')->sum('value'), // user total [closed] sales
+                'cancel' => $user_sales->where('status', 'Cancel')->sum('value'), // user total [cancel] sales
+                'countOpen' => $user_sales->where('status', 'Open')->count(), // user [open] sales count
+                'countCloseIn' => $user_sales->where('status', 'Close in')->count(), // user [close-in] sales count
+                'countClosed' => $user_sales->where('status', 'Closed')->count(), // user [closed] sales count
+                'countCancel' => $user_sales->where('status', 'Cancel')->count(), // user [cancel] sales count
             ];
+        }
+
+        // TODO temproray -> sorting in collection directly instead of eloquent query
+        if ($order == 'level') {
+            $user_salesplan = ($by == 'asc') ? $user_salesplan->sortBy('level')->values()
+                                            : $user_salesplan->sortByDesc('level')->values();
+        } else if ($order == 'status') {
+            $user_salesplan = ($by == 'asc') ? $user_salesplan->sortBy('status')->values()
+                                            : $user_salesplan->sortByDesc('status')->values();
         }
 
         // modifikasi data pagination
         $sales_by_user->setCollection($user_salesplan);
 
         // overview data (all sales) untuk [modal salesplan total]
-        $all_open = $all_sales->where('salesLevel.status', 1)->sum('value'); // total all sales [open]
-        $all_closed = $all_sales->where('salesLevel.status', 3)->sum('value'); // total all sales [closed]
-        $all_cancel = $all_sales->where('salesLevel.status', 4)->sum('value'); // total all sales [cancel]
+        $all_open = $all_sales->where('status', 'Open')->sum('value'); // total all sales [open]
+        $all_closed = $all_sales->where('status', 'Closed')->sum('value'); // total all sales [closed]
+        $all_cancel = $all_sales->where('status', 'Cancel')->sum('value'); // total all sales [cancel]
 
         $data = [
             'all' => [
@@ -206,7 +217,72 @@ class SalesController extends Controller
 
     public function createPBTH(Request $request)
     {
-        // TODO store new salesplan (PBTH type)
+        $request->validate([
+            'customer_id' => 'required|integer|exists:customers,id',
+            'prospect_id' => 'required|integer|exists:prospects,id',
+            'month' => 'required|array',
+            'month.*' => 'required|integer',
+            'value' => 'required|array',
+            'value.*' => 'required|integer',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $customer = Customer::find($request->customer_id);
+            $prospect = Prospect::find($request->prospect_id);
+            $year = $prospect->year;
+            
+            foreach ($request->month as $months => $month) {
+                $s_date = Carbon::create("{$year}-{$month}-1");
+                $e_date = Carbon::create("{$year}-{$month}-1");
+                
+                $start_date = $s_date->format('Y-m-d');
+                $end_date = $e_date->endOfMonth()->format('Y-m-d');
+                $tat = $s_date->diffInDays($e_date);
+                $value = $request->value[$months];
+
+                $sales = new Sales;
+                $sales->customer_id = $customer->id;
+                $sales->prospect_id = $prospect->id;
+                $sales->value = $value;
+                $sales->tat = $tat;
+                $sales->start_date = $start_date;
+                $sales->end_date = $end_date;
+                $sales->save();
+
+                for ($i = 1; $i <= 4; $i++) {  
+                    $level = new SalesLevel;
+                    $level->level_id = $i;
+                    $level->sales_id = $sales->id;
+                    $level->status = ($i == 1) ? 1 : 3;
+                    $level->save();
+                }
+
+                for ($i = 1; $i <= 10; $i++) { 
+                    $requirement = new SalesRequirement;
+                    $requirement->sales_id = $sales->id;
+                    $requirement->requirement_id = $i;
+                    $requirement->status = ($i == 9) ? 0 : 1;
+                    $requirement->save();
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Salesplan created successfully',
+                'data' => $sales,
+            ], 200);
+        } catch (QueryException $e) {
+            DB::rollback();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function show($id)
@@ -221,7 +297,7 @@ class SalesController extends Controller
         }
 
         $total_sales = (int)$sales->value;
-        if (str_contains($sales->type, 'TMB')) {
+        if (!strcasecmp($sales->type, 'TMB')) {
             $market_share = $sales->prospect->market_share;
             $deviasi = $market_share - $total_sales;
         } else {
@@ -255,7 +331,7 @@ class SalesController extends Controller
             'salesDetail' => [
                 'id' => $sales->id,
                 'customer' => $sales->customer->only(['id', 'name']),
-                'acReg' => $sales->ac_reg,
+                'acReg' => $sales->ac_reg ?? null,
                 'registration' => $sales->registration,
                 'level' => $sales->level,
                 'status' => $sales->status,
@@ -287,6 +363,11 @@ class SalesController extends Controller
             'message' => 'Retrieve data successfully',
             'data' => $data,
         ], 200);
+    }
+
+    public function slotRequest($id, Request $request)
+    {
+        // TODO hangar slot request (update sales requirement)
     }
 
     public function update($id)

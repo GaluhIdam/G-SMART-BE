@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-
 use App\Models\SalesRequirement;
 use App\Models\SalesLevel;
 use App\Models\Line;
@@ -25,7 +24,7 @@ class Sales extends Model
     const STATUS_ARRAY = [
         self::STATUS_OPEN => 'Open',
         self::STATUS_CLOSE_IN => 'Close in',
-        self::STATUS_CLOSED_SALES => 'Closed Sales',
+        self::STATUS_CLOSED_SALES => 'Closed',
         self::STATUS_CANCEL => 'Cancel',
     ];
 
@@ -106,14 +105,13 @@ class Sales extends Model
 
     public function getLevelAttribute()
     {
-        $levels = SalesLevel::where('sales_id', $this->id)
-                            ->orderBy('level_id', 'ASC')
-                            ->get();
+        $levels = $this->salesLevel->sortBy('level_id');
 
         foreach ($levels as $item) {
             if ($item->status == 4) {
                 return $item->level_id;
             } else if ($item->status == 3) {
+                // TODO perlu konfirmasi -> status CLOSED hanya ada di level 1?
                 return ($item->level_id == 1) ? $item->level_id : $item->level_id-1;
             } else {
                 if ($item->level_id != 4) {
@@ -213,7 +211,6 @@ class Sales extends Model
                     ];
                     $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
                 } else {
-                    $data = Line::where('hangar_id', $this->hangar->id)->get();
                     $last_update = null;
                 }
             } else {
@@ -367,15 +364,14 @@ class Sales extends Model
             } else if ($order == 'type') {
                 $query->withAggregate('prospect', 'transaction_type_id')
                     ->orderBy('prospect_transaction_type_id', $by);
-            } else if ($order == 'level') {
-                $query->withAggregate('salesLevel', 'level_id')
-                    ->orderBy('sales_level_level_id', $by);
+            // TODO doesn't work bree...  accessor gak akan kebaca di query database!
+            // } else if ($order == 'level') {
+            //     $query->orderBy('level', $by);
+            // } else if ($order == 'status') {
+            //     $query->orderBy('status', $by);
             } else if ($order == 'progress') {
                 $query->withCount('requirementDone')
                     ->orderBy('requirement_done_count', $by);
-            } else if ($order == 'status') {
-                $query->withAggregate('salesLevel', 'status')
-                    ->orderBy('sales_level_status', $by);
             } else if ($order == 'id') {
                 $query->orderBy('id', $by);
             }
