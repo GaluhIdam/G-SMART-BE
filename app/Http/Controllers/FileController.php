@@ -43,30 +43,11 @@ class FileController extends Controller
             DB::beginTransaction();
 
             $sales = Sales::find($request->sales_id);
-            $requirement = $sales->salesRequirements->where('requirement_id', $request->requirement_id);
+            $requirement_id = $request->requirement_id;
             $files = $request->file('files');
             $temp_paths = [];
             $temp_files = [];
             
-            if ($requirement->isEmpty()) {
-                $requirement = new SalesRequirement;
-                $requirement->sales_id = $sales->id;
-                $requirement->requirement_id = $request->requirement_id;
-                $requirement->status = 1;
-                $requirement->save();
-            } else {
-                if ($requirement->count() > 1) {
-                    foreach ($requirement as $item) {
-                        if ($requirement->count() > 1) {
-                            $item->delete();
-                        }
-                    }
-                }
-                $requirement = $requirement->first();
-                $requirement->status = 1;
-                $requirement->push();
-            }
-
             foreach ($files as $file) {
                 $file_name = Carbon::now()->format('dmyHis').'_'.$file->getClientOriginalName();
                 $file_path = Storage::disk('public')->putFileAs('attachment', $file, $file_name);
@@ -79,6 +60,8 @@ class FileController extends Controller
 
                 $temp_files[] = $new_file;
             }
+
+            $requirement = $sales->setRequirement($requirement_id);
 
             $level_id = $requirement->requirement->level_id;
             $sales->checkLevelStatus($level_id);

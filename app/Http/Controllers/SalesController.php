@@ -150,7 +150,6 @@ class SalesController extends Controller
     public function createTmb(Request $request)
     {
         $request->validate([
-            'customer_id' => 'required|integer|exists:customers,id',
             'prospect_id' => 'required|integer|exists:prospects,id',
             'maintenance_id' => 'required|integer|exists:maintenances,id',
             'hangar_id' => 'required|integer|exists:hangars,id',
@@ -163,13 +162,16 @@ class SalesController extends Controller
         try {
             DB::beginTransaction();
 
+            $prospect = Prospect::find($prospect_id);
+            $customer = $prospect->amsCustomer->customer;
+
             $start_date = Carbon::parse($request->start_date);
             $tat = $request->tat;
             $end_date = Carbon::parse($request->start_date)->addDays($tat);
 
             $sales = new Sales;
-            $sales->customer_id = $request->customer_id;
-            $sales->prospect_id = $request->prospect_id;
+            $sales->customer_id = $customer->id;
+            $sales->prospect_id = $prospect->id;
             $sales->ac_reg = $request->acreg;
             $sales->value = $request->value;
             $sales->maintenance_id = $request->maintenance_id;
@@ -192,7 +194,7 @@ class SalesController extends Controller
                 $requirement->sales_id = $sales->id;
                 $requirement->requirement_id = $i;
                 if ($i == 1) {
-                    $customer_cp = $sales->contact_persons;
+                    $customer_cp = $customer->contact_persons;
                     $requirement->status = $customer_cp->isNotEmpty() ?? 0;
                 }
                 $requirement->save();
@@ -215,10 +217,9 @@ class SalesController extends Controller
         }
     }
 
-    public function createPBTH(Request $request)
+    public function createPbth(Request $request)
     {
         $request->validate([
-            'customer_id' => 'required|integer|exists:customers,id',
             'prospect_id' => 'required|integer|exists:prospects,id',
             'month' => 'required|array',
             'month.*' => 'required|integer',
@@ -229,8 +230,8 @@ class SalesController extends Controller
         try {
             DB::beginTransaction();
 
-            $customer = Customer::find($request->customer_id);
             $prospect = Prospect::find($request->prospect_id);
+            $customer = $prospect->amsCustomer->customer;;
             $year = $prospect->year;
             
             $temp_sales = [];
@@ -379,26 +380,7 @@ class SalesController extends Controller
             $sales->line_id = $request->line_id;
             $sales->push();
 
-            $requirement = $sales->salesRequirements->where('requirement_id', 8);
-
-            if ($requirement->isEmpty()) {
-                $requirement = new SalesRequirement;
-                $requirement->sales_id = $sales->id;
-                $requirement->requirement_id = 1;
-                $requirement->status = 1;
-                $requirement->save();
-            } else {
-                if ($requirement->count() > 1) {
-                    foreach ($requirement as $item) {
-                        if ($requirement->count() > 1) {
-                            $item->delete();
-                        }
-                    }
-                }
-                $requirement = $requirement->first();
-                $requirement->status = 1;
-                $requirement->push();
-            }
+            $requirement = $sales->setRequirement(8);
 
             $level_id = $requirement->requirement->level_id;
             $sales->checkLevelStatus($level_id);
@@ -408,6 +390,39 @@ class SalesController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Hangar slot requested successfully',
+                'data' => $sales,
+            ], 200);
+        } catch (QueryException $e) {
+            DB::rollback();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function inputSONumber($id, Request $request)
+    {
+        $request->validate(['so_number' => 'required|string']);
+
+        try {
+            DB::beginTransaction();
+
+            $sales = Sales::findOrFail($id);
+            $sales->so_number = $request->so_number;
+            $sales->push();
+
+            $requirement = $sales->setRequirement(10);
+
+            $level_id = $requirement->requirement->level_id;
+            $sales->checkLevelStatus($level_id);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'SO Number inputted successfully',
                 'data' => $sales,
             ], 200);
         } catch (QueryException $e) {

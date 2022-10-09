@@ -59,6 +59,32 @@ class Sales extends Model
         'level1',
     ];
 
+    public function setRequirement($requirement_id)
+    {
+        $requirement = $this->salesRequirements->where('requirement_id', $requirement_id);
+
+        if ($requirement->isEmpty()) {
+            $requirement = new SalesRequirement;
+            $requirement->sales_id = $this->id;
+            $requirement->requirement_id = $requirement_id;
+            $requirement->status = 1;
+            $requirement->save();
+        } else {
+            if ($requirement->count() > 1) {
+                foreach ($requirement as $item) {
+                    if ($requirement->count() > 1) {
+                        $item->delete();
+                    }
+                }
+            }
+            $requirement = $requirement->first();
+            $requirement->status = 1;
+            $requirement->push();
+        }
+
+        return $requirement;
+    }
+
     public function checkLevelStatus($level_id)
     {
         $sales_level = $this->salesLevel->firstWhere('level_id', $level_id);

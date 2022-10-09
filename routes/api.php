@@ -181,7 +181,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('file', [FileController::class, 'index'])->middleware(['permission:read_file|manage_file']);
     Route::post('file-create', [FileController::class, 'store'])->middleware(['permission:create_file|manage_file']);
     Route::get('file-show/{id}', [FileController::class, 'show'])->middleware(['permission:show_file|manage_file']);
-    Route::get('file-history/{sales_id}', [FileController::class, 'history']);
+    Route::get('file-history/{sales_id}', [FileController::class, 'history'])->middleware(['permission:read_file|manage_file']);
     Route::delete('file-delete/{id}', [FileController::class, 'destroy'])->middleware(['permission:delete_file|manage_file']);
     
     //Level
@@ -204,8 +204,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('sales-create-tmb', [SalesController::class, 'createTmb'])->middleware(['permission:create_sales|manage_sales']);
     Route::post('sales-create-pbth', [SalesController::class, 'createPbth'])->middleware(['permission:create_sales|manage_sales']);
     Route::post('sales-slot-request/{id}', [SalesController::class, 'slotRequest'])->middleware(['permission:update_sales|manage_sales']);
+    Route::post('sales-so-number/{id}', [SalesController::class, 'inputSONumber'])->middleware(['permission:update_sales|manage_sales']);
     // Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']); // TODO sales plan update
-    // Route::delete('sales-delete/{id}', [SalesController::class, 'destroy'])->middleware(['permission:delete_sales|manage_sales']);
 
     // Line
     Route::get('line', LineController::class);

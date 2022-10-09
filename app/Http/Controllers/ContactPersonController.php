@@ -52,26 +52,7 @@ class ContactPersonController extends Controller
             $customer_cp->title = $request->title;
             $customer_cp->save();
 
-            $requirement = $sales->salesRequirements->where('requirement_id', 1);
-
-            if ($requirement->isEmpty()) {
-                $requirement = new SalesRequirement;
-                $requirement->sales_id = $sales->id;
-                $requirement->requirement_id = 1;
-                $requirement->status = 1;
-                $requirement->save();
-            } else {
-                if ($requirement->count() > 1) {
-                    foreach ($requirement as $item) {
-                        if ($requirement->count() > 1) {
-                            $item->delete();
-                        }
-                    }
-                }
-                $requirement = $requirement->first();
-                $requirement->status = 1;
-                $requirement->push();
-            }
+            $requirement = $sales->setRequirement(1);
 
             $level_id = $requirement->requirement->level_id;
             $sales->checkLevelStatus($level_id);
