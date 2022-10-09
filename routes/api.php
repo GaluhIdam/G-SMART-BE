@@ -33,6 +33,7 @@ use App\Http\Controllers\SalesRequirementController;
 use App\Http\Controllers\SalesRescheduleController;
 use App\Http\Controllers\SalesUpdateController;
 use App\Http\Controllers\ContactPersonController;
+use App\Http\Controllers\LineController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -202,14 +203,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales|manage_sales']);
     Route::post('sales-create-tmb', [SalesController::class, 'createTmb'])->middleware(['permission:create_sales|manage_sales']);
     Route::post('sales-create-pbth', [SalesController::class, 'createPbth'])->middleware(['permission:create_sales|manage_sales']);
-    // Route::put('sales-slot-request/{id}', [SalesController::class, 'slotRequest']);
+    Route::post('sales-slot-request/{id}', [SalesController::class, 'slotRequest'])->middleware(['permission:update_sales|manage_sales']);
     // Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']); // TODO sales plan update
     // Route::delete('sales-delete/{id}', [SalesController::class, 'destroy'])->middleware(['permission:delete_sales|manage_sales']);
-    
+
+    // Line
+    Route::get('line', LineController::class);
+
     // Contact Person
-    route::get('contact-person', [ContactPersonController::class, 'index']);
-    route::post('contact-person-create', [ContactPersonController::class, 'store']);
-    route::delete('contact-person-delete/{id}', [ContactPersonController::class, 'destroy']);
+    Route::get('contact-person', [ContactPersonController::class, 'index']);
+    Route::post('contact-person-create', [ContactPersonController::class, 'store']);
+    Route::delete('contact-person-delete/{id}', [ContactPersonController::class, 'destroy']);
 
     //Sales History
     Route::get('sales-history', [SalesHistoryController::class, 'index'])->middleware(['permission:read_sales_history|manage_sales_history']);

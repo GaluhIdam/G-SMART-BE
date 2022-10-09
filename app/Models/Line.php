@@ -12,6 +12,13 @@ class Line extends Model
     protected $table = 'lines';
     protected $guarded = ['id'];
 
+    public function scopeByHangar($query, $hangar)
+    {
+        $query->when($hangar, function ($query) use ($hangar) {
+            $query->where('hangar_id', $hangar);
+        });
+    }
+
     public function hangar()
     {
         return $this->belongsTo(Hangar::class, 'hangar_id');

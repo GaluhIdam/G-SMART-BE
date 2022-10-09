@@ -233,6 +233,7 @@ class SalesController extends Controller
             $prospect = Prospect::find($request->prospect_id);
             $year = $prospect->year;
             
+            $temp_sales = [];
             foreach ($request->month as $months => $month) {
                 $s_date = Carbon::create("{$year}-{$month}-1");
                 $e_date = Carbon::create("{$year}-{$month}-1");
@@ -250,6 +251,8 @@ class SalesController extends Controller
                 $sales->start_date = $start_date;
                 $sales->end_date = $end_date;
                 $sales->save();
+
+                $temp_sales[] = $sales;
 
                 for ($i = 1; $i <= 4; $i++) {  
                     $level = new SalesLevel;
@@ -273,7 +276,7 @@ class SalesController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Salesplan created successfully',
-                'data' => $sales,
+                'data' => $temp_sales,
             ], 200);
         } catch (QueryException $e) {
             DB::rollback();
@@ -367,7 +370,54 @@ class SalesController extends Controller
 
     public function slotRequest($id, Request $request)
     {
-        // TODO hangar slot request (update sales requirement)
+        $request->validate(['line_id' => 'required|integer|exists:lines,id']);
+
+        try {
+            DB::beginTransaction();
+
+            $sales = Sales::findOrFail($id);
+            $sales->line_id = $request->line_id;
+            $sales->push();
+
+            $requirement = $sales->salesRequirements->where('requirement_id', 8);
+
+            if ($requirement->isEmpty()) {
+                $requirement = new SalesRequirement;
+                $requirement->sales_id = $sales->id;
+                $requirement->requirement_id = 1;
+                $requirement->status = 1;
+                $requirement->save();
+            } else {
+                if ($requirement->count() > 1) {
+                    foreach ($requirement as $item) {
+                        if ($requirement->count() > 1) {
+                            $item->delete();
+                        }
+                    }
+                }
+                $requirement = $requirement->first();
+                $requirement->status = 1;
+                $requirement->push();
+            }
+
+            $level_id = $requirement->requirement->level_id;
+            $sales->checkLevelStatus($level_id);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Hangar slot requested successfully',
+                'data' => $sales,
+            ], 200);
+        } catch (QueryException $e) {
+            DB::rollback();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function update($id)
