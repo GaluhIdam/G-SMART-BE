@@ -18,7 +18,8 @@ class AuthController extends Controller
         if (Auth::attempt($request->all())) {
             return response()->json([
                 'message' => 'Authorized',
-                'token'    => Auth::user()->createToken('token')->plainTextToken
+                'token' => Auth::user()->createToken('token')->plainTextToken,
+                'user' => Auth::user(),
             ], 200);
             $request->session()->regenerate();
         } else {

@@ -162,7 +162,7 @@ class SalesController extends Controller
         try {
             DB::beginTransaction();
 
-            $prospect = Prospect::find($prospect_id);
+            $prospect = Prospect::find($request->prospect_id);
             $customer = $prospect->amsCustomer->customer;
 
             $start_date = Carbon::parse($request->start_date);
@@ -194,7 +194,7 @@ class SalesController extends Controller
                 $requirement->sales_id = $sales->id;
                 $requirement->requirement_id = $i;
                 if ($i == 1) {
-                    $customer_cp = $customer->contact_persons;
+                    $customer_cp = $sales->contact_persons;
                     $requirement->status = $customer_cp->isNotEmpty() ?? 0;
                 } else if ($i == 4) {
                     $requirement->status = 1;
