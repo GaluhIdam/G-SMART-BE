@@ -196,6 +196,8 @@ class SalesController extends Controller
                 if ($i == 1) {
                     $customer_cp = $customer->contact_persons;
                     $requirement->status = $customer_cp->isNotEmpty() ?? 0;
+                } else if ($i == 4) {
+                    $requirement->status = 1;
                 }
                 $requirement->save();
             }

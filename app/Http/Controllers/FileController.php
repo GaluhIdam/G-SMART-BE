@@ -48,6 +48,8 @@ class FileController extends Controller
             $temp_paths = [];
             $temp_files = [];
             
+            $requirement = $sales->setRequirement($requirement_id);
+
             foreach ($files as $file) {
                 $file_name = Carbon::now()->format('dmyHis').'_'.$file->getClientOriginalName();
                 $file_path = Storage::disk('public')->putFileAs('attachment', $file, $file_name);
@@ -60,8 +62,6 @@ class FileController extends Controller
 
                 $temp_files[] = $new_file;
             }
-
-            $requirement = $sales->setRequirement($requirement_id);
 
             $level_id = $requirement->requirement->level_id;
             $sales->checkLevelStatus($level_id);
@@ -132,7 +132,8 @@ class FileController extends Controller
                         ->get()
                         ->groupBy(function ($item) {
                             return $item->updated_at->format('d F Y');
-                        });
+                        })
+                        ->take(10);
 
         $file_histories = [];
         foreach ($files as $key => $file) {

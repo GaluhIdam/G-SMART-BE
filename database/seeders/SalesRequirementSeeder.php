@@ -20,7 +20,7 @@ class SalesRequirementSeeder extends Seeder
                 SalesRequirement::create([
                     'sales_id' => $i,
                     'requirement_id' => $j,
-                    'status' => ($j == 1) ? 1 : 0,
+                    'status' => ($j == 1 || $j == 4) ? 1 : 0,
                 ]);
             }
         }
