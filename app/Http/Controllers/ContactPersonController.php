@@ -34,68 +34,29 @@ class ContactPersonController extends Controller
             'email' => 'required|string|email|unique:contact_persons,email',
             'address' => 'required|string|max:255',
             'title' => 'required|string|max:255',
-            'sales_id' => 'required|integer|exists:sales,id',
+            'customer_id' => 'required|integer|exists:sales,id',
         ]);
 
-        try {
-            DB::beginTransaction();
+        $customer_cp = new ContactPerson;
+        $customer_cp->name = $request->name;
+        $customer_cp->phone = $request->phone;
+        $customer_cp->email = $request->email;
+        $customer_cp->address = $request->address;
+        $customer_cp->customer_id = $request->customer_id;
+        $customer_cp->title = $request->title;
+        $customer_cp->save();
 
-            $sales = Sales::find($request->sales_id);
-            $customer = $sales->customer;
-
-            $customer_cp = new ContactPerson;
-            $customer_cp->name = $request->name;
-            $customer_cp->phone = $request->phone;
-            $customer_cp->email = $request->email;
-            $customer_cp->address = $request->address;
-            $customer_cp->customer_id = $customer->id;
-            $customer_cp->title = $request->title;
-            $customer_cp->save();
-
-            $requirement = $sales->setRequirement(1);
-
-            $level_id = $requirement->requirement->level_id;
-            $sales->checkLevelStatus($level_id);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Contact person created successfully',
-                'data' => $customer_cp,
-            ], 200);
-        } catch (QueryException $e) {
-            DB::rollback();
-
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Contact person created successfully',
+            'data' => $customer_cp,
+        ], 200);
     }
 
-    public function destroy($id, Request $request)
+    public function destroy($id)
     {
-        $contact_person = ContactPerson::find($id);
-        $sales = Sales::find($request->sales_id);
-        
-        if (!$contact_person || !$sales) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data not found',
-            ], 404);
-        }
-
+        $contact_person = ContactPerson::findOrFail($id);
         $contact_person->delete();
-        
-        $customer_cp = $sales->contact_persons;
-
-        $requirement = $sales->salesRequirements->where('requirement_id', 1)->first();
-        $requirement->status = $customer_cp->isNotEmpty() ?? 0;
-        $requirement->push();
-
-        $level_id = $requirement->requirement->level_id;
-        $sales->checkLevelStatus($level_id);
 
         return response()->json([
             'success' => true,
