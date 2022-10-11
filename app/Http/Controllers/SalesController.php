@@ -437,6 +437,21 @@ class SalesController extends Controller
         }
     }
 
+    public function switchAMS($id, Request $request)
+    {
+        $request->validate(['ams_id' => 'required|integer|exists:ams,id']);
+
+        $sales = Sales::findOrFail($id);
+        $sales->ams_id = $request->ams_id;
+        $sales->push();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Salesplan AMS changed successfully',
+            'data' => $sales,
+        ], 200);
+    }
+
     public function update($id)
     {
         // TODO perlu konfirmasi -> field apa saja yang datanya bisa diubah
