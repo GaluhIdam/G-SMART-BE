@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Customer extends Model
 {
@@ -14,6 +15,15 @@ class Customer extends Model
         'code',
         'country_id',
     ];
+
+    protected $appends = [
+        'full_path',
+    ];
+
+    public function getFullPathAttribute()
+    {
+        return Storage::disk('public')->url($this->logo_path);
+    }
 
     public function latestCP()
     {

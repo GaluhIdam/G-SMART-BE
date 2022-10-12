@@ -349,7 +349,7 @@ class SalesController extends Controller
             'user' => auth()->user(),
             'salesDetail' => [
                 'id' => $sales->id,
-                'customer' => $sales->customer->only(['id', 'name', 'logo_path']),
+                'customer' => $sales->customer->only(['id', 'name', 'full_path']),
                 'acReg' => $sales->ac_reg ?? null,
                 'registration' => $sales->registration,
                 'level' => $sales->level,
@@ -497,7 +497,7 @@ class SalesController extends Controller
         $sales->tat = $tat;
         $sales->start_date = $start_date;
         $sales->end_date = $end_date;
-        $sales->save();
+        $sales->push();
 
         return response()->json([
             'success' => true,
