@@ -360,9 +360,11 @@ class Sales extends Model
     // query untuk get data salesplan by user
     public function scopeUser($query, $user)
     {
-        $query->whereHas('prospect', function ($query) use ($user) {
-            $query->where('pm_id', $user);
-        });
+        if ($user->hasRole('TPC')) {
+            $query->whereRelation('prospect', 'pm_id', $user->id);
+        } else if ($user->hasRole('AMS')) {
+            $query->where('ams_id', $user->ams->id);
+        }
     }
 
     // query untuk sorting data tabel salesplan

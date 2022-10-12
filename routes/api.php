@@ -34,6 +34,7 @@ use App\Http\Controllers\SalesRescheduleController;
 use App\Http\Controllers\SalesUpdateController;
 use App\Http\Controllers\ContactPersonController;
 use App\Http\Controllers\LineController;
+use App\Http\Controllers\HangarController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -207,10 +208,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('sales-so-number/{id}', [SalesController::class, 'inputSONumber'])->middleware(['permission:update_sales|manage_sales']);
     Route::put('sales-switch-ams/{id}', [SalesController::class, 'switchAMS']);
     Route::put('sales-upgrade-level/{id}', [SalesController::class, 'upgradeLevel']);
-    // Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']); // TODO sales plan update
+    Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
 
     // Line
     Route::get('line', LineController::class);
+
+    // Line
+    Route::get('hangar', HangarController::class);
 
     // Contact Person
     Route::get('contact-person', [ContactPersonController::class, 'index']);

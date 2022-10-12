@@ -54,7 +54,7 @@ class SalesController extends Controller
             'salesLevel',
         ])->search($search)
         ->filter([$start_date, $end_date, $type])
-        ->user($user->id)
+        ->user($user)
         ->sort([$order, $by])
         ->paginate($paginate)
         ->withQueryString();
@@ -345,7 +345,7 @@ class SalesController extends Controller
             'user' => auth()->user(),
             'salesDetail' => [
                 'id' => $sales->id,
-                'customer' => $sales->customer->only(['id', 'name']),
+                'customer' => $sales->customer->only(['id', 'name', 'logo_path']),
                 'acReg' => $sales->ac_reg ?? null,
                 'registration' => $sales->registration,
                 'level' => $sales->level,
@@ -470,8 +470,35 @@ class SalesController extends Controller
         ], 200);
     }
 
-    public function update($id)
+    public function update($id, Request $request)
     {
-        // TODO perlu konfirmasi -> field apa saja yang datanya bisa diubah
+        $request->validate([
+            'maintenance_id' => 'required|integer|exists:maintenances,id',
+            'hangar_id' => 'required|integer|exists:hangars,id',
+            'acreg' => 'required|string',
+            'value' => 'required|integer',
+            'tat' => 'required|integer',
+            'start_date' => 'required|date',
+        ]);
+
+        $start_date = Carbon::parse($request->start_date);
+        $tat = $request->tat;
+        $end_date = Carbon::parse($request->start_date)->addDays($tat);
+        
+        $sales = Sales::findOrFail($id);
+        $sales->maintenance_id = $request->maintenance_id;
+        $sales->hangar_id = $request->hangar_id;
+        $sales->ac_reg = $request->acreg;
+        $sales->value = $request->value;
+        $sales->tat = $tat;
+        $sales->start_date = $start_date;
+        $sales->end_date = $end_date;
+        $sales->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sales updated successfully',
+            'data' => $sales,
+        ], 200);
     }
 }
