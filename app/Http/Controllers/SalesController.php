@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\Prospect;
 use App\Models\Requirement;
 use App\Models\SalesReschedule;
+use App\Models\SalesReject;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -370,7 +371,7 @@ class SalesController extends Controller
                 'deviasi' => $deviasi,
             ], 
             'salesReschedule' => $sales_reschedule ?? null,
-            'salesReject' => $sales_reject ?? null, // TODO close/reject all activity where sales status was canceled
+            'salesReject' => $sales_reject ?? null,
             'level4' => $sales->level4,
             'level3' => $sales->level3,
             'level2' => $sales->level2,
@@ -536,5 +537,44 @@ class SalesController extends Controller
             'message' => 'Sales rescheduled successfully',
             'data' => $reschedule,
         ], 200);
+    }
+
+    public function rejectSales($id, Request $request)
+    {
+        $request->validate([
+            'category' => 'required|string',
+            'reason' => 'required|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $sales = Sales::findOrFail($id);
+
+            $reject = new SalesReject;
+            $reject->sales_id = $sales->id;
+            $reject->category = $request->category;
+            $reject->reason = $request->reason;
+            $reject->save();
+
+            $sales_level = $sales->salesLevel->firstWhere('level_id', $sales->level);
+            $sales_level->status = 4;
+            $sales_level->push();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sales rejected successfully',
+                'data' => $sales,
+            ], 200);
+        } catch (QueryException $e) {
+            DB::rollback();
+
+            return response()->json([
+                'success' => true,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }
