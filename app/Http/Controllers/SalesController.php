@@ -497,7 +497,7 @@ class SalesController extends Controller
         $sales->tat = $tat;
         $sales->start_date = $start_date;
         $sales->end_date = $end_date;
-        $sales->push();
+        $sales->save();
 
         return response()->json([
             'success' => true,

@@ -197,12 +197,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales|manage_sales']);
     Route::post('sales-create-tmb', [SalesController::class, 'createTmb'])->middleware(['permission:create_sales|manage_sales']);
     Route::post('sales-create-pbth', [SalesController::class, 'createPbth'])->middleware(['permission:create_sales|manage_sales']);
-    Route::post('sales-slot-request/{id}', [SalesController::class, 'slotRequest'])->middleware(['permission:update_sales|manage_sales']);
-    Route::post('sales-so-number/{id}', [SalesController::class, 'inputSONumber'])->middleware(['permission:update_sales|manage_sales']);
-    Route::post('sales-switch-ams/{id}', [SalesController::class, 'switchAMS']);
-    Route::post('sales-upgrade-level/{id}', [SalesController::class, 'upgradeLevel']);
-    Route::post('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
-    Route::post('sales-reschedule/{id}', [SalesController::class, 'rescheduleSales']);
+    Route::put('sales-slot-request/{id}', [SalesController::class, 'slotRequest'])->middleware(['permission:update_sales|manage_sales']);
+    Route::put('sales-so-number/{id}', [SalesController::class, 'inputSONumber'])->middleware(['permission:update_sales|manage_sales']);
+    Route::put('sales-switch-ams/{id}', [SalesController::class, 'switchAMS']);
+    Route::put('sales-upgrade-level/{id}', [SalesController::class, 'upgradeLevel']);
+    Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
+    Route::put('sales-reschedule/{id}', [SalesController::class, 'rescheduleSales']);
     // Route::post('sales-cancel/{id}', [SalesController::class, 'cancelSales']);
 
     // Line
