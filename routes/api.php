@@ -202,7 +202,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('sales-switch-ams/{id}', [SalesController::class, 'switchAMS']);
     Route::post('sales-upgrade-level/{id}', [SalesController::class, 'upgradeLevel']);
     Route::post('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
-    // Route::post('sales-reschedule/{id}', [SalesController::class, 'rescheduleSales']);
+    Route::post('sales-reschedule/{id}', [SalesController::class, 'rescheduleSales']);
     // Route::post('sales-cancel/{id}', [SalesController::class, 'cancelSales']);
 
     // Line

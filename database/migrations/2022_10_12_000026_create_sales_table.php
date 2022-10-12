@@ -35,7 +35,7 @@ return new class extends Migration
             $table->foreignId('line_id')->nullable()->constrained('lines');
 
             $table->string('ac_reg')->nullable();
-            $table->decimal('value');
+            $table->decimal('value', 18, 9);
             $table->integer('tat');
             $table->date('start_date');
             $table->date('end_date')->nullable();

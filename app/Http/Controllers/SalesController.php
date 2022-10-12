@@ -8,6 +8,7 @@ use App\Models\SalesRequirement;
 use App\Models\Customer;
 use App\Models\Prospect;
 use App\Models\Requirement;
+use App\Models\SalesReschedule;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -52,6 +53,7 @@ class SalesController extends Controller
             'component',
             'apu',
             'salesLevel',
+            'ams',
         ])->search($search)
         ->filter([$start_date, $end_date, $type])
         ->user($user)
@@ -88,7 +90,9 @@ class SalesController extends Controller
         } else {
             $total_target = 0;
             foreach ($raw_sales as $sales) {
-                $total_target += $sales->ams->amsTargets->sum('target');
+                if ($sales->ams) {
+                    $total_target += $sales->ams->amsTargets->sum('target');
+                }
             }
         }
         $total_open = $raw_sales->where('status', 'Open')->sum('value'); // total user sales [open]
@@ -162,8 +166,8 @@ class SalesController extends Controller
             'prospect_id' => 'required|integer|exists:prospects,id',
             'maintenance_id' => 'required|integer|exists:maintenances,id',
             'hangar_id' => 'required|integer|exists:hangars,id',
-            'acreg' => 'required|string',
-            'value' => 'required|integer',
+            'ac_reg' => 'required|string',
+            'value' => 'required|numeric',
             'tat' => 'required|integer',
             'start_date' => 'required|date',
         ]);
@@ -235,7 +239,7 @@ class SalesController extends Controller
             'month' => 'required|array',
             'month.*' => 'required|integer',
             'value' => 'required|array',
-            'value.*' => 'required|integer',
+            'value.*' => 'required|numeric',
         ]);
 
         try {
@@ -475,8 +479,8 @@ class SalesController extends Controller
         $request->validate([
             'maintenance_id' => 'required|integer|exists:maintenances,id',
             'hangar_id' => 'required|integer|exists:hangars,id',
-            'acreg' => 'required|string',
-            'value' => 'required|integer',
+            'acReg' => 'required|string',
+            'totalSales' => 'required|numeric',
             'tat' => 'required|integer',
             'start_date' => 'required|date',
         ]);
@@ -488,17 +492,49 @@ class SalesController extends Controller
         $sales = Sales::findOrFail($id);
         $sales->maintenance_id = $request->maintenance_id;
         $sales->hangar_id = $request->hangar_id;
-        $sales->ac_reg = $request->acreg;
-        $sales->value = $request->value;
+        $sales->ac_reg = $request->acReg;
+        $sales->value = $request->totalSales;
         $sales->tat = $tat;
         $sales->start_date = $start_date;
         $sales->end_date = $end_date;
-        $sales->save();
+        $sales->push();
 
         return response()->json([
             'success' => true,
             'message' => 'Sales updated successfully',
             'data' => $sales,
+        ], 200);
+    }
+
+    public function rescheduleSales($id, Request $request)
+    {
+        $request->validate([
+            'hangar_id' => 'required|integer|exists:hangars,id',
+            'current_date' => 'required|date',
+            'start_date' => 'required|date',
+            'tat' => 'required|integer',
+        ]);
+
+        $sales = Sales::findOrFail($id);
+        $reschedule = $sales->salesReschedule;
+
+        $start_date = Carbon::parse($request->start_date);
+        $tat = $request->tat;
+        $end_date = Carbon::parse($request->start_date)->addDays($tat);
+
+        $reschedule = $reschedule ?? new SalesReschedule;
+        $reschedule->sales_id = $sales->id;
+        $reschedule->start_date = $start_date;
+        $reschedule->end_date = $end_date;
+        $reschedule->tat = $tat;
+        $reschedule->hangar_id = $request->hangar_id;
+        $reschedule->current_date = $request->current_date;
+        $reschedule->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sales rescheduled successfully',
+            'data' => $reschedule,
         ], 200);
     }
 }
