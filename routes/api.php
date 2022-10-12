@@ -178,13 +178,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('approval-update/{id}', [ApprovalController::class, 'update'])->middleware(['permission:update_approval|manage_approval']);
     Route::delete('approval-delete/{id}', [ApprovalController::class, 'destroy'])->middleware(['permission:delete_approval|manage_approval']);
     
-    //File
-    Route::get('file', [FileController::class, 'index'])->middleware(['permission:read_file|manage_file']);
-    Route::post('file-create', [FileController::class, 'store'])->middleware(['permission:create_file|manage_file']);
-    Route::get('file-show/{id}', [FileController::class, 'show'])->middleware(['permission:show_file|manage_file']);
-    Route::get('file-history/{sales_id}', [FileController::class, 'history'])->middleware(['permission:read_file|manage_file']);
-    Route::delete('file-delete/{id}', [FileController::class, 'destroy'])->middleware(['permission:delete_file|manage_file']);
-    
     //Level
     Route::get('level', [LevelController::class, 'index'])->middleware(['permission:read_level|manage_level']);
     Route::post('level-create', [LevelController::class, 'create'])->middleware(['permission:create_level|manage_level']);
@@ -206,15 +199,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('sales-create-pbth', [SalesController::class, 'createPbth'])->middleware(['permission:create_sales|manage_sales']);
     Route::post('sales-slot-request/{id}', [SalesController::class, 'slotRequest'])->middleware(['permission:update_sales|manage_sales']);
     Route::post('sales-so-number/{id}', [SalesController::class, 'inputSONumber'])->middleware(['permission:update_sales|manage_sales']);
-    Route::put('sales-switch-ams/{id}', [SalesController::class, 'switchAMS']);
-    Route::put('sales-upgrade-level/{id}', [SalesController::class, 'upgradeLevel']);
-    Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
+    Route::post('sales-switch-ams/{id}', [SalesController::class, 'switchAMS']);
+    Route::post('sales-upgrade-level/{id}', [SalesController::class, 'upgradeLevel']);
+    Route::post('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
+    // Route::post('sales-reschedule/{id}', [SalesController::class, 'rescheduleSales']);
+    // Route::post('sales-cancel/{id}', [SalesController::class, 'cancelSales']);
 
     // Line
     Route::get('line', LineController::class);
 
-    // Line
+    // Hangar
     Route::get('hangar', HangarController::class);
+
+    //File
+    Route::get('file', [FileController::class, 'index'])->middleware(['permission:read_file|manage_file']);
+    Route::post('file-create', [FileController::class, 'store'])->middleware(['permission:create_file|manage_file']);
+    Route::get('file-show/{id}', [FileController::class, 'show'])->middleware(['permission:show_file|manage_file']);
+    Route::get('file-history/{sales_id}', [FileController::class, 'history'])->middleware(['permission:read_file|manage_file']);
+    Route::delete('file-delete/{id}', [FileController::class, 'destroy'])->middleware(['permission:delete_file|manage_file']);
 
     // Contact Person
     Route::get('contact-person', [ContactPersonController::class, 'index']);
