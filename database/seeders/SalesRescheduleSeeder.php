@@ -15,13 +15,13 @@ class SalesRescheduleSeeder extends Seeder
      */
     public function run()
     {
-        SalesReschedule::create([
-            'sales_id'   => 1,
-            'start_date' => date('Y-m-d'),
-            'end_date'   => date('Y-m-d'),
-            'tat'        => 1,
-            'hangar_id'  => 1,
-            'current_date' => now(),
-        ]);
+        // SalesReschedule::create([
+        //     'sales_id'   => 1,
+        //     'start_date' => date('Y-m-d'),
+        //     'end_date'   => date('Y-m-d'),
+        //     'tat'        => 1,
+        //     'hangar_id'  => 1,
+        //     'current_date' => now(),
+        // ]);
     }
 }

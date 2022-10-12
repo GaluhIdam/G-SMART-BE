@@ -237,28 +237,28 @@ class SalesController extends Controller
     {
         $request->validate([
             'prospect_id' => 'required|integer|exists:prospects,id',
-            'month' => 'required|array',
-            'month.*' => 'required|integer',
-            'value' => 'required|array',
-            'value.*' => 'required|numeric',
+            'pbth' => 'required|array',
+            'pbth.*.month' => 'required|string',
+            'pbth.*.value' => 'required|numeric',
         ]);
 
         try {
             DB::beginTransaction();
 
             $prospect = Prospect::find($request->prospect_id);
-            $customer = $prospect->amsCustomer->customer;;
+            $customer = $prospect->amsCustomer->customer;
             $year = $prospect->year;
+            $pbth = $request->pbth;
             
             $temp_sales = [];
-            foreach ($request->month as $months => $month) {
-                $s_date = Carbon::create("{$year}-{$month}-1");
-                $e_date = Carbon::create("{$year}-{$month}-1");
+            foreach ($pbth as $item) {
+                $s_date = Carbon::parse("1 {$item['month']} {$year}");
+                $e_date = Carbon::parse("1 {$item['month']} {$year}")->endOfMonth();
                 
                 $start_date = $s_date->format('Y-m-d');
-                $end_date = $e_date->endOfMonth()->format('Y-m-d');
+                $end_date = $e_date->format('Y-m-d');
                 $tat = $s_date->diffInDays($e_date);
-                $value = $request->value[$months];
+                $value = $item['value'];
 
                 $sales = new Sales;
                 $sales->customer_id = $customer->id;
@@ -275,7 +275,7 @@ class SalesController extends Controller
                     $level = new SalesLevel;
                     $level->level_id = $i;
                     $level->sales_id = $sales->id;
-                    $level->status = ($i == 1) ? 1 : 3;
+                    $level->status = ($i == 1) ? 1 : 2;
                     $level->save();
                 }
 
@@ -363,9 +363,9 @@ class SalesController extends Controller
                 'year' => $sales->prospect->year,
                 'startDate' => Carbon::parse($sales->start_date)->format('d-m-Y'),
                 'endDate' => Carbon::parse($sales->end_date)->format('d-m-Y'),
-                'location' => $sales->hangar ? $sales->hangar->name : null,
-                'product' => $sales->product ? $sales->product->name : null,
-                'maintenance' => $sales->maintenance ? $sales->maintenance->description : null,
+                'location' => $sales->hangar ?? null,
+                'product' => $sales->product ?? null,
+                'maintenance' => $sales->maintenance ?? null,
                 'marketShare' => $market_share,
                 'totalSales' => $total_sales,
                 'deviasi' => $deviasi,

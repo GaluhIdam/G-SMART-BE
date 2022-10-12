@@ -15,10 +15,10 @@ class SalesRejectSeeder extends Seeder
      */
     public function run()
     {
-        SalesReject::create([
-            'sales_id'   => 1,
-            'category'   => 'Category 1',
-            'reason'     => 'Success',
-        ]);
+        // SalesReject::create([
+        //     'sales_id'   => 1,
+        //     'category'   => 'Category 1',
+        //     'reason'     => 'Success',
+        // ]);
     }
 }
