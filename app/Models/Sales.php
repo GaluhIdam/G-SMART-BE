@@ -23,8 +23,8 @@ class Sales extends Model
 
     const STATUS_ARRAY = [
         self::STATUS_OPEN => 'Open',
-        self::STATUS_CLOSE_IN => 'Close in',
-        self::STATUS_CLOSED_SALES => 'Closed',
+        self::STATUS_CLOSE_IN => 'Closed',
+        self::STATUS_CLOSED_SALES => 'Close in',
         self::STATUS_CANCEL => 'Cancel',
     ];
 
@@ -57,6 +57,7 @@ class Sales extends Model
         'level3',
         'level2',
         'level1',
+        'upgrade_level',
     ];
 
     public function setRequirement($requirement_id)
@@ -83,23 +84,6 @@ class Sales extends Model
         }
 
         return $requirement;
-    }
-
-    public function checkLevelStatus($level_id)
-    {
-        $sales_level = $this->salesLevel->firstWhere('level_id', $level_id);
-        $requirement_ids = $sales_level->level->requirements->pluck('id');
-        $requirements = $this->salesRequirements->whereIn('requirement_id', $requirement_ids);
-
-        $requirement_done = 0;
-        foreach ($requirements as $requirement) {
-            if ($requirement->status == 1) {
-                $requirement_done += 1;
-            }
-        }
-
-        $sales_level->status = ($requirement_done == $requirements->count()) ? 3 : 1;
-        $sales_level->push();
     }
 
     public function getStatusAttribute()
@@ -136,9 +120,14 @@ class Sales extends Model
         foreach ($levels as $item) {
             if ($item->status == 4) {
                 return $item->level_id;
-            } else if ($item->status == 3) {
-                // TODO perlu konfirmasi -> status CLOSED hanya ada di level 1?
-                return ($item->level_id == 1) ? $item->level_id : $item->level_id-1;
+            } else if ($item->status == 3)  {
+                if ($item->level_id != 1) {
+                    continue;
+                } else {
+                    return $item->level_id;
+                }
+            } else if ($item->status == 2) {
+                return $item->level_id - 1;
             } else {
                 if ($item->level_id != 4) {
                     continue;
@@ -292,6 +281,21 @@ class Sales extends Model
         }
 
         return collect($level1)->sortBy('sequence')->values();
+    }
+
+    public function getUpgradeLevelAttribute()
+    {
+        if ($this->level == 1) {
+            return false;
+        }
+
+        $requirements = Requirement::where('level_id', $this->level)->pluck('id');
+        $requirement_done = SalesRequirement::where('sales_id', $this->id)
+                                            ->where('status', 1)
+                                            ->whereIn('requirement_id', $requirements)
+                                            ->get();
+        
+        return ($requirement_done->count() == $requirements->count());
     }
 
     // query untuk global search tabel salesplan

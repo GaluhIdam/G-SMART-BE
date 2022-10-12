@@ -63,9 +63,6 @@ class FileController extends Controller
                 $temp_files[] = $new_file;
             }
 
-            $level_id = $requirement->requirement->level_id;
-            $sales->checkLevelStatus($level_id);
-
             DB::commit();
 
             return response()->json([
@@ -181,10 +178,6 @@ class FileController extends Controller
         $files = $requirement->files;
         $requirement->status = $files->isNotEmpty() ?? 0;
         $requirement->push();
-
-        $sales = $requirement->sales;;
-        $level_id = $requirement->requirement->level_id;
-        $sales->checkLevelStatus($level_id);
 
         return response()->json([
             'success' => true,

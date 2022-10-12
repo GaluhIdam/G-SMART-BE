@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContactPerson;
-use App\Models\Sales;
-use App\Models\SalesRequirement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;

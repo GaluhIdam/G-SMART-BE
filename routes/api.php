@@ -206,6 +206,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('sales-slot-request/{id}', [SalesController::class, 'slotRequest'])->middleware(['permission:update_sales|manage_sales']);
     Route::post('sales-so-number/{id}', [SalesController::class, 'inputSONumber'])->middleware(['permission:update_sales|manage_sales']);
     Route::put('sales-switch-ams/{id}', [SalesController::class, 'switchAMS']);
+    Route::put('sales-upgrade-level/{id}', [SalesController::class, 'upgradeLevel']);
     // Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']); // TODO sales plan update
 
     // Line

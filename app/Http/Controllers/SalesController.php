@@ -7,6 +7,7 @@ use App\Models\SalesLevel;
 use App\Models\SalesRequirement;
 use App\Models\Customer;
 use App\Models\Prospect;
+use App\Models\Requirement;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -41,7 +42,7 @@ class SalesController extends Controller
         // get all sales data
         $all_sales = Sales::with('salesLevel')->get();
 
-        $sales_by_user = Sales::with([
+        $raw_sales = Sales::with([
             'customer',
             'prospect',
             'maintenance',
@@ -59,10 +60,10 @@ class SalesController extends Controller
         ->withQueryString();
 
         // define empty collection untuk menampung data [tabel salesplan user]
-        $user_salesplan = new Collection();
+        $table_salesplan = new Collection();
 
-        foreach ($sales_by_user as $item) {
-            $user_salesplan->push((object)[
+        foreach ($raw_sales as $item) {
+            $table_salesplan->push((object)[
                 'id' => $item->id,
                 'customer' => $item->customer->name,
                 'product' => $item->product ? $item->product->name : null,
@@ -75,20 +76,28 @@ class SalesController extends Controller
                 'status' => $item->status,
                 'location' => $item->hangar ? $item->hangar->name : null,
                 'maintenance' => $item->maintenance ? $item->maintenance->description : null,
+                'upgrade' => $item->upgrade_level,
                 'startDate' => Carbon::parse($item->start_date)->format('Y-m-d'),
                 'endDate' => Carbon::parse($item->end_date)->format('Y-m-d'),
             ]);
         }
 
         // data untuk 5 overview card [ter-atas] user sales
-        $user_target = $user->ams->amsTargets->sum('target'); // total user sales [target]
-        $user_open = $sales_by_user->where('status', 'Open')->sum('value'); // total user sales [open]
-        $user_closed = $sales_by_user->where('status', 'Closed')->sum('value'); // total user sales [closed]
-        $user_cancel = $sales_by_user->where('status', 'Cancel')->sum('value'); // total user sales [cancel]
+        if ($user->hasRole('AMS')) {
+            $total_target = $user->ams->amsTargets->sum('target'); // total user sales [target]
+        } else {
+            $total_target = 0;
+            foreach ($raw_sales as $sales) {
+                $total_target += $sales->ams->amsTargets->sum('target');
+            }
+        }
+        $total_open = $raw_sales->where('status', 'Open')->sum('value'); // total user sales [open]
+        $total_closed = $raw_sales->where('status', 'Closed')->sum('value'); // total user sales [closed]
+        $total_cancel = $raw_sales->where('status', 'Cancel')->sum('value'); // total user sales [cancel]
 
         // menampung overview data untuk [4 card level]
         for ($i = 1; $i <= 4; $i++){
-            $user_sales = $sales_by_user->where('level', $i); // get data user sales [per-level]
+            $user_sales = $raw_sales->where('level', $i); // get data user sales [per-level]
             ${"level$i"} = [ // level[1-4]
                 'total' => $user_sales->sum('value'), // user total [all] sales 
                 'open' => $user_sales->where('status', 'Open')->sum('value'), // user total [open] sales
@@ -104,15 +113,15 @@ class SalesController extends Controller
 
         // TODO temproray -> sorting in collection directly instead of eloquent query
         if ($order == 'level') {
-            $user_salesplan = ($by == 'asc') ? $user_salesplan->sortBy('level')->values()
-                                            : $user_salesplan->sortByDesc('level')->values();
+            $table_salesplan = ($by == 'asc') ? $table_salesplan->sortBy('level')->values()
+                                            : $table_salesplan->sortByDesc('level')->values();
         } else if ($order == 'status') {
-            $user_salesplan = ($by == 'asc') ? $user_salesplan->sortBy('status')->values()
-                                            : $user_salesplan->sortByDesc('status')->values();
+            $table_salesplan = ($by == 'asc') ? $table_salesplan->sortBy('status')->values()
+                                            : $table_salesplan->sortByDesc('status')->values();
         }
 
         // modifikasi data pagination
-        $sales_by_user->setCollection($user_salesplan);
+        $raw_sales->setCollection($table_salesplan);
 
         // overview data (all sales) untuk [modal salesplan total]
         $all_open = $all_sales->where('status', 'Open')->sum('value'); // total all sales [open]
@@ -127,16 +136,16 @@ class SalesController extends Controller
                 'totalCancel' => $all_cancel,
             ],
             'user' => [
-                'totalTarget' => $user_target,
-                'totalOpen' => $user_open,
-                'totalClosed' => $user_closed,
-                'totalOpenClosed' => $user_open + $user_closed,
-                'totalCancel' => $user_cancel,
+                'totalTarget' => $total_target,
+                'totalOpen' => $total_open,
+                'totalClosed' => $total_closed,
+                'totalOpenClosed' => $total_open + $total_closed,
+                'totalCancel' => $total_cancel,
                 'level4' => $level4,
                 'level3' => $level3,
                 'level2' => $level2,
                 'level1' => $level1,
-                'salesPlan' => $sales_by_user,
+                'salesPlan' => $raw_sales,
             ]
         ];
 
@@ -371,6 +380,21 @@ class SalesController extends Controller
         ], 200);
     }
 
+    public function upgradeLevel($id)
+    {
+        $sales = Sales::findOrFail($id);
+
+        $level = $sales->salesLevel->firstWhere('level_id', $sales->level);
+        $level->status = 2;
+        $level->push();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sales level upgraded successfully',
+            'data' => $sales,
+        ], 200);
+    }
+
     public function slotRequest($id, Request $request)
     {
         $request->validate(['line_id' => 'required|integer|exists:lines,id']);
@@ -382,10 +406,7 @@ class SalesController extends Controller
             $sales->line_id = $request->line_id;
             $sales->push();
 
-            $requirement = $sales->setRequirement(8);
-
-            $level_id = $requirement->requirement->level_id;
-            $sales->checkLevelStatus($level_id);
+            $sales->setRequirement(8);
 
             DB::commit();
 
@@ -415,10 +436,7 @@ class SalesController extends Controller
             $sales->so_number = $request->so_number;
             $sales->push();
 
-            $requirement = $sales->setRequirement(10);
-
-            $level_id = $requirement->requirement->level_id;
-            $sales->checkLevelStatus($level_id);
+            $sales->setRequirement(10);
 
             DB::commit();
 
