@@ -127,7 +127,11 @@ class Sales extends Model
                     return $item->level_id;
                 }
             } else if ($item->status == 2) {
-                return $item->level_id - 1;
+                if ($item->level_id == 1) {
+                    return $item->level_id;
+                } else {
+                    return $item->level_id - 1;
+                }
             } else {
                 if ($item->level_id != 4) {
                     continue;
