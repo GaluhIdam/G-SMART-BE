@@ -366,6 +366,7 @@ class SalesController extends Controller
                 'location' => $sales->hangar ?? null,
                 'product' => $sales->product ?? null,
                 'maintenance' => $sales->maintenance ?? null,
+                'upgrade' => $sales->upgrade,
                 'marketShare' => $market_share,
                 'totalSales' => $total_sales,
                 'deviasi' => $deviasi,
