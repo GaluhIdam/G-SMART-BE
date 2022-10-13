@@ -19,7 +19,7 @@ class Prospect extends Model
         'prospect_type_id',
         'strategic_initiative_id',
         'pm_id',
-        'customer_id',
+        'ams_customer_id',
     ];
 
     protected $appends = [

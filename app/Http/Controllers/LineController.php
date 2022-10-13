@@ -11,9 +11,7 @@ class LineController extends Controller
     {
         $hangar = $request->hangar_id;
         
-        $lines = Line::byHangar($hangar)
-                    ->paginate(10)
-                    ->withQueryString();
+        $lines = Line::byHangar($hangar)->get();
 
         return response()->json([
             'success' => true,

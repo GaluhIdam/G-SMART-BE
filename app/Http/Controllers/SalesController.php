@@ -577,4 +577,31 @@ class SalesController extends Controller
             ], 500);
         }
     }
+
+    public function closeSales($id)
+    {
+        $sales = Sales::findOrFail($id);
+        $sales_level = $sales->salesLevel->firstWhere('level_id', $sales->level);
+
+        if (($sales_level->level_id != 1) && ($sales_level->status != 2)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sales cannot be closed',
+            ], 400);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sales closed successfully',
+        ], 200);
+
+        $sales_level->status = 3;
+        $sales_level->push();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sales closed successfully',
+            'data' => $sales,
+        ], 200);
+    }
 }

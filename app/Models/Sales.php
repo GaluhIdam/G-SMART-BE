@@ -285,9 +285,9 @@ class Sales extends Model
 
     public function getUpgradeLevelAttribute()
     {
-        if ($this->level == 1) {
-            return false;
-        }
+        // if ($this->level == 1) {
+        //     return false;
+        // }
 
         $requirements = Requirement::where('level_id', $this->level)->pluck('id');
         $requirement_done = SalesRequirement::where('sales_id', $this->id)

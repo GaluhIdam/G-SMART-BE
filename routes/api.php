@@ -204,6 +204,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales|manage_sales']);
     Route::put('sales-reschedule/{id}', [SalesController::class, 'rescheduleSales']);
     Route::put('sales-reject/{id}', [SalesController::class, 'rejectSales']);
+    Route::put('sales-close/{id}', [SalesController::class, 'closeSales']);
 
     // Line
     Route::get('line', LineController::class);
