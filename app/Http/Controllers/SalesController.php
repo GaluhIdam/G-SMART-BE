@@ -591,11 +591,6 @@ class SalesController extends Controller
             ], 400);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Sales closed successfully',
-        ], 200);
-
         $sales_level->status = 3;
         $sales_level->push();
 
