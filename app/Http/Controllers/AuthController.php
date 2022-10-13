@@ -17,14 +17,14 @@ class AuthController extends Controller
         ]);
         if (Auth::attempt($request->all())) {
             return response()->json([
-                'message' => 'Authorized',
+                'message' => 'Logged in successfully',
                 'token' => Auth::user()->createToken('token')->plainTextToken,
                 'user' => Auth::user(),
             ], 200);
             $request->session()->regenerate();
         } else {
             return response()->json([
-                'message' => 'Unauthorized',
+                'message' => 'The provided credentials are invalid',
             ], 401);
         }
     }
@@ -33,7 +33,7 @@ class AuthController extends Controller
     {
         if ($request->user()->tokens()->delete()) {
             return response()->json([
-                'message' => 'Logout has successfully!',
+                'message' => 'Logged out successfully!',
             ], 200);
             $request->session()->invalidate();
             $request->session()->regenerateToken();
