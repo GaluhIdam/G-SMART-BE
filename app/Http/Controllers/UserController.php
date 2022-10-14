@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -62,26 +63,26 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'name'        => 'required|unique:users',
-            // 'username'    => 'required|unique:users',
-            'email'       => 'required|unique:users|email',
-            'nopeg'       => 'required|unique:users',
-            'unit'        => 'required',
-            // 'password'    => 'required|min:8',
+            'name'        => 'required|string',
+            'username'    => 'required|string|unique:users',
+            'role_id'     => 'required|integer|exists:roles,id',
+            'email'       => 'required|string|unique:users,email|email',
+            'nopeg'       => 'required|integer|unique:users',
+            'unit'        => 'required|string',
+            'password'    => 'required|string|min:3',
             // 're_password' => 'required|same:password',
-        ], [
-            'nopeg.required' => 'The employee number field is required.'
         ]);
-        $register = User::create($request->all());
-        // $register = User::create([
-        //     'name'       => $request->get('name'),
-        //     'nopeg'       => $request->get('nopeg'),
-        //     // 'username'   => $request->get('username'),
-        //     // 'role_id'    => $request->get('role_id'),
-        //     'email'      => $request->get('email'),
-        //     'unit'       => $request->get('unit'),
-        //     // 'password'   => password_hash($request->get('password'), PASSWORD_DEFAULT),
-        // ]);
+        // $register = User::create($request->all());
+        $register = User::create([
+            'name'       => $request->name,
+            'nopeg'      => $request->nopeg,
+            'username'   => $request->username,
+            'role_id'    => $request->role_id,
+            'email'      => $request->email,
+            'unit'       => $request->unit,
+            'password'   => Hash::make($request->password),
+            'email_verified_at' => Carbon::now(),
+        ]);
 
         return response()->json([
             'message' => 'User created has successfully!',
@@ -107,16 +108,12 @@ class UserController extends Controller
     {
         if ($user = User::find($id)) {
             $request->validate([
-                'name'        => 'required|unique:users,name,' . $id . '|max:255',
-                // 'username'    => 'required|unique:users,username,' . $id . '|max:255',
-                'email'       => 'required|unique:users,email,' . $id . '|max:255',
-                'nopeg'       => 'required|unique:users,nopeg,' . $id . '|max:255',
-                'unit'        => 'required',
-                // 'password'    => 'required|min:8|max:255',
-            ], [
-                'nopeg.required' => 'The employee number field is required.',
-                'nopeg.unique' => 'The employee number has already been taken.',
-                'nopeg.max' => 'The employee number must not be greater than 255 characters.',
+                'name'        => 'required|string',
+                'role_id'     => 'required|integer|exists:roles,id',
+                'email'       => 'required|string|email',
+                'nopeg'       => 'required|integer|unique:users',
+                'unit'        => 'required|string',
+                'password'    => 'required|string|min:3',
             ]);
 
             $user->update($request->all());
