@@ -86,11 +86,24 @@ class UserSeeder extends Seeder
             'nopeg'             => '102985',
             'unit'              => 'TPR-1',
             'role_id'           => 3,
-            'email'             => 'tp.user@gmf-aeroasia.co.id',
+            'email'             => 'tpr.user@gmf-aeroasia.co.id',
             'password'          => Hash::make('password'),
             'email_verified_at' => Carbon::now(),
         ]);
         $tpr->assignRole('TPR');
+        
+        // CBO
+        $tpr = User::create([
+            'name'              => 'User CBO',
+            'username'          => 'cbo_user',
+            'nopeg'             => '092375',
+            'unit'              => 'CBO-1',
+            'role_id'           => 4,
+            'email'             => 'cbo.user@gmf-aeroasia.co.id',
+            'password'          => Hash::make('password'),
+            'email_verified_at' => Carbon::now(),
+        ]);
+        $tpr->assignRole('CBO');
 
         // AMS
         $ams = User::create([
@@ -98,7 +111,7 @@ class UserSeeder extends Seeder
             'username'          => 'ams_user1',
             'nopeg'             => '017523',
             'unit'              => 'AMS-1',
-            'role_id'           => 4,
+            'role_id'           => 5,
             'email'             => 'ams.user1@gmf-aeroasia.co.id',
             'password'          => Hash::make('password'),
             'email_verified_at' => Carbon::now(),
@@ -109,7 +122,7 @@ class UserSeeder extends Seeder
             'username'          => 'ams_user2',
             'nopeg'             => '235853',
             'unit'              => 'AMS-2',
-            'role_id'           => 4,
+            'role_id'           => 5,
             'email'             => 'ams.user2@gmf-aeroasia.co.id',
             'password'          => Hash::make('password'),
             'email_verified_at' => Carbon::now(),
@@ -120,25 +133,12 @@ class UserSeeder extends Seeder
             'username'          => 'ams_user3',
             'nopeg'             => '0235352',
             'unit'              => 'AMS-3',
-            'role_id'           => 4,
+            'role_id'           => 5,
             'email'             => 'ams.user3@gmf-aeroasia.co.id',
             'password'          => Hash::make('password'),
             'email_verified_at' => Carbon::now(),
         ]);
         $ams->assignRole('AMS');
-
-        // CBO
-        // $cbo = User::create([
-        //     'name'              => 'User CBO',
-        //     'username'          => 'cbo_user',
-        //     'nopeg'             => '973523',
-        //     'unit'              => 'CBO-1',
-        //     'role_id'           => 7,
-        //     'email'             => 'cbo@gmf-aeroasia.co.id',
-        //     'password'          => Hash::mak('password'),
-        //     'email_verified_at' => Carbon::now(),
-        // ]);
-        // $cbo->assignRole('CBO');
 
         // TD
         // $td = User::create([

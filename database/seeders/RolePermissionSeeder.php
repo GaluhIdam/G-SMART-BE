@@ -590,7 +590,6 @@ class RolePermissionSeeder extends Seeder
             $show_sales,
             $upgrade_level,
             $update_sales,
-            $reschedule_sales,
             $reject_sales,
             $close_sales,
             $read_files,
@@ -601,6 +600,21 @@ class RolePermissionSeeder extends Seeder
             $read_contacts,
         ]);
 
+        // CBO
+        $tpr = Role::create([
+            'name' => 'CBO',
+            'description' => 'Approve Sales Plan Requirement',
+        ])->givePermissionTo([
+            $read_sales,
+            $show_sales,
+            $slot_request,
+            $input_so_number,
+            $read_files,
+            $show_files,
+            $file_histories,
+            $read_contacts,
+        ]);
+
         // AMS
         $ams = Role::create([
             'name' => 'AMS',
@@ -608,9 +622,8 @@ class RolePermissionSeeder extends Seeder
         ])->givePermissionTo([
             $read_sales, 
             $show_sales, 
-            $slot_request, 
-            $input_so_number,
             $switch_ams,
+            $reschedule_sales,
             $read_lines,
             $read_hangars,
             $read_files,
