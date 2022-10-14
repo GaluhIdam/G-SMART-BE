@@ -74,14 +74,14 @@ class UserController extends Controller
         ]);
         // $register = User::create($request->all());
         $user = new User;
-        $user->name = $request->name,
-        $user->nopeg = $request->nopeg,
-        $user->username = $request->username,
-        $user->role_id = $request->role_id,
-        $user->email = $request->email,
-        $user->unit = $request->unit,
-        $user->password = Hash::make($request->password),
-        $user->email_verified_at = Carbon::now(),
+        $user->name = $request->name;
+        $user->nopeg = $request->nopeg;
+        $user->username = $request->username;
+        $user->role_id = $request->role_id;
+        $user->email = $request->email;
+        $user->unit = $request->unit;
+        $user->password = Hash::make($request->password);
+        $user->email_verified_at = Carbon::now();
         $user->save();
 
         return response()->json([
@@ -116,12 +116,12 @@ class UserController extends Controller
                 'password'    => 'required|string|min:3',
             ]);
 
-            $user->name = $request->name,
-            $user->nopeg = $request->nopeg,
-            $user->role_id = $request->role_id,
-            $user->email = $request->email,
-            $user->unit = $request->unit,
-            $user->password = Hash::make($request->password),
+            $user->name = $request->name;
+            $user->nopeg = $request->nopeg;
+            $user->role_id = $request->role_id;
+            $user->email = $request->email;
+            $user->unit = $request->unit;
+            $user->password = Hash::make($request->password);
             $user->push();
 
             return response()->json([
