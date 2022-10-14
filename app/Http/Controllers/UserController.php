@@ -73,16 +73,16 @@ class UserController extends Controller
             // 're_password' => 'required|same:password',
         ]);
         // $register = User::create($request->all());
-        $register = User::create([
-            'name'       => $request->name,
-            'nopeg'      => $request->nopeg,
-            'username'   => $request->username,
-            'role_id'    => $request->role_id,
-            'email'      => $request->email,
-            'unit'       => $request->unit,
-            'password'   => Hash::make($request->password),
-            'email_verified_at' => Carbon::now(),
-        ]);
+        $user = new User;
+        $user->name = $request->name,
+        $user->nopeg = $request->nopeg,
+        $user->username = $request->username,
+        $user->role_id = $request->role_id,
+        $user->email = $request->email,
+        $user->unit = $request->unit,
+        $user->password = Hash::make($request->password),
+        $user->email_verified_at = Carbon::now(),
+        $user->save();
 
         return response()->json([
             'message' => 'User created has successfully!',
@@ -116,7 +116,13 @@ class UserController extends Controller
                 'password'    => 'required|string|min:3',
             ]);
 
-            $user->update($request->all());
+            $user->name = $request->name,
+            $user->nopeg = $request->nopeg,
+            $user->role_id = $request->role_id,
+            $user->email = $request->email,
+            $user->unit = $request->unit,
+            $user->password = Hash::make($request->password),
+            $user->push();
 
             return response()->json([
                 'message' => 'User has been updated successfully!',
