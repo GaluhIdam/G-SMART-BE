@@ -57,7 +57,7 @@ class Handler extends ExceptionHandler
         if ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
             return response()->json([
                 'code' => 403,
-                'message' => 'Forbidden Error',
+                'message' => 'Oops! You are unauthorized.',
             ], 403);
         }
         return parent::render($request, $exception);
