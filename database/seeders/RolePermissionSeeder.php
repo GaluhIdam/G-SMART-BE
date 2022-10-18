@@ -573,6 +573,7 @@ class RolePermissionSeeder extends Seeder
             'name' => 'TPC',
             'description' => 'Manage Prospect Data',
         ])->givePermissionTo([
+            $read_users,
             $read_sales, 
             $show_sales, 
             // $create_sales,
@@ -586,9 +587,11 @@ class RolePermissionSeeder extends Seeder
             'name' => 'TPR',
             'description' => 'Manage AMS Sales Plan Request',
         ])->givePermissionTo([
+            $read_users,
             $read_sales, 
             $show_sales,
             $upgrade_level,
+            $slot_request,
             $update_sales,
             $reject_sales,
             $close_sales,
@@ -601,13 +604,13 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         // CBO
-        $tpr = Role::create([
+        $cbo = Role::create([
             'name' => 'CBO',
             'description' => 'Approve Sales Plan Requirement',
         ])->givePermissionTo([
+            $read_users,
             $read_sales,
             $show_sales,
-            $slot_request,
             $input_so_number,
             $read_files,
             $show_files,
@@ -620,6 +623,7 @@ class RolePermissionSeeder extends Seeder
             'name' => 'AMS',
             'description' => 'Manage Sales Plan Requirement',
         ])->givePermissionTo([
+            $read_users,
             $read_sales, 
             $show_sales, 
             $switch_ams,
@@ -646,12 +650,6 @@ class RolePermissionSeeder extends Seeder
         // $tp = Role::create([
         //     'name' => 'TP',
         //     'description' => 'Approve Profitable Analysis',
-        // ])->givePermissionTo();
-
-        // CBO
-        // $cbo = Role::create([
-        //     'name' => 'CBO',
-        //     'description' => 'Confirm Hangar Slot Book',
         // ])->givePermissionTo();
     }
 }

@@ -56,7 +56,6 @@ class SalesRejectController extends Controller
             'sales_id'   => 'required|numeric',
             'category'   => 'required',
             'reason'     => 'required',
-            'competitor' => 'required',
         ]);
 
         $sales_reject = SalesReject::create($request->all());
@@ -88,7 +87,6 @@ class SalesRejectController extends Controller
                 'sales_id'   => 'required|unique:sales_rejects,sales_id,' . $id . '',
                 'category'   => 'required',
                 'reason'     => 'required',
-                'competitor' => 'required',
             ]);
 
             $sales_reject->update($request->all());

@@ -93,7 +93,7 @@ class UserSeeder extends Seeder
         $tpr->assignRole('TPR');
         
         // CBO
-        $tpr = User::create([
+        $cbo = User::create([
             'name'              => 'User CBO',
             'username'          => 'cbo_user',
             'nopeg'             => '092375',
@@ -103,7 +103,7 @@ class UserSeeder extends Seeder
             'password'          => Hash::make('password'),
             'email_verified_at' => Carbon::now(),
         ]);
-        $tpr->assignRole('CBO');
+        $cbo->assignRole('CBO');
 
         // AMS
         $ams = User::create([
