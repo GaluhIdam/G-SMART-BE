@@ -14,6 +14,7 @@ class ContactPersonController extends Controller
         $customer_id = $request->customer ?? false;
 
         $contact_persons = ContactPerson::byCustomer($customer_id)
+                                        ->latest()
                                         ->paginate(10)
                                         ->withQueryString();
 

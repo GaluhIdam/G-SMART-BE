@@ -159,7 +159,7 @@ class Sales extends Model
         
         foreach ($requirements as $item) {
             if ($item->requirement_id == 1) {
-                $data = $this->contact_persons->values();
+                $data = $this->contact_persons->sortByDesc('updated_at')->take(10)->values();
                 if ($data->isNotEmpty()) {
                     $last_update = Carbon::parse($this->customer->latestCP->updated_at)->format('Y-m-d H:i');
                 } else {
