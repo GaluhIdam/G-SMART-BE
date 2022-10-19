@@ -390,6 +390,13 @@ class SalesController extends Controller
     {
         $sales = Sales::findOrFail($id);
 
+        if (!$sales->upgrade) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, complete your requirements first',
+            ], 422);
+        }
+
         $level = $sales->salesLevel->firstWhere('level_id', $sales->level);
         $level->status = 2;
         $level->push();
