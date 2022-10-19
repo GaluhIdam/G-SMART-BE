@@ -623,6 +623,7 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Manage Sales Plan Requirement',
         ])->givePermissionTo([
             $read_users,
+            $read_ams,
             $read_sales, 
             $show_sales, 
             $switch_ams,
