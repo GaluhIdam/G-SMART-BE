@@ -49,13 +49,12 @@ class UserController extends Controller
 
         $user->appends($query_string);
 
-        $user_active = Auth::user();
+        $user_active = User::with('role.permissions.permission')->find(Auth::id());
 
         return response()->json([
             'message' => 'success',
             'data' => $user,
-            'user' => $user_active->name,
-            'email' => $user_active->email,
+            'user' => $user_active,
         ], 200);
     }
 
