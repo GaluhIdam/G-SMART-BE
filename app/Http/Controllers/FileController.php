@@ -146,7 +146,7 @@ class FileController extends Controller
 
         $data = collect([
             'month' => $month->format('F Y'),
-            'history' => $file_histories,
+            'history' => collect($file_histories)->sortByDesc('uploadedAt')->values(),
         ]);
 
         return response()->json([
