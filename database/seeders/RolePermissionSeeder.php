@@ -591,7 +591,6 @@ class RolePermissionSeeder extends Seeder
             $read_sales, 
             $show_sales,
             $upgrade_level,
-            $slot_request,
             $update_sales,
             $reject_sales,
             $close_sales,
@@ -638,6 +637,7 @@ class RolePermissionSeeder extends Seeder
             $read_contacts,
             $create_contacts,
             $delete_contacts,
+            $slot_request,
         ]);
 
         // TD
