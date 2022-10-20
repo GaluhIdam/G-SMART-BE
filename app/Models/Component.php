@@ -13,4 +13,14 @@ class Component extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function tmb()
+    {
+        return $this->hasMany(TMB::class);
+    }
+    
+    public function sales()
+    {
+        return $this->hasMany(Sales::class);
+    }
 }

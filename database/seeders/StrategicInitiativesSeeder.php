@@ -19,5 +19,13 @@ class StrategicInitiativesSeeder extends Seeder
             'name'        => 'Military',
             'description' => 'Military Based Project',
         ]);
+        StrategicInitiatives::create([
+            'name'        => 'Business',
+            'description' => 'Business Based Project',
+        ]);
+        StrategicInitiatives::create([
+            'name'        => 'Corporate',
+            'description' => 'Corporation Based Project',
+        ]);
     }
 }

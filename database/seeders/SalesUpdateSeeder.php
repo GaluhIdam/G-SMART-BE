@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\SalesUpdate;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ProspectPBTHSecondSeeder extends Seeder
+class SalesUpdateSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +15,10 @@ class ProspectPBTHSecondSeeder extends Seeder
      */
     public function run()
     {
-        //
+        SalesUpdate::create([
+            'sales_id' => 1,
+            'detail'   => 'This is Detail',
+            'reason'   => 'Success',
+        ]);
     }
 }

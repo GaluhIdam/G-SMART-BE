@@ -12,7 +12,19 @@ class EngineSeeder extends Seeder
     public function run()
     {
         Engine::create([
-            'name' => 'CFM56-5B',
+            'name' => 'Turbofan',
+        ]);
+        Engine::create([
+            'name' => 'Turboshaft',
+        ]);
+        Engine::create([
+            'name' => 'Turbojet',
+        ]);
+        Engine::create([
+            'name' => 'Turboprop',
+        ]);
+        Engine::create([
+            'name' => 'Ramjet',
         ]);
     }
 }

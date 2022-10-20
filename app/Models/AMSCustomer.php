@@ -19,8 +19,19 @@ class AMSCustomer extends Model
     {
         return $this->belongsTo(Area::class, 'area_id');
     }
+
     public function ams()
     {
         return $this->belongsTo(AMS::class, 'ams_id');
+    }
+
+    public function prospects()
+    {
+        return $this->hasMany(Prospect::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 }

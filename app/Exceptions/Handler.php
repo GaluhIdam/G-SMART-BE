@@ -50,4 +50,16 @@ class Handler extends ExceptionHandler
             ), 422);
         });
     }
+
+    // Custom exception for spatie role permission
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
+            return response()->json([
+                'code' => 403,
+                'message' => 'Oops! You are unauthorized.',
+            ], 403);
+        }
+        return parent::render($request, $exception);
+    }
 }

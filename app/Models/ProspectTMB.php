@@ -15,4 +15,14 @@ class ProspectTMB extends Model
         'prospect_id',
         'tmb_id',
     ];
+
+    public function tmb()
+    {
+        return $this->belongsTo(TMB::class, 'tmb_id');
+    }
+
+    public function prospect()
+    {
+        return $this->belongsTo(Prospect::class, 'prospect_id');
+    }
 }

@@ -15,13 +15,33 @@ return new class extends Migration
     {
         Schema::create('tmb', function (Blueprint $table) {
             $table->id()->unsigned();
-            $table->integer('product_id')->nullable();
-            $table->integer('ac_type_id')->nullable();
-            $table->integer('component_id')->nullable();
-            $table->integer('engine_id')->nullable();
-            $table->decimal('apu_id')->nullable();
+
+            $table->unsignedBigInteger('product_id')->nullable();
+            $table->index('product_id');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('ac_type_id')->nullable();
+            $table->index('ac_type_id');
+            $table->foreign('ac_type_id')->references('id')->on('ac_type_id')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('component_id')->nullable();
+            $table->index('component_id');
+            $table->foreign('component_id')->references('id')->on('component_id')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('engine_id')->nullable();
+            $table->index('engine_id');
+            $table->foreign('engine_id')->references('id')->on('engine_id')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('apu_id')->nullable();
+            $table->index('apu_id');
+            $table->foreign('apu_id')->references('id')->on('apu_id')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('maintenance_id')->nullable();
+            $table->index('maintenance_id');
+            $table->foreign('maintenance_id')->references('id')->on('maintenances')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->decimal('market_share', 18,2)->nullable();
             $table->text('remarks')->nullable();
-            $table->text('maintenance_id')->nullable();
             $table->timestamps();
         });
     }

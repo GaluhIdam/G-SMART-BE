@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -49,43 +49,42 @@ class UserController extends Controller
 
         $user->appends($query_string);
 
-        $user_active = Auth::user();
+        $user_active = User::with('role.permissions.permission')->find(Auth::id());
 
         return response()->json([
             'message' => 'success',
             'data' => $user,
-            'user' => $user_active->name,
-            'email' => $user_active->email,
+            'user' => $user_active,
         ], 200);
     }
 
     public function create(Request $request)
     {
         $request->validate([
-            'name'        => 'required|unique:users',
-            // 'username'    => 'required|unique:users',
-            'email'       => 'required|unique:users|email',
-            'nopeg'       => 'required|unique:users',
-            'unit'        => 'required',
-            // 'password'    => 'required|min:8',
+            'name'        => 'required|string',
+            'username'    => 'required|string|unique:users',
+            'role_id'     => 'required|integer|exists:roles,id',
+            'email'       => 'required|string|unique:users,email|email',
+            'nopeg'       => 'required|integer|unique:users',
+            'unit'        => 'required|string',
+            'password'    => 'required|string|min:3',
             // 're_password' => 'required|same:password',
-        ], [
-            'nopeg.required' => 'The employee number field is required.'
         ]);
-        $register = User::create($request->all());
-        // $register = User::create([
-        //     'name'       => $request->get('name'),
-        //     'nopeg'       => $request->get('nopeg'),
-        //     // 'username'   => $request->get('username'),
-        //     // 'role_id'    => $request->get('role_id'),
-        //     'email'      => $request->get('email'),
-        //     'unit'       => $request->get('unit'),
-        //     // 'password'   => password_hash($request->get('password'), PASSWORD_DEFAULT),
-        // ]);
+        // $register = User::create($request->all());
+        $user = new User;
+        $user->name = $request->name;
+        $user->nopeg = $request->nopeg;
+        $user->username = trim($request->username);
+        $user->role_id = $request->role_id;
+        $user->email = $request->email;
+        $user->unit = strtoupper($request->unit);
+        $user->password = Hash::make($request->password);
+        $user->email_verified_at = Carbon::now();
+        $user->save();
 
         return response()->json([
             'message' => 'User created has successfully!',
-            'data'    => $register,
+            'data'    => $user,
         ], 201);
     }
 
@@ -107,19 +106,21 @@ class UserController extends Controller
     {
         if ($user = User::find($id)) {
             $request->validate([
-                'name'        => 'required|unique:users,name,' . $id . '|max:255',
-                // 'username'    => 'required|unique:users,username,' . $id . '|max:255',
-                'email'       => 'required|unique:users,email,' . $id . '|max:255',
-                'nopeg'       => 'required|unique:users,nopeg,' . $id . '|max:255',
-                'unit'        => 'required',
-                // 'password'    => 'required|min:8|max:255',
-            ], [
-                'nopeg.required' => 'The employee number field is required.',
-                'nopeg.unique' => 'The employee number has already been taken.',
-                'nopeg.max' => 'The employee number must not be greater than 255 characters.',
+                'name'        => 'required|string',
+                'role_id'     => 'required|integer|exists:roles,id',
+                // 'email'       => 'required|string|email',
+                // 'nopeg'       => 'required|integer|unique:users',
+                'unit'        => 'required|string',
+                'password'    => 'required|string|min:3',
             ]);
 
-            $user->update($request->all());
+            $user->name = $request->name;
+            $user->role_id = $request->role_id;
+            // $user->nopeg = $request->nopeg;
+            // $user->email = $request->email;
+            $user->unit = strtoupper($request->unit);
+            $user->password = Hash::make($request->password);
+            $user->push();
 
             return response()->json([
                 'message' => 'User has been updated successfully!',

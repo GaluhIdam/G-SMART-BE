@@ -5,14 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProspectPBTHSecond extends Model
+class SalesHistory extends Model
 {
     use HasFactory;
-    protected $table = 'prospect_pbth_seconds';
-
     protected $fillable = [
-        'month',
-        'rate',
-        'flight_hour',
+        'sales_id',
+        'detail',
     ];
+
+    public function sales()
+    {
+        return $this->belongsTo(Sales::class, 'sales_id');
+    }
 }
