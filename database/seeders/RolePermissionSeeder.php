@@ -305,6 +305,23 @@ class RolePermissionSeeder extends Seeder
         ModulePermissions::create(['module_id' => $manage_approval->id, 'permission_id' => $update_approval->id],);
         ModulePermissions::create(['module_id' => $manage_approval->id, 'permission_id' => $delete_approval->id],);
 
+         //Prospect Permission
+        $manage_prospect = Module::create([
+            'module_name' => 'Manage Prospects'
+        ]);
+
+        $read_prospects = Permission::create(['name' => 'read_prospects']);
+        $create_prospects = Permission::create(['name' => 'create_prospects']);
+        $show_prospects = Permission::create(['name' => 'show_prospects']);
+        $update_prospects = Permission::create(['name' => 'update_prospects']);
+        $delete_prospects = Permission::create(['name' => 'delete_prospects']);
+        
+        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $read_prospects->id],);
+        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $create_prospects->id],);
+        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $show_prospects->id],);
+        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $update_prospects->id],);
+        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $delete_prospects->id],);
+
         //File Permission
         // $manage_file = Module::create([
         //     'module_name' => 'Manage File'
