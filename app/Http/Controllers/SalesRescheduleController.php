@@ -25,7 +25,7 @@ class SalesRescheduleController extends Controller
             $paginate = 10;
         }
         
-        $sales_reschedule = SalesReschedule::with('sales_id')->when($search, function ($query) use ($search) {
+        $sales_reschedule = SalesReschedule::with('sales')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('sales_id', 'LIKE', "%$search%")
                     ->orWhere('start_date', 'LIKE', "%$search%")

@@ -25,7 +25,7 @@ class SalesUpdateController extends Controller
             $paginate = 10;
         }
 
-        $sales_update = SalesUpdate::with('sales_id')->when($search, function ($query) use ($search) {
+        $sales_update = SalesUpdate::with('sales')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('sales_id', 'LIKE', "%$search%")
                     ->orWhere('detail', 'LIKE', "%$search%")

@@ -25,7 +25,7 @@ class CountriesController extends Controller
             $paginate = 10;
         }
 
-        $countries = Countries::with('regions')->when($search, function ($query) use ($search) {
+        $countries = Countries::with('region')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%$search%")
                     ->orWhere('region_id', $search);

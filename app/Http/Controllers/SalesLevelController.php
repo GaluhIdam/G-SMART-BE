@@ -25,7 +25,7 @@ class SalesLevelController extends Controller
             $paginate = 10;
         }
 
-        $sales_level = SalesLevel::with('sales_id', 'level_id')->when($search, function ($query) use ($search) {
+        $sales_level = SalesLevel::with('sales', 'level')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('sales_id', 'LIKE', "%$search%")
                     ->orWhere('level_id', 'LIKE', "%$search%")

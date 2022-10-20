@@ -28,7 +28,7 @@ class CustomerController extends Controller
             $paginate = 10;
         }
 
-        $customer = Customer::with('country.regions')->with('amscustomer.area')->with('amscustomer.ams.user')->when($search, function ($query) use ($search) {
+        $customer = Customer::with('country.region')->with('amsCustomers.area')->with('amsCustomers.ams.user')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('name', 'LIKE', "%$search%")
                     ->orWhere('code', 'LIKE', "%$search%");
@@ -94,7 +94,7 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($customer = Customer::with('amscustomer')->find($id)) {
+        if ($customer = Customer::with('amsCustomers')->find($id)) {
             $request->validate([
                 'name' => 'required|max:255',
                 'code' => 'required|max:255',
@@ -128,7 +128,7 @@ class CustomerController extends Controller
 
     public function destroy($id)
     {
-        if ($customer = Customer::with('amscustomer')->find($id)) {
+        if ($customer = Customer::with('amsCustomers')->find($id)) {
             $customer->delete();
             // AMSCustomer::find($customer->);
             return response()->json([

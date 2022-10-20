@@ -25,7 +25,7 @@ class RequirementController extends Controller
             $paginate = 10;
         }
 
-        $requirement = Requirement::with('levels')->when($search, function ($query) use ($search) {
+        $requirement = Requirement::with('level')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('level_id', 'LIKE', "%$search%")
                     ->orWhere('requirement', $search);

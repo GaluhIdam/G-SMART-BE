@@ -25,7 +25,7 @@ class SalesHistoryController extends Controller
             $paginate = 10;
         }
 
-        $sales_history = SalesHistory::with('sales_id')->when($search, function ($query) use ($search) {
+        $sales_history = SalesHistory::with('sales')->when($search, function ($query) use ($search) {
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('sales_id', 'LIKE', "%$search%")
                     ->orWhere('detail', 'LIKE', "%$search%");
