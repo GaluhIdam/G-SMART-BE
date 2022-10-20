@@ -20,4 +20,9 @@ class Permission extends Model
             get: fn ($value) => ucwords(str_replace('_', ' ', $value)),
         );
     }
+
+    public function permissions()
+    {
+        return $this->hasMany(RoleHasPermission::class);
+    }
 }

@@ -14,4 +14,14 @@ class Maintenance extends Model
         'name',
         'description',
     ];
+
+    public function sales()
+    {
+        return $this->hasMany(Sales::class);
+    }
+
+    public function tmb()
+    {
+        return $this->hasMany(TMB::class);
+    }
 }

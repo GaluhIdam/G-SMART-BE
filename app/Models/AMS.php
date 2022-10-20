@@ -18,6 +18,21 @@ class AMS extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function amsCustomers()
+    {
+        return $this->hasMany(AMSCustomer::class);
+    }
+
+    public function amsTargets()
+    {
+        return $this->hasMany(AMSTarget::class, 'ams_id');
+    }
+
+    public function sales()
+    {
+        return $this->hasMany(Sales::class);
     }
 }

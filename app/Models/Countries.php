@@ -15,8 +15,13 @@ class Countries extends Model
         'region_id',
     ];
 
-    public function regions()
+    public function region()
     {
         return $this->belongsTo(Region::class, 'region_id');
+    }
+
+    public function customers()
+    {
+        return $this->hasMany(Customer::class);
     }
 }

@@ -10,8 +10,14 @@ class Area extends Model
     use HasFactory;
 
     protected $table = 'areas';
+    
     protected $fillable = [
         'name',
         'scope',
     ];
+
+    public function amsCustomer()
+    {
+        return $this->hasMany(AMSCustomer::class);
+    }
 }

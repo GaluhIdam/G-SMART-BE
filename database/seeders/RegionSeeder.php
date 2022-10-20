@@ -22,10 +22,19 @@ class RegionSeeder extends Seeder
             'name' => 'East Asia',
         ]);
         Region::create([
-            'name' => 'Central Asia',
+            'name' => 'Middle East',
         ]);
         Region::create([
             'name' => 'South Asia',
+        ]);
+        Region::create([
+            'name' => 'Europe',
+        ]);
+        Region::create([
+            'name' => 'North America',
+        ]);
+        Region::create([
+            'name' => 'South America',
         ]);
     }
 }
