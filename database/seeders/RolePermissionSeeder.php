@@ -322,6 +322,23 @@ class RolePermissionSeeder extends Seeder
         ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $update_prospects->id],);
         ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $delete_prospects->id],);
 
+        //Customer Permission
+        $manage_customer = Module::create([
+            'module_name' => 'Manage Customer'
+        ]);
+
+        $read_customer = Permission::create(['name' => 'read_customer']);
+        $create_customer = Permission::create(['name' => 'create_customer']);
+        $show_customer = Permission::create(['name' => 'show_customer']);
+        $update_customer = Permission::create(['name' => 'update_customer']);
+        $delete_customer = Permission::create(['name' => 'delete_customer']);
+
+        ModulePermissions::create(['module_id' => $manage_customer->id, 'permission_id' => $read_customer->id],);
+        ModulePermissions::create(['module_id' => $manage_customer->id, 'permission_id' => $create_customer->id],);
+        ModulePermissions::create(['module_id' => $manage_customer->id, 'permission_id' => $show_customer->id],);
+        ModulePermissions::create(['module_id' => $manage_customer->id, 'permission_id' => $update_customer->id],);
+        ModulePermissions::create(['module_id' => $manage_customer->id, 'permission_id' => $delete_customer->id],);
+
         //File Permission
         // $manage_file = Module::create([
         //     'module_name' => 'Manage File'

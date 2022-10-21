@@ -74,11 +74,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('prospect-delete/{id}', [ProspectController::class, 'destroy']);
 
     //Customer Routes
-    Route::get('customer', [CustomerController::class, 'index']);
-    Route::post('customer-create', [CustomerController::class, 'create']);
-    Route::get('customer-show/{id}', [CustomerController::class, 'show']);
-    Route::put('customer-update/{id}', [CustomerController::class, 'update']);
-    Route::delete('customer-delete/{id}', [CustomerController::class, 'destroy']);
+    Route::get('customer', [CustomerController::class, 'index'])->middleware(['permission:read_customer|manage_customer']);
+    Route::post('customer-create', [CustomerController::class, 'create'])->middleware(['permission:create_customer|manage_customer']);
+    Route::get('customer-show/{id}', [CustomerController::class, 'show'])->middleware(['permission:show_customer|manage_customer']);
+    Route::put('customer-update/{id}', [CustomerController::class, 'update'])->middleware(['permission:update_customer|manage_customer']);
+    Route::delete('customer-delete/{id}', [CustomerController::class, 'destroy'])->middleware(['permission:delete_customer|manage_customer']);
 
     //Strategic Initiative Routes
     Route::get('strategic-initiative', [StrategicInitiativeController::class, 'index'])->middleware(['permission:read_strategic_initiative|manage_strategic_initiative']);
