@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Notification;
 
 class SalesController extends Controller
 {
@@ -386,14 +388,55 @@ class SalesController extends Controller
         ], 200);
     }
 
-    public function upgradeLevel($id)
+    public function requestUpgrade(Request $request)
+    {
+        $request->validate([
+            'sales_id' => 'required|integer|exists:sales,id',
+            'target_url' => 'required|string|url',
+        ]);
+
+        $sales = Sales::find($request->sales_id);
+
+        if (!$sales->upgrade_level) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, complete the requirement first',
+            ], 422);
+        }
+
+        $pm_mail = $sales->prospect->pm->email;
+        $pm_name = $sales->prospect->pm->name;
+        $ams_name = $sales->ams->user->name;
+        $redirect_to = $request->target_url;
+
+        $data = [
+            'subject' => 'GSMART - Upgrade Sales Level Request',
+            'body' => "Hi <b>{$pm_name}</b>,
+                        <br>You have new request for upgrading salesplan level.
+                        <br><br>AMS Name: {$ams_name}
+                        <br>Registration: {$sales->ac_reg}
+                        <br>TAT: {$sales->tat}
+                        <br>Start Date: {$sales->start_date}
+                        <br>End Date: {$sales->end_date}
+                        <br><br><a href='{$redirect_to}'>Open GSMART</a>",
+        ];
+
+        Mail::to($pm_mail)->send(new Notification($data));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sales level upgrade requested successfully',
+        ], 200);
+    }
+
+    public function confirmUpgrade($id)
     {
         $sales = Sales::findOrFail($id);
 
         if (!$sales->upgrade_level) {
             return response()->json([
                 'success' => false,
-                'message' => 'Oops, complete your requirements first',
+                'message' => 'Oops, sales level cannot be upgraded',
             ], 422);
         }
 
