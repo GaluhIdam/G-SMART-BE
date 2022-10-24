@@ -197,7 +197,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales']);
     Route::post('sales-create-tmb', [SalesController::class, 'createTmb'])->middleware(['permission:create_sales']);
     Route::post('sales-create-pbth', [SalesController::class, 'createPbth'])->middleware(['permission:create_sales']);
-    Route::put('sales-slot-request/{id}', [SalesController::class, 'slotRequest'])->middleware(['permission:slot_request']);
+    Route::post('sales-slot-request', [SalesController::class, 'slotRequest'])->middleware(['permission:slot_request']);
+    Route::put('sales-slot-confirm/{id}', [SalesController::class, 'slotConfirm'])->middleware(['permission:slot_confirm']);
     Route::put('sales-so-number/{id}', [SalesController::class, 'inputSONumber'])->middleware(['permission:input_so_number']);
     Route::put('sales-switch-ams/{id}', [SalesController::class, 'switchAMS'])->middleware(['permission:switch_ams']);
     Route::post('sales-request-upgrade', [SalesController::Class, 'requestUpgrade'])->middleware(['permission:sales_request_upgrade']);

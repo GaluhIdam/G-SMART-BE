@@ -492,6 +492,7 @@ class RolePermissionSeeder extends Seeder
         $close_sales = Permission::create(['name' => 'close_sales']);
         $delete_sales = Permission::create(['name' => 'delete_sales']);
         $sales_request_cogs = Permission::create(['name' => 'sales_request_cogs']);
+        $slot_confirm = Permission::create(['name' => 'slot_confirm']);
 
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $read_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $show_sales->id]);
@@ -507,6 +508,7 @@ class RolePermissionSeeder extends Seeder
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $close_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $delete_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $sales_request_cogs->id]);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $slot_confirm->id]);
         
         // Line Hangar Permission
         $manage_lines = Module::create([
@@ -584,6 +586,7 @@ class RolePermissionSeeder extends Seeder
             $read_sales, 
             $show_sales,
             $sales_confirm_upgrade,
+            $sales_request_cogs,
             $update_sales,
             $reject_sales,
             $close_sales,
@@ -606,6 +609,7 @@ class RolePermissionSeeder extends Seeder
             $show_files,
             $file_histories,
             $read_contacts,
+            $slot_confirm,
         ]);
 
         // AMS
@@ -623,7 +627,6 @@ class RolePermissionSeeder extends Seeder
             $create_sales,
             $delete_sales, 
             $sales_request_upgrade,
-            $sales_request_cogs,
             $switch_ams,
             $reschedule_sales,
             $read_lines,

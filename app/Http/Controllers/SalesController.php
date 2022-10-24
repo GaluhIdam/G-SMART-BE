@@ -420,7 +420,7 @@ class SalesController extends Controller
 
         $data = [
             'type' => 1,
-            'subject' => 'GSMART - New Upgrade Level Request',
+            'subject' => 'GSMART - New Request to Upgrade Sales Level',
             'body' => [
                 'message' => 'You have new request to upgrade salesplan level.',
                 'user_name' => $tpr_name,
@@ -497,7 +497,7 @@ class SalesController extends Controller
         $link = $request->target_url;
 
         $data = [
-            'type' => 2,
+            'type' => 1,
             'subject' => 'GSMART - New Request to Upload COGS',
             'body' => [
                 'message' => 'You have new request to upload COGS.',
@@ -523,34 +523,82 @@ class SalesController extends Controller
         ], 200);
     }
 
-    public function slotRequest($id, Request $request)
+    public function slotRequest(Request $request)
     {
-        $request->validate(['line_id' => 'required|integer|exists:lines,id']);
+        $request->validate([
+            'sales_id' => 'required|integer|exists:sales,id',
+            'line_id' => 'required|integer|exists:lines,id',
+            'user_id' => 'required|integer|exists:users,id',
+            'target_url' => 'required|string|url',
+        ]);
 
-        try {
-            DB::beginTransaction();
+        $sales = Sales::find($request->sales_id);
+        $sales->line_id = $request->line_id;
+        $sales->push();
 
-            $sales = Sales::findOrFail($id);
-            $sales->line_id = $request->line_id;
-            $sales->push();
+        $user = User::find($request->user_id);
 
-            $sales->setRequirement(8);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Hangar slot requested successfully',
-                'data' => $sales,
-            ], 200);
-        } catch (QueryException $e) {
-            DB::rollback();
-
+        if ($sales->level != 2) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+                'message' => 'Oops, this action only available at level 2',
+            ], 422);
         }
+
+        if (!$user->hasRole('CBO')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The selected user does not have access as a CBO',
+            ], 422);
+        }
+
+        $cbo_mail = $user->email;
+        $cbo_name = $user->name;
+        $link = $request->target_url;
+
+        $data = [
+            'type' => 2,
+            'subject' => 'GSMART - New Hangar Slot Request',
+            'body' => [
+                'message' => 'You have new request for hangar slot.',
+                'user_name' => $cbo_name,
+                'ams_name' => $sales->ams->user->name,
+                'hangar' => $sales->hangar->name,
+                'line' => $sales->line->name,
+                'ac_reg' => $sales->ac_reg,
+                'tat' => $sales->tat,
+                'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
+                'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
+                'link' => $link,
+            ]
+        ];
+
+        Mail::to($cbo_mail)->send(new Notification($data));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Hangar slot requested successfully',
+        ], 200);
+    }
+
+    public function slotConfirm($id)
+    {
+        $sales = Sales::findOrFail($id);
+
+        if (!$sales->line) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, this sales does not have a line hangar yet',
+            ], 422);
+        }
+
+        $sales->setRequirement(8);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Line hangar approved successfully',
+            'data' => $sales,
+        ], 200);
     }
 
     public function inputSONumber($id, Request $request)

@@ -24,11 +24,21 @@
             <td>AMS Name</td>
             <td>: {{ $data['body']['ams_name'] }}</td>
         </tr>
+        @if ($data['type'] == 2)
+            <tr>
+                <td>Hangar</td>
+                <td>: {{ $data['body']['hangar'] }}</td>
+            </tr>
+            <tr>
+                <td>Line</td>
+                <td>: {{ $data['body']['line'] }}</td>
+            </tr>
+        @endif
         <tr>
             <td>Registration</td>
             <td>: {{ $data['body']['ac_reg'] }}</td>
         </tr>
-        @if ($data['body']['type'] != 3)
+        @if ($data['type'] == 1)
             <tr>
                 <td>Customer</td>
                 <td>: {{ $data['body']['customer'] }}</td>
