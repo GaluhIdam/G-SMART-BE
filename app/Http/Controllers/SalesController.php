@@ -10,6 +10,7 @@ use App\Models\Prospect;
 use App\Models\Requirement;
 use App\Models\SalesReschedule;
 use App\Models\SalesReject;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -392,10 +393,12 @@ class SalesController extends Controller
     {
         $request->validate([
             'sales_id' => 'required|integer|exists:sales,id',
+            'user_id' => 'required|integer|exists:users,id',
             'target_url' => 'required|string|url',
         ]);
 
         $sales = Sales::find($request->sales_id);
+        $user = User::find($request->user_id);
 
         if (!$sales->upgrade_level) {
             return response()->json([
@@ -404,24 +407,37 @@ class SalesController extends Controller
             ], 422);
         }
 
-        $pm_mail = $sales->prospect->pm->email;
-        $pm_name = $sales->prospect->pm->name;
-        $ams_name = $sales->ams->user->name;
-        $redirect_to = $request->target_url;
+        if (!$user->hasRole('TPR')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The selected user does not have access as a TPR',
+            ], 422);
+        }
+
+        $tpr_mail = $user->email;
+        $tpr_name = $user->name;
+        $link = $request->target_url;
 
         $data = [
-            'subject' => 'GSMART - Upgrade Sales Level Request',
-            'body' => "Hi <b>{$pm_name}</b>,
-                        <br>You have new request for upgrading salesplan level.
-                        <br><br>AMS Name: {$ams_name}
-                        <br>Registration: {$sales->ac_reg}
-                        <br>TAT: {$sales->tat}
-                        <br>Start Date: {$sales->start_date}
-                        <br>End Date: {$sales->end_date}
-                        <br><br><a href='{$redirect_to}'>Open GSMART</a>",
+            'type' => 1,
+            'subject' => 'GSMART - New Upgrade Level Request',
+            'body' => [
+                'message' => 'You have new request to upgrade salesplan level.',
+                'user_name' => $tpr_name,
+                'link' => $link,
+                'ams_name' => $sales->ams->user->name,
+                'customer' => $sales->customer->name,
+                'ac_reg' => $sales->ac_reg,
+                'type' => $sales->type,
+                'level' => $sales->level,
+                'progress' => $sales->progress,
+                'tat' => $sales->tat,
+                'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
+                'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
+            ]
         ];
 
-        Mail::to($pm_mail)->send(new Notification($data));
+        Mail::to($tpr_mail)->send(new Notification($data));
 
         return response()->json([
             'success' => true,
@@ -448,6 +464,62 @@ class SalesController extends Controller
             'success' => true,
             'message' => 'Sales level upgraded successfully',
             'data' => $sales,
+        ], 200);
+    }
+
+    public function cogsRequest(Request $request)
+    {
+        $request->validate([
+            'sales_id' => 'required|integer|exists:sales,id',
+            'user_id' => 'required|integer|exists:users,id',
+            'target_url' => 'required|string|url',
+        ]);
+
+        $sales = Sales::find($request->sales_id);
+        $user = User::find($request->user_id);
+
+        if ($sales->level != 3) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, this action only available at level 3',
+            ], 422);
+        }
+
+        if (!$user->hasRole('CBO')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The selected user does not have access as a CBO',
+            ], 422);
+        }
+
+        $cbo_mail = $user->email;
+        $cbo_name = $user->name;
+        $link = $request->target_url;
+
+        $data = [
+            'type' => 2,
+            'subject' => 'GSMART - New Request to Upload COGS',
+            'body' => [
+                'message' => 'You have new request to upload COGS.',
+                'user_name' => $cbo_name,
+                'link' => $link,
+                'ams_name' => $sales->ams->user->name,
+                'customer' => $sales->customer->name,
+                'ac_reg' => $sales->ac_reg,
+                'type' => $sales->type,
+                'level' => $sales->level,
+                'progress' => $sales->progress,
+                'tat' => $sales->tat,
+                'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
+                'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
+            ]
+        ];
+
+        Mail::to($cbo_mail)->send(new Notification($data));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'COGS Upload requested successfully',
         ], 200);
     }
 

@@ -203,6 +203,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('sales-request-upgrade', [SalesController::Class, 'requestUpgrade'])->middleware(['permission:sales_request_upgrade']);
     Route::put('sales-upgrade-level/{id}', [SalesController::class, 'confirmUpgrade'])->middleware(['permission:sales_confirm_upgrade']);
     Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales']);
+    Route::post('sales-request-cogs', [SalesController::class, 'cogsRequest'])->middleware(['permission:sales_request_cogs']);
     Route::put('sales-reschedule/{id}', [SalesController::class, 'rescheduleSales'])->middleware(['permission:reschedule_sales']);
     Route::put('sales-reject/{id}', [SalesController::class, 'rejectSales'])->middleware(['permission:reject_sales']);
     Route::put('sales-close/{id}', [SalesController::class, 'closeSales'])->middleware(['permission:close_sales']);
