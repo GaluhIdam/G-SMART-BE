@@ -416,7 +416,7 @@ class SalesController extends Controller
 
         $tpr_mail = $user->email;
         $tpr_name = $user->name;
-        $link = env('FRONTEND_URL').'/'.$request->target_url;
+        // $link = env('FRONTEND_URL').'/'.$request->target_url;
 
         $data = [
             'type' => 1,
@@ -424,7 +424,7 @@ class SalesController extends Controller
             'body' => [
                 'message' => 'You have new request to upgrade salesplan level.',
                 'user_name' => $tpr_name,
-                'link' => $link,
+                'link' => env('FRONTEND_URL'),
                 'ams_name' => $sales->ams->user->name,
                 'customer' => $sales->customer->name,
                 'ac_reg' => $sales->ac_reg,
@@ -494,7 +494,7 @@ class SalesController extends Controller
 
         $cbo_mail = $user->email;
         $cbo_name = $user->name;
-        $link = env('FRONTEND_URL').'/'.$request->target_url;
+        // $link = env('FRONTEND_URL').'/'.$request->target_url;
 
         $data = [
             'type' => 1,
@@ -502,7 +502,7 @@ class SalesController extends Controller
             'body' => [
                 'message' => 'You have new request to upload COGS.',
                 'user_name' => $cbo_name,
-                'link' => $link,
+                'link' => env('FRONTEND_URL'),
                 'ams_name' => $sales->ams->user->name,
                 'customer' => $sales->customer->name,
                 'ac_reg' => $sales->ac_reg,
@@ -554,7 +554,7 @@ class SalesController extends Controller
 
         $cbo_mail = $user->email;
         $cbo_name = $user->name;
-        $link = env('FRONTEND_URL').'/'.$request->target_url;
+        // $link = env('FRONTEND_URL').'/'.$request->target_url;
 
         $data = [
             'type' => 2,
@@ -569,7 +569,7 @@ class SalesController extends Controller
                 'tat' => $sales->tat,
                 'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
                 'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
-                'link' => $link,
+                'link' => env('FRONTEND_URL'),
             ]
         ];
 
