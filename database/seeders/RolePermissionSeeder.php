@@ -566,6 +566,7 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Manage Prospect Data',
         ])->givePermissionTo([
             $read_users,
+            $read_maintenance,
             $read_prospects,
             $read_lines,
             $create_prospects,
@@ -584,6 +585,7 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Manage AMS Sales Plan Request',
         ])->givePermissionTo([
             $read_users,
+            $read_maintenance,
             $read_sales, 
             $read_lines,
             $show_sales,
@@ -604,6 +606,7 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Approve Sales Plan Requirement',
         ])->givePermissionTo([
             $read_users,
+            $read_maintenance,
             $read_sales,
             $read_lines,
             $show_sales,
@@ -622,6 +625,7 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Manage Sales Plan Requirement',
         ])->givePermissionTo([
             $read_users,
+            $read_maintenance,
             $read_ams,
             $read_sales,
             $read_prospects,
