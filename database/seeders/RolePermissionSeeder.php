@@ -610,6 +610,7 @@ class RolePermissionSeeder extends Seeder
             $input_so_number,
             $read_files,
             $show_files,
+            $upload_files,
             $file_histories,
             $read_contacts,
             $slot_confirm,
