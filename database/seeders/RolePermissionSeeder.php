@@ -567,6 +567,7 @@ class RolePermissionSeeder extends Seeder
         ])->givePermissionTo([
             $read_users,
             $read_prospects,
+            $read_lines,
             $create_prospects,
             $show_prospects,
             $pickup_prospects,
@@ -584,6 +585,7 @@ class RolePermissionSeeder extends Seeder
         ])->givePermissionTo([
             $read_users,
             $read_sales, 
+            $read_lines,
             $show_sales,
             $sales_confirm_upgrade,
             $sales_request_cogs,
@@ -603,6 +605,7 @@ class RolePermissionSeeder extends Seeder
         ])->givePermissionTo([
             $read_users,
             $read_sales,
+            $read_lines,
             $show_sales,
             $input_so_number,
             $read_files,

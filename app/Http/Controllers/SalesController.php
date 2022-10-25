@@ -394,7 +394,7 @@ class SalesController extends Controller
         $request->validate([
             'sales_id' => 'required|integer|exists:sales,id',
             'user_id' => 'required|integer|exists:users,id',
-            'target_url' => 'required|string|url',
+            'target_url' => 'required|string',
         ]);
 
         $sales = Sales::find($request->sales_id);
@@ -416,7 +416,7 @@ class SalesController extends Controller
 
         $tpr_mail = $user->email;
         $tpr_name = $user->name;
-        $link = $request->target_url;
+        $link = env('FRONTEND_URL').'/'.$request->target_url;
 
         $data = [
             'type' => 1,
@@ -472,7 +472,7 @@ class SalesController extends Controller
         $request->validate([
             'sales_id' => 'required|integer|exists:sales,id',
             'user_id' => 'required|integer|exists:users,id',
-            'target_url' => 'required|string|url',
+            'target_url' => 'required|string',
         ]);
 
         $sales = Sales::find($request->sales_id);
@@ -494,7 +494,7 @@ class SalesController extends Controller
 
         $cbo_mail = $user->email;
         $cbo_name = $user->name;
-        $link = $request->target_url;
+        $link = env('FRONTEND_URL').'/'.$request->target_url;
 
         $data = [
             'type' => 1,
@@ -529,7 +529,7 @@ class SalesController extends Controller
             'sales_id' => 'required|integer|exists:sales,id',
             'line_id' => 'required|integer|exists:lines,id',
             'user_id' => 'required|integer|exists:users,id',
-            'target_url' => 'required|string|url',
+            'target_url' => 'required|string',
         ]);
 
         $sales = Sales::find($request->sales_id);
@@ -554,7 +554,7 @@ class SalesController extends Controller
 
         $cbo_mail = $user->email;
         $cbo_name = $user->name;
-        $link = $request->target_url;
+        $link = env('FRONTEND_URL').'/'.$request->target_url;
 
         $data = [
             'type' => 2,
