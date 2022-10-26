@@ -74,11 +74,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('prospect-delete/{id}', [ProspectController::class, 'destroy']);
 
     //Customer Routes
-    Route::get('customer', [CustomerController::class, 'index']);
-    Route::post('customer-create', [CustomerController::class, 'create']);
-    Route::get('customer-show/{id}', [CustomerController::class, 'show']);
-    Route::put('customer-update/{id}', [CustomerController::class, 'update']);
-    Route::delete('customer-delete/{id}', [CustomerController::class, 'destroy']);
+    Route::get('customer', [CustomerController::class, 'index'])->middleware(['permission:read_customer|manage_customer']);
+    Route::post('customer-create', [CustomerController::class, 'create'])->middleware(['permission:create_customer|manage_customer']);
+    Route::get('customer-show/{id}', [CustomerController::class, 'show'])->middleware(['permission:show_customer|manage_customer']);
+    Route::put('customer-update/{id}', [CustomerController::class, 'update'])->middleware(['permission:update_customer|manage_customer']);
+    Route::delete('customer-delete/{id}', [CustomerController::class, 'destroy'])->middleware(['permission:delete_customer|manage_customer']);
 
     //Strategic Initiative Routes
     Route::get('strategic-initiative', [StrategicInitiativeController::class, 'index'])->middleware(['permission:read_strategic_initiative|manage_strategic_initiative']);
@@ -197,11 +197,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales']);
     Route::post('sales-create-tmb', [SalesController::class, 'createTmb'])->middleware(['permission:create_sales']);
     Route::post('sales-create-pbth', [SalesController::class, 'createPbth'])->middleware(['permission:create_sales']);
-    Route::put('sales-slot-request/{id}', [SalesController::class, 'slotRequest'])->middleware(['permission:slot_request']);
+    Route::post('sales-slot-request', [SalesController::class, 'slotRequest'])->middleware(['permission:slot_request']);
+    Route::put('sales-slot-confirm/{id}', [SalesController::class, 'slotConfirm'])->middleware(['permission:slot_confirm']);
     Route::put('sales-so-number/{id}', [SalesController::class, 'inputSONumber'])->middleware(['permission:input_so_number']);
     Route::put('sales-switch-ams/{id}', [SalesController::class, 'switchAMS'])->middleware(['permission:switch_ams']);
-    Route::put('sales-upgrade-level/{id}', [SalesController::class, 'upgradeLevel'])->middleware(['permission:upgrade_level']);
+    Route::post('sales-request-upgrade', [SalesController::Class, 'requestUpgrade'])->middleware(['permission:sales_request_upgrade']);
+    Route::put('sales-upgrade-level/{id}', [SalesController::class, 'confirmUpgrade'])->middleware(['permission:sales_confirm_upgrade']);
     Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales']);
+    Route::post('sales-request-cogs', [SalesController::class, 'cogsRequest'])->middleware(['permission:sales_request_cogs']);
     Route::put('sales-reschedule/{id}', [SalesController::class, 'rescheduleSales'])->middleware(['permission:reschedule_sales']);
     Route::put('sales-reject/{id}', [SalesController::class, 'rejectSales'])->middleware(['permission:reject_sales']);
     Route::put('sales-close/{id}', [SalesController::class, 'closeSales'])->middleware(['permission:close_sales']);

@@ -10,13 +10,26 @@ use App\Models\Prospect;
 use App\Models\Requirement;
 use App\Models\SalesReschedule;
 use App\Models\SalesReject;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Notification;
+// use Illuminate\Support\Facades\Gate;
 
 class SalesController extends Controller
 {
+    // public function __construct(Gate $gate)
+    // {
+    //     $gate->define('ams-sales', function ($user, $sales) {
+    //         return $user->id == $sales->id;
+    //     });
+
+    //     $this->middleware('can:ams-sales')->only('show');
+    // }
+
     public function index(Request $request)
     {
         $search = $request->get('search');
@@ -307,9 +320,16 @@ class SalesController extends Controller
 
     public function show($id)
     {
-        $sales = Sales::find($id);
+        $sales = Sales::findOrFail($id);
+        $user = auth()->user();
 
-        if (!$sales) {
+        if ($user->hasRole('AMS')) {
+            $ams = ($user->ams->id == $sales->ams_id);
+        } else {
+            $ams = true;
+        }
+
+        if (!$sales || !$ams) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data not found',
@@ -386,14 +406,70 @@ class SalesController extends Controller
         ], 200);
     }
 
-    public function upgradeLevel($id)
+    public function requestUpgrade(Request $request)
+    {
+        $request->validate([
+            'sales_id' => 'required|integer|exists:sales,id',
+            'user_id' => 'required|integer|exists:users,id',
+            'target_url' => 'required|string',
+        ]);
+
+        $sales = Sales::find($request->sales_id);
+        $user = User::find($request->user_id);
+
+        if (!$sales->upgrade_level) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, complete the requirement first',
+            ], 422);
+        }
+
+        if (!$user->hasRole('TPR')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The selected user does not have access as a TPR',
+            ], 422);
+        }
+
+        $tpr_mail = $user->email;
+        $tpr_name = $user->name;
+        // $link = env('FRONTEND_URL').'/'.$request->target_url;
+
+        $data = [
+            'type' => 1,
+            'subject' => 'GSMART - New Request to Upgrade Sales Level',
+            'body' => [
+                'message' => 'You have new request to upgrade salesplan level.',
+                'user_name' => $tpr_name,
+                'link' => env('FRONTEND_URL'),
+                'ams_name' => $sales->ams->user->name,
+                'customer' => $sales->customer->name,
+                'ac_reg' => $sales->ac_reg,
+                'type' => $sales->type,
+                'level' => $sales->level,
+                'progress' => $sales->progress,
+                'tat' => $sales->tat,
+                'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
+                'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
+            ]
+        ];
+
+        Mail::to($tpr_mail)->send(new Notification($data));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sales level upgrade requested successfully',
+        ], 200);
+    }
+
+    public function confirmUpgrade($id)
     {
         $sales = Sales::findOrFail($id);
 
         if (!$sales->upgrade_level) {
             return response()->json([
                 'success' => false,
-                'message' => 'Oops, complete your requirements first',
+                'message' => 'Oops, sales level cannot be upgraded',
             ], 422);
         }
 
@@ -408,34 +484,138 @@ class SalesController extends Controller
         ], 200);
     }
 
-    public function slotRequest($id, Request $request)
+    public function cogsRequest(Request $request)
     {
-        $request->validate(['line_id' => 'required|integer|exists:lines,id']);
+        $request->validate([
+            'sales_id' => 'required|integer|exists:sales,id',
+            'user_id' => 'required|integer|exists:users,id',
+            'target_url' => 'required|string',
+        ]);
 
-        try {
-            DB::beginTransaction();
+        $sales = Sales::find($request->sales_id);
+        $user = User::find($request->user_id);
 
-            $sales = Sales::findOrFail($id);
-            $sales->line_id = $request->line_id;
-            $sales->push();
-
-            $sales->setRequirement(8);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Hangar slot requested successfully',
-                'data' => $sales,
-            ], 200);
-        } catch (QueryException $e) {
-            DB::rollback();
-
+        if ($sales->level != 3) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+                'message' => 'Oops, this action only available at level 3',
+            ], 422);
         }
+
+        if (!$user->hasRole('CBO')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The selected user does not have access as a CBO',
+            ], 422);
+        }
+
+        $cbo_mail = $user->email;
+        $cbo_name = $user->name;
+        // $link = env('FRONTEND_URL').'/'.$request->target_url;
+
+        $data = [
+            'type' => 1,
+            'subject' => 'GSMART - New Request to Upload COGS',
+            'body' => [
+                'message' => 'You have new request to upload COGS.',
+                'user_name' => $cbo_name,
+                'link' => env('FRONTEND_URL'),
+                'ams_name' => $sales->ams->user->name,
+                'customer' => $sales->customer->name,
+                'ac_reg' => $sales->ac_reg,
+                'type' => $sales->type,
+                'level' => $sales->level,
+                'progress' => $sales->progress,
+                'tat' => $sales->tat,
+                'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
+                'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
+            ]
+        ];
+
+        Mail::to($cbo_mail)->send(new Notification($data));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'COGS Upload requested successfully',
+        ], 200);
+    }
+
+    public function slotRequest(Request $request)
+    {
+        $request->validate([
+            'sales_id' => 'required|integer|exists:sales,id',
+            'line_id' => 'required|integer|exists:lines,id',
+            'user_id' => 'required|integer|exists:users,id',
+            'target_url' => 'required|string',
+        ]);
+
+        $sales = Sales::find($request->sales_id);
+        $sales->line_id = $request->line_id;
+        $sales->push();
+
+        $user = User::find($request->user_id);
+
+        if ($sales->level != 2) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, this action only available at level 2',
+            ], 422);
+        }
+
+        if (!$user->hasRole('CBO')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The selected user does not have access as a CBO',
+            ], 422);
+        }
+
+        $cbo_mail = $user->email;
+        $cbo_name = $user->name;
+        // $link = env('FRONTEND_URL').'/'.$request->target_url;
+
+        $data = [
+            'type' => 2,
+            'subject' => 'GSMART - New Hangar Slot Request',
+            'body' => [
+                'message' => 'You have new request for hangar slot.',
+                'user_name' => $cbo_name,
+                'ams_name' => $sales->ams->user->name,
+                'hangar' => $sales->hangar->name,
+                'line' => $sales->line->name,
+                'ac_reg' => $sales->ac_reg,
+                'tat' => $sales->tat,
+                'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
+                'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
+                'link' => env('FRONTEND_URL'),
+            ]
+        ];
+
+        Mail::to($cbo_mail)->send(new Notification($data));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Hangar slot requested successfully',
+        ], 200);
+    }
+
+    public function slotConfirm($id)
+    {
+        $sales = Sales::findOrFail($id);
+
+        if (!$sales->line) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, this sales does not have a line hangar yet',
+            ], 422);
+        }
+
+        $sales->setRequirement(8);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Line hangar approved successfully',
+            'data' => $sales,
+        ], 200);
     }
 
     public function inputSONumber($id, Request $request)

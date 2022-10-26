@@ -364,9 +364,7 @@ class Sales extends Model
     // query untuk get data salesplan by user
     public function scopeUser($query, $user)
     {
-        if ($user->hasRole('TPC')) {
-            $query->whereRelation('prospect', 'pm_id', $user->id);
-        } else if ($user->hasRole('AMS')) {
+        if ($user->hasRole('AMS')) {
             $query->where('ams_id', $user->ams->id);
         }
     }
