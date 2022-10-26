@@ -17,9 +17,19 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Notification;
+// use Illuminate\Support\Facades\Gate;
 
 class SalesController extends Controller
 {
+    // public function __construct(Gate $gate)
+    // {
+    //     $gate->define('ams-sales', function ($user, $sales) {
+    //         return $user->id == $sales->id;
+    //     });
+
+    //     $this->middleware('can:ams-sales')->only('show');
+    // }
+
     public function index(Request $request)
     {
         $search = $request->get('search');
@@ -310,9 +320,16 @@ class SalesController extends Controller
 
     public function show($id)
     {
-        $sales = Sales::find($id);
+        $sales = Sales::findOrFail($id);
+        $user = auth()->user();
 
-        if (!$sales) {
+        if ($user->hasRole('AMS')) {
+            $ams = ($user->ams->id == $sales->ams_id);
+        } else {
+            $ams = true;
+        }
+
+        if (!$sales || !$ams) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data not found',
