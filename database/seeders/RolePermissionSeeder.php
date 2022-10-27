@@ -305,39 +305,22 @@ class RolePermissionSeeder extends Seeder
         ModulePermissions::create(['module_id' => $manage_approval->id, 'permission_id' => $update_approval->id],);
         ModulePermissions::create(['module_id' => $manage_approval->id, 'permission_id' => $delete_approval->id],);
 
-         //Prospect Permission
-        $manage_prospect = Module::create([
-            'module_name' => 'Manage Prospects'
+        //Customer Permission
+        $manage_customer = Module::create([
+            'module_name' => 'Manage Customer'
         ]);
 
-        $read_prospects = Permission::create(['name' => 'read_prospects']);
-        $create_prospects = Permission::create(['name' => 'create_prospects']);
-        $show_prospects = Permission::create(['name' => 'show_prospects']);
-        $update_prospects = Permission::create(['name' => 'update_prospects']);
-        $delete_prospects = Permission::create(['name' => 'delete_prospects']);
-        
-        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $read_prospects->id],);
-        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $create_prospects->id],);
-        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $show_prospects->id],);
-        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $update_prospects->id],);
-        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $delete_prospects->id],);
+        $read_customer = Permission::create(['name' => 'read_customer']);
+        $create_customer = Permission::create(['name' => 'create_customer']);
+        $show_customer = Permission::create(['name' => 'show_customer']);
+        $update_customer = Permission::create(['name' => 'update_customer']);
+        $delete_customer = Permission::create(['name' => 'delete_customer']);
 
-        //File Permission
-        // $manage_file = Module::create([
-        //     'module_name' => 'Manage File'
-        // ]);
-
-        // $read_file = Permission::create(['name' => 'read_file']);
-        // $create_file = Permission::create(['name' => 'create_file']);
-        // $show_file = Permission::create(['name' => 'show_file']);
-        // $update_file = Permission::create(['name' => 'update_file']);
-        // $delete_file = Permission::create(['name' => 'delete_file']);
-
-        // ModulePermissions::create(['module_id' => $manage_file->id, 'permission_id' => $read_file->id],);
-        // ModulePermissions::create(['module_id' => $manage_file->id, 'permission_id' => $create_file->id],);
-        // ModulePermissions::create(['module_id' => $manage_file->id, 'permission_id' => $show_file->id],);
-        // ModulePermissions::create(['module_id' => $manage_file->id, 'permission_id' => $update_file->id],);
-        // ModulePermissions::create(['module_id' => $manage_file->id, 'permission_id' => $delete_file->id],);
+        ModulePermissions::create(['module_id' => $manage_customer->id, 'permission_id' => $read_customer->id],);
+        ModulePermissions::create(['module_id' => $manage_customer->id, 'permission_id' => $create_customer->id],);
+        ModulePermissions::create(['module_id' => $manage_customer->id, 'permission_id' => $show_customer->id],);
+        ModulePermissions::create(['module_id' => $manage_customer->id, 'permission_id' => $update_customer->id],);
+        ModulePermissions::create(['module_id' => $manage_customer->id, 'permission_id' => $delete_customer->id],);
 
         //Level Permission
         $manage_level = Module::create([
@@ -372,23 +355,6 @@ class RolePermissionSeeder extends Seeder
         ModulePermissions::create(['module_id' => $manage_requirement->id, 'permission_id' => $show_requirement->id],);
         ModulePermissions::create(['module_id' => $manage_requirement->id, 'permission_id' => $update_requirement->id],);
         ModulePermissions::create(['module_id' => $manage_requirement->id, 'permission_id' => $delete_requirement->id],);
-
-        //Sales Permission
-        // $manage_sales = Module::create([
-        //     'module_name' => 'Manage Sales'
-        // ]);
-
-        // $read_sales = Permission::create(['name' => 'read_sales']);
-        // $create_sales = Permission::create(['name' => 'create_sales']);
-        // $show_sales = Permission::create(['name' => 'show_sales']);
-        // $update_sales = Permission::create(['name' => 'update_sales']);
-        // $delete_sales = Permission::create(['name' => 'delete_sales']);
-
-        // ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $read_sales->id],);
-        // ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $create_sales->id],);
-        // ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $show_sales->id],);
-        // ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $update_sales->id],);
-        // ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $delete_sales->id],);
 
         //Sales History Permission
         $manage_sales_history = Module::create([
@@ -492,65 +458,73 @@ class RolePermissionSeeder extends Seeder
         ModulePermissions::create(['module_id' => $manage_sales_update->id, 'permission_id' => $update_sales_update->id],);
         ModulePermissions::create(['module_id' => $manage_sales_update->id, 'permission_id' => $delete_sales_update->id],);
 
-        //Role Admin
-        // $admin = Role::create([
-        //     'name' => 'Administrator',
-        //     'description' => 'Manage All Module',
-        // ])->givePermissionTo(Permission::all());
+        // Prospect Permission
+        $manage_prospect = Module::create([
+            'module_name' => 'Manage Prospects'
+        ]);
 
-        // $roler = Role::create([
-        //     'name' => 'Roler',
-        //     'description' => 'Manage All Role',
-        // ])->givePermissionTo($read_role, $read_users);
+        $read_prospects = Permission::create(['name' => 'read_prospects']);
+        $create_prospects = Permission::create(['name' => 'create_prospects']);
+        $show_prospects = Permission::create(['name' => 'show_prospects']);
+        $pickup_prospects = Permission::create(['name' => 'pickup_prospects']);
+        
+        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $read_prospects->id],);
+        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $create_prospects->id],);
+        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $show_prospects->id],);
+        ModulePermissions::create(['module_id' => $manage_prospect->id, 'permission_id' => $pickup_prospects->id],);
 
-        // //Role User
-        // $user = Role::create([
-        //     'name' => 'User',
-        //     'description' => 'Only Specific Permission',
-        // ])->givePermissionTo($read_product, $create_product, $show_product, $update_product, $delete_product, $read_users);
-
+        // Sales Permission
         $manage_sales = Module::create([
             'module_name' => 'Manage Sales'
         ]);
 
         $read_sales = Permission::create(['name' => 'read_sales']);
         $show_sales = Permission::create(['name' => 'show_sales']);
-        // $create_sales = Permission::create(['name' => 'create_sales']);
+        $create_sales = Permission::create(['name' => 'create_sales']);
         $slot_request = Permission::create(['name' => 'slot_request']);
         $input_so_number = Permission::create(['name' => 'input_so_number']);
         $switch_ams = Permission::create(['name' => 'switch_ams']);
-        $upgrade_level = Permission::create(['name' => 'upgrade_level']);
+        $sales_request_upgrade = Permission::create(['name' => 'sales_request_upgrade']);
+        $sales_confirm_upgrade = Permission::create(['name' => 'sales_confirm_upgrade']);
         $update_sales = Permission::create(['name' => 'update_sales']);
         $reschedule_sales = Permission::create(['name' => 'reschedule_sales']);
         $reject_sales = Permission::create(['name' => 'reject_sales']);
         $close_sales = Permission::create(['name' => 'close_sales']);
-        // $delete_sales = Permission::create(['name' => 'delete_sales']);
+        $delete_sales = Permission::create(['name' => 'delete_sales']);
+        $sales_request_cogs = Permission::create(['name' => 'sales_request_cogs']);
+        $slot_confirm = Permission::create(['name' => 'slot_confirm']);
 
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $read_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $show_sales->id]);
-        // ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $create_sales->id]);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $create_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $slot_request->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $input_so_number->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $switch_ams->id]);
-        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $upgrade_level->id]);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $sales_request_upgrade->id]);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $sales_confirm_upgrade->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $update_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $reschedule_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $reject_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $close_sales->id]);
-        // ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $delete_sales->id]);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $delete_sales->id]);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $sales_request_cogs->id]);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $slot_confirm->id]);
         
+        // Line Hangar Permission
         $manage_lines = Module::create([
             'module_name' => 'Manage Lines'
         ]);
         $read_lines = Permission::create(['name' => 'read_lines']);
         ModulePermissions::create(['module_id' => $manage_lines->id, 'permission_id' => $read_lines->id]);
         
+        // Hangar Permission
         $manage_hangars = Module::create([
             'module_name' => 'Manage Hangars'
         ]);
         $read_hangars = Permission::create(['name' => 'read_hangars']);
         ModulePermissions::create(['module_id' => $manage_hangars->id, 'permission_id' => $read_hangars->id]);
 
+        // File Permission
         $manage_files = Module::create([
             'module_name' => 'Manage Files'
         ]);
@@ -567,6 +541,7 @@ class RolePermissionSeeder extends Seeder
         ModulePermissions::create(['module_id' => $manage_files->id, 'permission_id' => $file_histories->id],);
         ModulePermissions::create(['module_id' => $manage_files->id, 'permission_id' => $delete_files->id],);
         
+        // Contact Person Permission
         $manage_contacts = Module::create([
             'module_name' => 'Manage Contacts'
         ]);
@@ -591,9 +566,39 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Manage Prospect Data',
         ])->givePermissionTo([
             $read_users,
+            $read_role,
+            $read_permission,
+            $read_strategic_initiative,
+            $read_region,
+            $read_countries,
+            $read_area,
+            $read_transaction_type,
+            $read_ams,
+            $read_prospect_type,
+            $read_maintenance,
+            $read_aircraft_type,
+            $read_engine,
+            $read_component,
+            $read_apu,
+            $read_product,
+            $read_approval,
+            $read_customer,
+            $show_customer,
+            $read_requirement,
+            $read_sales_history,
+            $read_sales_level,
+            $read_sales_reject,
+            $read_sales_requirement,
+            $read_sales_reschedule,
+            $read_sales_update,
+            $read_prospects,
+            $read_hangars,
+            $read_lines,
+            $create_prospects,
+            $show_prospects,
+            $pickup_prospects,
             $read_sales, 
             $show_sales, 
-            // $create_sales,
             $read_files,
             $show_files,
             $read_contacts,
@@ -605,17 +610,44 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Manage AMS Sales Plan Request',
         ])->givePermissionTo([
             $read_users,
+            $read_role,
+            $read_permission,
+            $read_strategic_initiative,
+            $read_region,
+            $read_countries,
+            $read_area,
+            $read_transaction_type,
+            $read_ams,
+            $read_prospect_type,
+            $read_maintenance,
+            $read_aircraft_type,
+            $read_engine,
+            $read_component,
+            $read_apu,
+            $read_product,
+            $read_approval,
+            $read_customer,
+            $show_customer,
+            $read_requirement,
+            $read_sales_history,
+            $read_sales_level,
+            $read_sales_reject,
+            $read_sales_requirement,
+            $read_sales_reschedule,
+            $read_sales_update,
+            $read_prospects,
+            $read_hangars,
             $read_sales, 
+            $read_lines,
             $show_sales,
-            $upgrade_level,
+            $sales_confirm_upgrade,
+            $sales_request_cogs,
             $update_sales,
             $reject_sales,
             $close_sales,
             $read_files,
-            $upload_files,
             $show_files,
             $file_histories,
-            $delete_files,
             $read_contacts,
         ]);
 
@@ -625,13 +657,43 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Approve Sales Plan Requirement',
         ])->givePermissionTo([
             $read_users,
+            $read_role,
+            $read_permission,
+            $read_strategic_initiative,
+            $read_region,
+            $read_countries,
+            $read_area,
+            $read_transaction_type,
+            $read_ams,
+            $read_prospect_type,
+            $read_maintenance,
+            $read_aircraft_type,
+            $read_engine,
+            $read_component,
+            $read_apu,
+            $read_product,
+            $read_approval,
+            $read_customer,
+            $show_customer,
+            $read_requirement,
+            $read_sales_history,
+            $read_sales_level,
+            $read_sales_reject,
+            $read_sales_requirement,
+            $read_sales_reschedule,
+            $read_sales_update,
+            $read_prospects,
+            $read_hangars,
             $read_sales,
+            $read_lines,
             $show_sales,
             $input_so_number,
             $read_files,
             $show_files,
+            $upload_files,
             $file_histories,
             $read_contacts,
+            $slot_confirm,
         ]);
 
         // AMS
@@ -640,9 +702,40 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Manage Sales Plan Requirement',
         ])->givePermissionTo([
             $read_users,
+            $read_role,
+            $read_permission,
+            $read_strategic_initiative,
+            $read_region,
+            $read_countries,
+            $read_area,
+            $read_transaction_type,
             $read_ams,
-            $read_sales, 
+            $read_prospect_type,
+            $read_maintenance,
+            $read_aircraft_type,
+            $read_engine,
+            $read_component,
+            $read_apu,
+            $read_product,
+            $read_approval,
+            $read_customer,
+            $show_customer,
+            $read_requirement,
+            $read_sales_history,
+            $read_sales_level,
+            $read_sales_reject,
+            $read_sales_requirement,
+            $read_sales_reschedule,
+            $read_sales_update,
+            $read_ams,
+            $read_sales,
+            $read_prospects,
+            $show_prospects,
+            $pickup_prospects,
             $show_sales, 
+            $create_sales,
+            $delete_sales, 
+            $sales_request_upgrade,
             $switch_ams,
             $reschedule_sales,
             $read_lines,
