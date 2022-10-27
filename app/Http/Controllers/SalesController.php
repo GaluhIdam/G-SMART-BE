@@ -21,15 +21,6 @@ use App\Mail\Notification;
 
 class SalesController extends Controller
 {
-    // public function __construct(Gate $gate)
-    // {
-    //     $gate->define('ams-sales', function ($user, $sales) {
-    //         return $user->id == $sales->id;
-    //     });
-
-    //     $this->middleware('can:ams-sales')->only('show');
-    // }
-
     public function index(Request $request)
     {
         $search = $request->get('search');
@@ -320,7 +311,7 @@ class SalesController extends Controller
 
     public function show($id)
     {
-        $sales = Sales::findOrFail($id);
+        $sales = Sales::find($id);
         $user = auth()->user();
 
         if ($user->hasRole('AMS')) {
@@ -433,7 +424,7 @@ class SalesController extends Controller
 
         $tpr_mail = $user->email;
         $tpr_name = $user->name;
-        // $link = env('FRONTEND_URL').'/'.$request->target_url;
+        $link = env('FRONTEND_URL').$request->target_url;
 
         $data = [
             'type' => 1,
@@ -441,7 +432,7 @@ class SalesController extends Controller
             'body' => [
                 'message' => 'You have new request to upgrade salesplan level.',
                 'user_name' => $tpr_name,
-                'link' => env('FRONTEND_URL'),
+                'link' => $link,
                 'ams_name' => $sales->ams->user->name,
                 'customer' => $sales->customer->name,
                 'ac_reg' => $sales->ac_reg,
@@ -511,7 +502,7 @@ class SalesController extends Controller
 
         $cbo_mail = $user->email;
         $cbo_name = $user->name;
-        // $link = env('FRONTEND_URL').'/'.$request->target_url;
+        $link = env('FRONTEND_URL').$request->target_url;
 
         $data = [
             'type' => 1,
@@ -519,7 +510,7 @@ class SalesController extends Controller
             'body' => [
                 'message' => 'You have new request to upload COGS.',
                 'user_name' => $cbo_name,
-                'link' => env('FRONTEND_URL'),
+                'link' => $link,
                 'ams_name' => $sales->ams->user->name,
                 'customer' => $sales->customer->name,
                 'ac_reg' => $sales->ac_reg,
@@ -571,7 +562,7 @@ class SalesController extends Controller
 
         $cbo_mail = $user->email;
         $cbo_name = $user->name;
-        // $link = env('FRONTEND_URL').'/'.$request->target_url;
+        $link = env('FRONTEND_URL').$request->target_url;
 
         $data = [
             'type' => 2,
@@ -586,7 +577,7 @@ class SalesController extends Controller
                 'tat' => $sales->tat,
                 'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
                 'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
-                'link' => env('FRONTEND_URL'),
+                'link' => $link,
             ]
         ];
 

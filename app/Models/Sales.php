@@ -364,9 +364,9 @@ class Sales extends Model
     // query untuk get data salesplan by user
     public function scopeUser($query, $user)
     {
-        if ($user->hasRole('AMS')) {
+        $query->when($user->hasRole('AMS'), function ($query) use ($user) {
             $query->where('ams_id', $user->ams->id);
-        }
+        });
     }
 
     // query untuk sorting data tabel salesplan
