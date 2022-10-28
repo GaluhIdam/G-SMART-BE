@@ -70,7 +70,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('prospect', [ProspectController::class, 'index'])->middleware(['permission:read_prospects']);
     Route::post('prospect-create', [ProspectController::class, 'create'])->middleware(['permission:create_prospects']);
     Route::get('prospect-show/{id}', [ProspectController::class, 'show'])->middleware(['permission:show_prospects']);
-    Route::get('prospect-pbth/{id}', [ProspectController::class, 'pbth'])->middleware(['permission:create_sales']);
+    Route::get('prospect-pbth/{id}', [ProspectController::class, 'pbth'])->middleware(['permission:pickup_prospects']);
+    Route::get('prospect-tmb/{id}', [ProspectController::class, 'tmb'])->middleware(['permission:pickup_prospects']);
 
     //Customer Routes
     Route::get('customer', [CustomerController::class, 'index'])->middleware(['permission:read_customer|manage_customer']);
@@ -207,6 +208,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('sales-reschedule/{id}', [SalesController::class, 'rescheduleSales'])->middleware(['permission:reschedule_sales']);
     Route::put('sales-reject/{id}', [SalesController::class, 'rejectSales'])->middleware(['permission:reject_sales']);
     Route::put('sales-close/{id}', [SalesController::class, 'closeSales'])->middleware(['permission:close_sales']);
+    Route::get('sales-show-tmb/{id}', [SalesController::class, 'showTmbSales'])->middleware(['permission:pickup_prospects']);
+    Route::delete('sales-delete-tmb/{id}', [SalesController::class, 'deleteTmbSales'])->middleware(['permission:delete_sales']);
 
     // Line
     Route::get('line', LineController::class)->middleware('permission:read_lines');
