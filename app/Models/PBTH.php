@@ -12,6 +12,16 @@ class PBTH extends Model
     protected $table = 'pbth';
     protected $guarded = ['id'];
 
+    protected $aoppends = [
+        'registration',
+    ];
+
+    public function getRegistrationAttribute()
+    {
+        $registration = $this->prospectPbth->first() ? $this->prospectPbth->first()->acType->name : '-';
+        return $registration;
+    }
+
     public function prospectPbth()
     {
         return $this->hasMany(ProspectPBTH::class);

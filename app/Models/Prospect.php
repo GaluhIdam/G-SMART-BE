@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Customer;
+use App\Models\Sales;
+use App\Models\AMSCustomer;
+use App\Models\ProspectTMB;
+use App\Models\ProspectPBTH;
 use App\Models\ProspectType;
 use App\Models\TransactionType;
 use App\Models\StrategicInitiatives;
@@ -24,11 +28,65 @@ class Prospect extends Model
 
     protected $appends = [
         'market_share',
+        'registration',
+        'sales_plan',
     ];
 
+    public function scopeUser($query, $user)
+    {
+        $query->when($user->hasRole('AMS'), function ($query) use ($user) {   
+            $query->whereHas('amsCustomer', function ($query) use ($user) {
+                $query->where('ams_id', $user->ams->id);
+            });
+        });
+    }
+    
     public function getMarketShareAttribute()
     {
-        return $this->prospectTmb->sum('tmb.market_share');
+        if ($this->transaction_type_id == 1) {
+            return $this->prospectTmb->sum('tmb.market_share');
+        } else if ($this->transaction_type_id == 2) {
+            return $this->prospectPbth->sum('market_share');
+        }
+    }
+
+    public function getSalesPlanAttribute()
+    {
+        $sales = Sales::where('prospect_id', $this->id);
+        return $sales->sum('value');
+    }
+
+    public function scopeMarketShareByCustomer($query, $customer)
+    {
+        $data = $query->whereHas('amsCustomer', function ($query) use ($customer) {
+            $query->where('customer_id', $customer);
+        })->get();
+
+        return $data->sum('market_share');
+    }
+
+    public function getRegistrationAttribute()
+    {
+        if ($this->transaction_type_id == 1) {
+            $tmb = $this->prospectTmb->first()->tmb;
+            $ac_type = $tmb->acType ? $tmb->acType->name : '-';
+            $engine = $tmb->engine ? $tmb->engine->name : '-';
+            $apu = $tmb->apu ? $tmb->apu->name : '-';
+            $component = $tmb->component ? $tmb->component->name : '-';
+
+            $registration = "{$ac_type}/{$engine}/{$apu}/{$component}";
+        } else {
+            $registration = $this->prospectPbth ? $this->prospectPbth->first()->acType->name : '-';
+        }
+
+        return $registration;
+    }
+
+    public function scopeMarketYearAgo($query)
+    {
+        $data = $query->where('year', Carbon::now()->format('Y'))->get();
+
+        return $data->sum('market_share');
     }
 
     public function transactionType()

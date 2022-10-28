@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
-class TMB extends Model
+class tmb extends Model
 {
     use HasFactory;
 
@@ -21,6 +22,28 @@ class TMB extends Model
         'remarks',
         'maintenance_id',
     ];
+
+    protected $appends = [
+        'registration',
+        'full_path'
+    ];
+
+    public function getFullPathAttribute()
+    {
+        
+        return Storage::disk('public')->url($this->prospectTmb);
+    }
+
+    public function getRegistrationAttribute()
+    {
+            $ac_type = $this->acType ? $this->acType->name : '-';
+            $engine = $this->engine ? $this->engine->name : '-';
+            $apu = $this->apu ? $this->apu->name : '-';
+            $component = $this->component ? $this->component->name : '-';
+
+            $registration = "{$ac_type}/{$engine}/{$apu}/{$component}";
+            return $registration;
+    }
 
     public function product()
     {
@@ -54,6 +77,6 @@ class TMB extends Model
     
     public function prospectTmb()
     {
-        return $this->hasMany(ProspectTMB::class);
+        return $this->hasOne(ProspectTMB::class);
     }
 }
