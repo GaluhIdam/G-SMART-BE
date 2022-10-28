@@ -31,6 +31,7 @@ return new class extends Migration
             $table->unsignedBigInteger('ac_type_id')->nullable();
             $table->index('ac_type_id');
             $table->foreign('ac_type_id')->references('id')->on('ac_type_id')->onDelete('cascade')->onUpdate('cascade');
+            $table->decimal('market_share', 18, 2);
 
             $table->timestamps();
         });
