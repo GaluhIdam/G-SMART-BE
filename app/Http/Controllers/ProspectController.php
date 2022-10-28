@@ -195,4 +195,62 @@ class ProspectController extends Controller
             ], 500);
         }
     }
+
+    public function show($id)
+    {
+        $user = auth()->user();
+        $customer = Customer::find($id);
+
+        if ($user->hasRole('AMS')) {
+            $amsCustomers = $customer->amsCustomers;
+            foreach ($amsCustomers as $item) {
+                if ($item->ams_id == $user->ams->id) {
+                    $ams = true;
+                } else {
+                    $ams = false;
+                }
+            }
+        } else {
+            $ams = true;
+        }
+
+        if (!$customer || !$ams) {
+            return response()->json([
+                'message' => 'Data not found!',
+            ], 404);
+        }
+
+        $data = Prospect::with(
+                        'transactionType',
+                        'prospectType',
+                        'strategicInitiative',
+                        'pm',
+                        'amsCustomer',
+                        'sales',
+                        'prospectTmb',
+                        'prospectPbth',
+                        'amsCustomer.customer',
+                        'amsCustomer.area',
+                        'amsCustomer.ams',
+                        'prospectTmb.tmb',
+                        'prospectPbth.pbth',
+                        'prospectPbth.product',
+                        'prospectPbth.acType',
+                        )->whereHas('amsCustomer', function ($query) use ($customer) {
+                            $query->where('customer_id', $customer->id);
+                        })->get();
+
+        $market_share = Prospect::marketShareByCustomer($id);
+        $total_sales = Sales::totalSalesByCustomer($id);
+
+        return response()->json([
+            'message' => 'Success Get Prospect By Customer!',
+            'data' => [
+                'prospect' => $data,
+                'marketShare' => $market_share,
+                'salesPlan' => $total_sales,
+                'deviation' => $market_share - $total_sales,
+            ]
+        ], 200);
+    }
 }
