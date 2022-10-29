@@ -275,4 +275,26 @@ class ProspectController extends Controller
             ],
         ], 200);
     }
+
+    public function tmb($id)
+    {
+        $prospect = Prospect::findOrFail($id);
+        $market_share = $prospect->market_share;
+        $sales_plan = $prospect->sales_plan;
+
+        $data =  TMB::whereHas('prospectTmb', function ($query) use ($id) {
+                    $query->where('prospect_id', $id);
+                })->get();
+
+        return response()->json([
+            'data' => [
+                'customer' => $prospect->amsCustomer->customer,
+                'registration' => $prospect->registration,
+                'market_share' => $market_share,
+                'sales_plan' => $sales_plan,
+                'deviation' => $market_share - $sales_plan,
+                'prospect' => $data
+            ],
+        ], 200);
+    }
 }
