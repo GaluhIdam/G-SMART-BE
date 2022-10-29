@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class ContactPerson extends Model
 {
@@ -11,6 +12,16 @@ class ContactPerson extends Model
 
     protected $table = 'contact_persons';
     protected $guarded = ['id'];
+
+    protected $appends = [
+        'firstalphabet',
+    ];
+
+    public function getFirstAlphabetAttribute()
+    {
+        $firstalphabet = Str::of($this->name)->substr(0, 1);
+        return $firstalphabet;
+    }
 
     public function scopeByCustomer($query, $customer)
     {
