@@ -78,9 +78,17 @@ class CustomerController extends Controller
         ], 201);
     }
 
-    public function show($id)
+    public function show(Request $request)
     {
-        if ($customer = Customer::find($id)) {
+        $customer = Customer::with(
+            'amsCustomers',
+            'amsCustomers.area',
+            'country',
+            'country.region',
+            )->where('id', $request->id
+            )->get();
+
+        if ($customer->isNotEmpty()) {
             return response()->json([
                 'message' => 'Success!',
                 'data' => $customer

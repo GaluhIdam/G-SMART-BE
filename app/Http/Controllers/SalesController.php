@@ -397,6 +397,83 @@ class SalesController extends Controller
         ], 200);
     }
 
+    public function showTmbSales($id, Request $request)
+    {
+        $search = $request->get('search');
+        $paginate = $request->paginate ?? 10;
+
+        $data = Sales::with('hangar', 'maintenance')
+                    ->when($search, function ($query) use ($search) {
+                        $query->where('ac_reg', 'LIKE', "%$search%");
+                    })
+                    ->where('prospect_id', $id)
+                    ->paginate($paginate);
+                    
+        $prospect = Prospect::find($id);
+        $sales_plan = $prospect->sales_plan;
+        $market_share = $prospect->market_share;
+        $deviation = $market_share - $sales_plan;
+
+        return response()->json([
+            'logo' => $prospect->amsCustomer->customer->full_path,
+            'salesplan' => $sales_plan,
+            'market_share' => $market_share,
+            'deviation' => $deviation,
+            'customer' => $prospect->amsCustomer->customer,
+            'sales' => $data
+        ], 200);
+    }
+
+    public function deleteTmbSales($id)
+    {
+        if ($tmbSales = Sales::find($id)) {
+            try {
+                DB::beginTransaction();
+
+                $levels = $tmbSales->salesLevel;
+                $requirements = $tmbSales->salesRequirements;
+
+                foreach ($levels as $level) {
+                    $level->delete();
+                }
+
+                $temp_files = [];
+                foreach ($requirements as $requirement) {
+                    $files = $requirement->files;
+                    foreach ($files as $file) {
+                        $temp_files[] = (object)$file;
+                        $file->delete();
+                    }
+                    $requirement->delete();
+                }
+                $tmbSales->delete();
+                
+                DB::commit();
+
+                foreach ($temp_files as $file) {
+                    if (Storage::disk('public')->exists($file->path)) {
+                        Storage::disk('public')->delete($file->path);
+                    }
+                }
+                
+                return response()->json([
+                    'message' => 'TMB Sales has been deleted successfully!',
+                    'data'    => $tmbSales
+                ], 200);
+            } catch (QueryException $e) {
+                DB::rollback();
+
+                return response()->json([
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+        } else {
+            return response()->json([
+                'message' => 'Data not found!',
+            ], 404);
+        }
+    }
+
     public function requestUpgrade(Request $request)
     {
         $request->validate([

@@ -16,84 +16,36 @@ class ProspectTMBSeeder extends Seeder
     public function run()
     {
         ProspectTMB::create([
-            'prospect_id' => 1,
-            'tmb_id' => 6,
+            'prospect_id'   => 1,
+            'tmb_id'        => 1,
         ]);
         ProspectTMB::create([
-            'prospect_id' => 2,
-            'tmb_id' => 7,
+            'prospect_id'   => 3,
+            'tmb_id'        => 2,
         ]);
         ProspectTMB::create([
-            'prospect_id' => 3,
-            'tmb_id' => 8,
+            'prospect_id'   => 5,
+            'tmb_id'        => 3,
         ]);
         ProspectTMB::create([
-            'prospect_id' => 4,
-            'tmb_id' => 9,
+            'prospect_id'   => 7,
+            'tmb_id'        => 4,
         ]);
         ProspectTMB::create([
-            'prospect_id' => 5,
-            'tmb_id' => 10,
+            'prospect_id'   => 9,
+            'tmb_id'        => 5,
         ]);
         ProspectTMB::create([
-            'prospect_id' => 10,
-            'tmb_id' => 5,
+            'prospect_id'   => 11,
+            'tmb_id'        => 6,
         ]);
         ProspectTMB::create([
-            'prospect_id' => 9,
-            'tmb_id' => 4,
+            'prospect_id'   => 13,
+            'tmb_id'        => 5,
         ]);
         ProspectTMB::create([
-            'prospect_id' => 8,
-            'tmb_id' => 3,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 7,
-            'tmb_id' => 2,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 6,
-            'tmb_id' => 1,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 1,
-            'tmb_id' => 3,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 2,
-            'tmb_id' => 6,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 3,
-            'tmb_id' => 9,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 4,
-            'tmb_id' => 1,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 5,
-            'tmb_id' => 4,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 6,
-            'tmb_id' => 7,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 7,
-            'tmb_id' => 10,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 8,
-            'tmb_id' => 2,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 9,
-            'tmb_id' => 5,
-        ]);
-        ProspectTMB::create([
-            'prospect_id' => 10,
-            'tmb_id' => 8,
+            'prospect_id'   => 15,
+            'tmb_id'        => 6,
         ]);
     }
 }

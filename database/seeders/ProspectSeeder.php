@@ -19,70 +19,62 @@ class ProspectSeeder extends Seeder
             'year'                    => 2022,
             'transaction_type_id'     => 1,
             'prospect_type_id'        => 1,
-            'strategic_initiative_id' => 3,
+            'strategic_initiative_id' => 1,
             'pm_id'                   => 1,
-            'ams_customer_id'         => 8,
+            'ams_customer_id'         => 1,
         ]);
         Prospect::create([
-            'year'                    => 2021,
-            'transaction_type_id'     => 1,
+            'year'                    => 2022,
+            'transaction_type_id'     => 2,
             'prospect_type_id'        => 2,
-            'strategic_initiative_id' => 1,
-            'pm_id'                   => 2,
-            'ams_customer_id'         => 3,
+            // 'strategic_initiative_id' => 1,
+            // 'pm_id'                   => 1,
+            'ams_customer_id'         => 2,
         ]);
         Prospect::create([
             'year'                    => 2022,
             'transaction_type_id'     => 1,
-            'prospect_type_id'        => 2,
-            'strategic_initiative_id' => 3,
-            'pm_id'                   => 3,
-            'ams_customer_id'         => 5,
+            'prospect_type_id'        => 1,
+            'strategic_initiative_id' => 1,
+            'pm_id'                   => 1,
+            'ams_customer_id'         => 3,
         ]);
         Prospect::create([
-            'year'                    => 2020,
+            'year'                    => 2022,
             'transaction_type_id'     => 2,
             'prospect_type_id'        => 1,
-            'strategic_initiative_id' => 2,
-            'pm_id'                   => 3,
+            'strategic_initiative_id' => 1,
+            'pm_id'                   => 1,
+            'ams_customer_id'         => 3,
+        ]);
+        Prospect::create([
+            'year'                    => 2021,
+            'transaction_type_id'     => 1,
+            'prospect_type_id'        => 1,
+            'strategic_initiative_id' => 1,
+            'pm_id'                   => 1,
             'ams_customer_id'         => 1,
         ]);
         Prospect::create([
             'year'                    => 2021,
             'transaction_type_id'     => 2,
             'prospect_type_id'        => 2,
-            'strategic_initiative_id' => 1,
-            'pm_id'                   => 2,
+            // 'strategic_initiative_id' => 1,
+            // 'pm_id'                   => 1,
             'ams_customer_id'         => 2,
         ]);
         Prospect::create([
-            'year'                    => 2020,
+            'year'                    => 2021,
             'transaction_type_id'     => 1,
             'prospect_type_id'        => 1,
-            'strategic_initiative_id' => 2,
-            'pm_id'                   => 3,
-            'ams_customer_id'         => 6,
-        ]);
-        Prospect::create([
-            'year'                    => 2022,
-            'transaction_type_id'     => 1,
-            'prospect_type_id'        => 1,
-            'strategic_initiative_id' => 3,
+            'strategic_initiative_id' => 1,
             'pm_id'                   => 1,
-            'ams_customer_id'         => 7,
-        ]);
-        Prospect::create([
-            'year'                    => 2022,
-            'transaction_type_id'     => 2,
-            'prospect_type_id'        => 1,
-            'strategic_initiative_id' => 2,
-            'pm_id'                   => 2,
-            'ams_customer_id'         => 4,
+            'ams_customer_id'         => 3,
         ]);
         Prospect::create([
             'year'                    => 2021,
             'transaction_type_id'     => 2,
-            'prospect_type_id'        => 2,
+            'prospect_type_id'        => 1,
             'strategic_initiative_id' => 1,
             'pm_id'                   => 1,
             'ams_customer_id'         => 3,
@@ -90,10 +82,74 @@ class ProspectSeeder extends Seeder
         Prospect::create([
             'year'                    => 2020,
             'transaction_type_id'     => 1,
+            'prospect_type_id'        => 1,
+            'strategic_initiative_id' => 1,
+            'pm_id'                   => 1,
+            'ams_customer_id'         => 1,
+        ]);
+        Prospect::create([
+            'year'                    => 2020,
+            'transaction_type_id'     => 2,
             'prospect_type_id'        => 2,
-            'strategic_initiative_id' => 2,
-            'pm_id'                   => 3,
+            // 'strategic_initiative_id' => 1,
+            // 'pm_id'                   => 1,
             'ams_customer_id'         => 2,
+        ]);
+        Prospect::create([
+            'year'                    => 2020,
+            'transaction_type_id'     => 1,
+            'prospect_type_id'        => 1,
+            'strategic_initiative_id' => 1,
+            'pm_id'                   => 1,
+            'ams_customer_id'         => 3,
+        ]);
+        Prospect::create([
+            'year'                    => 2020,
+            'transaction_type_id'     => 2,
+            'prospect_type_id'        => 1,
+            'strategic_initiative_id' => 1,
+            'pm_id'                   => 1,
+            'ams_customer_id'         => 3,
+        ]);
+        Prospect::create([
+            'year'                    => 2019,
+            'transaction_type_id'     => 1,
+            'prospect_type_id'        => 1,
+            'strategic_initiative_id' => 1,
+            'pm_id'                   => 1,
+            'ams_customer_id'         => 1,
+        ]);
+        Prospect::create([
+            'year'                    => 2019,
+            'transaction_type_id'     => 2,
+            'prospect_type_id'        => 2,
+            // 'strategic_initiative_id' => 1,
+            // 'pm_id'                   => 1,
+            'ams_customer_id'         => 2,
+        ]);
+        Prospect::create([
+            'year'                    => 2019,
+            'transaction_type_id'     => 1,
+            'prospect_type_id'        => 1,
+            'strategic_initiative_id' => 1,
+            'pm_id'                   => 1,
+            'ams_customer_id'         => 3,
+        ]);
+        Prospect::create([
+            'year'                    => 2019,
+            'transaction_type_id'     => 2,
+            'prospect_type_id'        => 1,
+            'strategic_initiative_id' => 1,
+            'pm_id'                   => 1,
+            'ams_customer_id'         => 3,
+        ]);
+        Prospect::create([
+            'year'                    => 2022,
+            'transaction_type_id'     => 2,
+            'prospect_type_id'        => 1,
+            'strategic_initiative_id' => 1,
+            'pm_id'                   => 1,
+            'ams_customer_id'         => 4,
         ]);
     }
 }

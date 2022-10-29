@@ -31,7 +31,7 @@ class AMSController extends Controller
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('initial', 'LIKE', "%$search%")
                     ->orWhereHas('user', function ($sub_sub_query) use ($search) {
-                        $sub_sub_query->where('name', 'LIKE', "%{$search}%");
+                        $sub_sub_query->where('name', 'LIKE', "%$search%");
                     });
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
@@ -69,7 +69,11 @@ class AMSController extends Controller
 
     public function show($id)
     {
-        if ($ams = AMS::find($id)) {
+        $ams =  AMS::whereHas('amsCustomers', function ($query) use ($id) {
+            $query->where('customer_id', $id);
+            })->get();
+            
+            if($ams){
             return response()->json([
                 'message' => 'Success!',
                 'data' => $ams
