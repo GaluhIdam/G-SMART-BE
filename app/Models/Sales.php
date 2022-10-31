@@ -60,6 +60,23 @@ class Sales extends Model
         'upgrade_level',
     ];
 
+    public function scopeSalesYearAgo($query)
+    {
+        $data = $query->whereHas('prospect', function ($query) {
+            $query->where('year', Carbon::now()->format('Y'));
+        })->get();
+        
+        return $data->sum('value');
+    }
+
+    public function scopeTotalSalesByCustomer($query, $customer)
+    {
+        $data = $query->whereHas('customer', function ($query) use ($customer) {
+        $query->where('customer_id', $customer);
+        })->get();
+        return $data->sum('value');
+    }
+
     public function setRequirement($requirement_id)
     {
         $requirement = $this->salesRequirements->where('requirement_id', $requirement_id);
@@ -289,10 +306,6 @@ class Sales extends Model
 
     public function getUpgradeLevelAttribute()
     {
-        // if ($this->level == 1) {
-        //     return false;
-        // }
-
         $requirements = Requirement::where('level_id', $this->level)->pluck('id');
         $requirement_done = SalesRequirement::where('sales_id', $this->id)
                                             ->where('status', 1)
