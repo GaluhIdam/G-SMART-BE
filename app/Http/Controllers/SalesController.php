@@ -190,7 +190,7 @@ class SalesController extends Controller
             $sales = new Sales;
             $sales->customer_id = $customer->id;
             $sales->prospect_id = $prospect->id;
-            $sales->ac_reg = $request->acreg;
+            $sales->ac_reg = $request->ac_reg;
             $sales->value = $request->value;
             $sales->maintenance_id = $request->maintenance_id;
             $sales->hangar_id = $request->hangar_id;
@@ -736,8 +736,8 @@ class SalesController extends Controller
         $request->validate([
             'maintenance_id' => 'required|integer|exists:maintenances,id',
             'hangar_id' => 'required|integer|exists:hangars,id',
-            'acReg' => 'required|string',
-            'totalSales' => 'required|numeric',
+            'ac_reg' => 'required|string',
+            'value' => 'required|numeric',
             'tat' => 'required|integer',
             'start_date' => 'required|date',
         ]);
@@ -749,8 +749,8 @@ class SalesController extends Controller
         $sales = Sales::findOrFail($id);
         $sales->maintenance_id = $request->maintenance_id;
         $sales->hangar_id = $request->hangar_id;
-        $sales->ac_reg = $request->acReg;
-        $sales->value = $request->totalSales;
+        $sales->ac_reg = $request->ac_reg;
+        $sales->value = $request->value;
         $sales->tat = $tat;
         $sales->start_date = $start_date;
         $sales->end_date = $end_date;
