@@ -111,7 +111,7 @@ class UserController extends Controller
                 // 'email'       => 'required|string|email',
                 // 'nopeg'       => 'required|integer|unique:users',
                 'unit'        => 'required|string',
-                'password'    => 'required|string|min:3',
+                'password'    => 'string|min:3',
             ]);
 
             $user->name = $request->name;
