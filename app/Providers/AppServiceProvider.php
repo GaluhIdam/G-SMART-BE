@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (request()->secure() && !$this->app->environment('local')) {
+        if (!$this->app->environment('local')) {
             $this->app['request']->server->set('HTTPS', 'on');
         }
     }
