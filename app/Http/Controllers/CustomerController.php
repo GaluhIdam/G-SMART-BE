@@ -28,28 +28,11 @@ class CustomerController extends Controller
             $paginate = 10;
         }
 
-        $customer = Customer::with('country.region')->with('amsCustomers.area')->with('amsCustomers.ams.user')->when($search, function ($query) use ($search) {
-            $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%$search%")
-                    ->orWhere('code', 'LIKE', "%$search%")
-                    ->orWhereHas('country', function ($query) use ($search) {
-                        $query->where('name', 'LIKE', "%$search%")
-                            ->orWhereHas('region', function ($query) use ($search) {
-                                $query->where('name', 'LIKE', "%$search%");
-                            });
-                    });
-            });
-        })->when(($order && $by), function ($query) use ($order, $by) {
-            $query->orderBy($order, $by);
-        })->paginate($paginate);
-
-        $query_string = [
-            'search' => $search,
-            'order' => $order,
-            'by' => $by,
-        ];
-
-        $customer->appends($query_string);
+        $customer = Customer::with(['country.region', 'amsCustomers.area', 'amsCustomers.ams.user',])
+                            ->search($search)
+                            ->sort($order, $by)
+                            ->paginate($paginate)
+                            ->withQueryString();
 
         return response()->json([
             'message' => 'Success!',
