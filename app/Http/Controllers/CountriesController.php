@@ -25,22 +25,28 @@ class CountriesController extends Controller
             $paginate = 10;
         }
 
-        $countries = Countries::with('region')->when($search, function ($query) use ($search) {
-            $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%$search%")
-                    ->orWhere('region_id', $search);
-            });
-        })->when(($order && $by), function ($query) use ($order, $by) {
-            $query->orderBy($order, $by);
-        })->paginate($paginate);
+        // $countries = Countries::with('region')->when($search, function ($query) use ($search) {
+        //     $query->where(function ($sub_query) use ($search) {
+        //         $sub_query->where('name', 'LIKE', "%$search%")
+        //             ->orWhere('region_id', $search);
+        //     });
+        // })->when(($order && $by), function ($query) use ($order, $by) {
+        //     $query->orderBy($order, $by);
+        // })->paginate($paginate);
 
-        $query_string = [
-            'search' => $search,
-            'order' => $order,
-            'by' => $by,
-        ];
+        // $query_string = [
+        //     'search' => $search,
+        //     'order' => $order,
+        //     'by' => $by,
+        // ];
 
-        $countries->appends($query_string);
+        // $countries->appends($query_string);
+
+        $countries = Countries::with('region')
+                            ->search($search)
+                            ->sort($order, $by)
+                            ->paginate($paginate)
+                            ->withQueryString();
 
         return response()->json([
             'message' => 'Success!',
