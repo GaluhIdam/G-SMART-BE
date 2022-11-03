@@ -82,6 +82,8 @@ class UserController extends Controller
         $user->email_verified_at = Carbon::now();
         $user->save();
 
+        $user->assignRole(User::ROLES[$user->role_id]);
+
         return response()->json([
             'message' => 'User created has successfully!',
             'data'    => $user,
@@ -121,6 +123,8 @@ class UserController extends Controller
             $user->unit = strtoupper($request->unit);
             $user->password = Hash::make($request->password);
             $user->push();
+
+            $user->assignRole(User::ROLES[$user->role_id]);
 
             return response()->json([
                 'message' => 'User has been updated successfully!',
