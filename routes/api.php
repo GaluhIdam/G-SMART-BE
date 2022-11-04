@@ -37,7 +37,7 @@ use App\Http\Controllers\LineController;
 use App\Http\Controllers\HangarController;
 
 Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::post('login', [AuthController::class, 'login']);
 
 // TODO route untuk testing tanpe perlu autentikasi
 // Route::get('test/{id}', [FileController::class, 'show']);
