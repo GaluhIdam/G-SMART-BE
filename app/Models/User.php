@@ -17,6 +17,7 @@ class User extends Authenticatable
     const ROLE_TPR = 3;
     const ROLE_CBO = 4;
     const ROLE_AMS = 5;
+    const ROLE_INIT = 6;
 
     const ROLES = [
         self::ROLE_ADMIN => 'Administrator',
@@ -24,6 +25,7 @@ class User extends Authenticatable
         self::ROLE_TPR => 'TPR',
         self::ROLE_CBO => 'CBO',
         self::ROLE_AMS => 'AMS',
+        self::ROLE_INIT => 'Initial',
     ];
 
     /**

@@ -566,6 +566,7 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Manage Prospect Data',
         ])->givePermissionTo([
             $read_users,
+            $show_users,
             $read_role,
             $read_permission,
             $read_strategic_initiative,
@@ -611,6 +612,7 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Manage AMS Sales Plan Request',
         ])->givePermissionTo([
             $read_users,
+            $show_users,
             $read_role,
             $read_permission,
             $read_strategic_initiative,
@@ -660,6 +662,7 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Approve Sales Plan Requirement',
         ])->givePermissionTo([
             $read_users,
+            $show_users,
             $read_role,
             $read_permission,
             $read_strategic_initiative,
@@ -707,6 +710,7 @@ class RolePermissionSeeder extends Seeder
             'description' => 'Manage Sales Plan Requirement',
         ])->givePermissionTo([
             $read_users,
+            $show_users,
             $read_role,
             $read_permission,
             $read_strategic_initiative,
@@ -754,6 +758,43 @@ class RolePermissionSeeder extends Seeder
             $create_contacts,
             $delete_contacts,
             $slot_request,
+        ]);
+
+        $init = Role::create([
+            'name' => 'Initial',
+            'description' => 'Initial Role for First-in LDAP User',
+        ])->givePermissionTo([
+            $read_users,
+            $read_role,
+            $read_permission,
+            $read_strategic_initiative,
+            $read_region,
+            $read_countries,
+            $read_area,
+            $read_transaction_type,
+            $read_ams,
+            $read_prospect_type,
+            $read_maintenance,
+            $read_aircraft_type,
+            $read_engine,
+            $read_component,
+            $read_apu,
+            $read_product,
+            $read_approval,
+            $read_customer,
+            $read_requirement,
+            $read_sales_history,
+            $read_sales_level,
+            $read_sales_reject,
+            $read_sales_requirement,
+            $read_sales_reschedule,
+            $read_sales_update,
+            $read_prospects,
+            $read_hangars,
+            $read_lines,
+            $read_sales,
+            $read_files,
+            $read_contacts,
         ]);
 
         // TD
