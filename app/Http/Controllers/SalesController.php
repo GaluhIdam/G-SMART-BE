@@ -522,12 +522,27 @@ class SalesController extends Controller
             ]
         ];
 
-        Mail::to($tpr_mail)->send(new Notification($data));
+        try {
+            $mail_sent = Mail::to($tpr_mail)->send(new Notification($data));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Sales level upgrade requested successfully',
-        ], 200);
+            if (!$mail_sent) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oops, the email request can not be sent',
+                ], 422);
+            } else {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Sales level upgrade requested successfully',
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, something\'s wrong with the email request process',
+                'error' => $e->getMessage(),
+            ], 422);
+        }
     }
 
     public function confirmUpgrade($id)
@@ -600,12 +615,27 @@ class SalesController extends Controller
             ]
         ];
 
-        Mail::to($cbo_mail)->send(new Notification($data));
+        try {
+            $mail_sent = Mail::to($cbo_mail)->send(new Notification($data));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'COGS Upload requested successfully',
-        ], 200);
+            if (!$mail_sent) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oops, the email request can not be sent',
+                ], 422);
+            } else {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'COGS Upload requested successfully',
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, something\'s wrong with the email request process',
+                'error' => $e->getMessage(),
+            ], 422);
+        }
     }
 
     public function slotRequest(Request $request)
@@ -658,12 +688,27 @@ class SalesController extends Controller
             ]
         ];
 
-        Mail::to($cbo_mail)->send(new Notification($data));
+        try {
+            $mail_sent = Mail::to($cbo_mail)->send(new Notification($data));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Hangar slot requested successfully',
-        ], 200);
+            if (!$mail_sent) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oops, the email request can not be sent',
+                ], 422);
+            } else {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Hangar slot requested successfully',
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, something\'s wrong with the email request process',
+                'error' => $e->getMessage(),
+            ], 422);
+        }
     }
 
     public function slotConfirm($id)
