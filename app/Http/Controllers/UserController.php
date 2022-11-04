@@ -28,32 +28,17 @@ class UserController extends Controller
             $paginate = 10;
         }
 
-        $user = User::when($search, function ($query) use ($search) {
-            $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%$search%")
-                    ->orWhere('username', 'LIKE', "%$search%")
-                    ->orWhere('email', 'LIKE', "%$search%")
-                    ->orWhere('nopeg', 'LIKE', "%$search%")
-                    ->orWhere('unit', 'LIKE', "%$search%")
-                    ->orWhere('role_id', 'LIKE', "%$search%");
-            });
-        })->when(($order && $by), function ($query) use ($order, $by) {
-            $query->orderBy($order, $by);
-        })->paginate($paginate);
-
-        $query_string = [
-            'search' => $search,
-            'order' => $order,
-            'by' => $by,
-        ];
-
-        $user->appends($query_string);
+        $users = User::with('role')
+                    ->search($search)
+                    ->sort($order, $by)
+                    ->paginate($paginate)
+                    ->withQueryString();
 
         $user_active = User::with('role.permissions.permission')->find(Auth::id());
 
         return response()->json([
             'message' => 'success',
-            'data' => $user,
+            'data' => $users,
             'user' => $user_active,
         ], 200);
     }
