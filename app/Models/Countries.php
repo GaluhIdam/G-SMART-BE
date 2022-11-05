@@ -15,6 +15,26 @@ class Countries extends Model
         'region_id',
     ];
 
+    public function scopeSearch($query, $search)
+    {
+        $query->when($search, function ($query) use ($search) {
+            $query->where('name', 'LIKE', "%{$search}%")
+                ->orWhereRelation('region', 'name', 'LIKE', "%{$search}%");
+        });
+    }
+
+    public function scopeSort($query, $order, $by)
+    {
+        $query->when(($order && $by), function ($query) use ($order, $by) {
+            if ($order  == 'region') {
+                $query->withAggregate('region', 'name')
+                    ->orderBy('region_name', $by);
+            } else {
+                $query->orderBy('name', $by);
+            }
+        }) ;
+    }
+
     public function region()
     {
         return $this->belongsTo(Region::class, 'region_id');

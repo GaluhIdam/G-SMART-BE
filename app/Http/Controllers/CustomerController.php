@@ -28,22 +28,26 @@ class CustomerController extends Controller
             $paginate = 10;
         }
 
-        $customer = Customer::with('country.region')->with('amsCustomers.area')->with('amsCustomers.ams.user')->when($search, function ($query) use ($search) {
-            $query->where(function ($sub_query) use ($search) {
-                $sub_query->where('name', 'LIKE', "%$search%")
-                    ->orWhere('code', 'LIKE', "%$search%");
-            });
-        })->when(($order && $by), function ($query) use ($order, $by) {
-            $query->orderBy($order, $by);
-        })->paginate($paginate);
-
-        $query_string = [
-            'search' => $search,
-            'order' => $order,
-            'by' => $by,
-        ];
-
-        $customer->appends($query_string);
+        $customer = DB::connection('mysql')
+                    ->table('customers')
+                    ->select('customers.id AS id',
+                            'customers.code AS code',
+                            'customers.name AS name',
+                            'countries.name AS country',
+                            'regions.name AS region')
+                    ->join('countries', 'customers.country_id', '=', 'countries.id')
+                    ->join('regions', 'countries.region_id', '=', 'regions.id')
+                    ->where('customers.code', 'LIKE', "%{$search}%")
+                    ->orWhere('customers.name', 'LIKE', "%{$search}%")
+                    ->orWhere('countries.name', 'LIKE', "%{$search}%")
+                    ->orWhere('regions.name', 'LIKE', "%{$search}%")
+                    ->orderBy($order, $by)
+                    ->paginate($paginate)
+                    ->appends([
+                        'search' => $search,
+                        'order' => $order,
+                        'by' => $by,
+                    ]);
 
         return response()->json([
             'message' => 'Success!',
@@ -80,18 +84,15 @@ class CustomerController extends Controller
 
     public function show(Request $request)
     {
-        $customer = Customer::with(
-            'amsCustomers',
-            'amsCustomers.area',
-            'country',
-            'country.region',
-            )->where('id', $request->id
-            )->get();
+        $customer = Customer::with('country.region')->with('amsCustomers.area')->with('amsCustomers.ams.user')->where(
+            'id',
+            $request->id
+        )->get();
 
         if ($customer->isNotEmpty()) {
             return response()->json([
                 'message' => 'Success!',
-                'data' => $customer
+                'data' => $customer->first()
             ], 200);
         } else {
             return response()->json([
