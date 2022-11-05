@@ -35,21 +35,6 @@ return [
 
     'connections' => [
 
-        'db_hrm' => [
-            'driver' => 'sqlsrv',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HRM_HOST', 'localhost'),
-            'port' => env('DB_HRM_PORT', '1433'),
-            'database' => env('DB_HRM_DATABASE', 'forge'),
-            'username' => env('DB_HRM_USERNAME', 'forge'),
-            'password' => env('DB_HRM_PASSWORD', ''),
-            'charset' => 'utf8',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'encrypt' => env('DB_ENCRYPT', 'yes'),
-            'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'true'),
-        ],
-
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DATABASE_URL'),
