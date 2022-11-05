@@ -114,4 +114,17 @@ class AuthController extends Controller
             'message' => 'Logged out successfully!',
         ], 200);
     }
+    
+    public function me(Request $request)
+    {
+        $user = User::with('role.permissions.permission')
+                    ->where('id', Auth::id())
+                    ->first();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data successfully',
+            'data' => $user,
+        ], 200);
+    }
 }
