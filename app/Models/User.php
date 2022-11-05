@@ -50,6 +50,24 @@ class User extends Authenticatable implements LdapAuthenticatable
 
     protected $guard_name = 'web';
 
+    public function scopeSearch($query, $search)
+    {
+        $query->when($search, function ($query) use ($search) {
+            $query->where('name', 'LIKE', "%{$search}%")
+                ->orWhere('nopeg', 'LIKE', "%{$search}%")
+                ->orWhere('email', 'LIKE', "%{$search}%")
+                ->orWhere('unit', 'LIKE', "%{$search}%")
+                ->orWhere('username', 'LIKE', "%{$search}%");
+        });
+    }
+
+    public function scopeSort($query, $order, $by)
+    {
+        $query->when(($order && $by), function ($query) use ($order, $by) {
+            $query->orderBy($order, $by);
+        });
+    }
+
     public function ams()
     {
         return $this->hasOne(AMS::class);
