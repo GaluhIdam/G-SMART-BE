@@ -41,7 +41,7 @@ class AuthController extends Controller
                 $user->assignRole(User::ROLES[$user->role_id]);
             }
             
-            // $request->session()->regenerate();
+            $request->session()->regenerate();
 
             return response()->json([
                 'success' => true,
