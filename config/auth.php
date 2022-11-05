@@ -65,8 +65,19 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'driver' => 'ldap',
+            'model' => LdapRecord\Models\ActiveDirectory\User::class,
+            'rules' => [],
+            'database' => [
+                'model' => App\Models\User::class,
+                'password_column' => 'password',
+                'sync_passwords' => true,
+                'sync_attributes' => App\Ldap\AttributeHandler::class,
+                'sync_existing' => [
+                    'email' => 'mail',
+                    'username' => 'samaccountname',
+                ],
+            ],
         ],
 
         // 'users' => [
