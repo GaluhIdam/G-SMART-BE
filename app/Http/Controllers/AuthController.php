@@ -41,14 +41,14 @@ class AuthController extends Controller
                 $user->assignRole(User::ROLES[$user->role_id]);
             }
             
-            $request->session()->regenerate();
-
             return response()->json([
                 'success' => true,
                 'message' => 'Logged in successfully',
                 'token' => $user->createToken('token')->plainTextToken,
                 'user' => $user,
             ], 200);
+
+            $request->session()->regenerate();
         } else {
             return response()->json([
                 'success' => false,
