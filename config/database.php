@@ -35,6 +35,21 @@ return [
 
     'connections' => [
 
+        'db_xpream' => [
+            'driver' => 'sqlsrv',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_XPREAM_HOST', 'localhost'),
+            'port' => env('DB_XPREAM_PORT', '1433'),
+            'database' => env('DB_XPREAM_DATABASE', 'forge'),
+            'username' => env('DB_XPREAM_USERNAME', 'forge'),
+            'password' => env('DB_XPREAM_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'encrypt' => env('DB_ENCRYPT', 'yes'),
+            'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'true'),
+        ],
+
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DATABASE_URL'),
