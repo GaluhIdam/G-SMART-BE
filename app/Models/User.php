@@ -5,18 +5,20 @@ namespace App\Models;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use LdapRecord\Laravel\Auth\LdapAuthenticatable;
+use LdapRecord\Laravel\Auth\AuthenticatesWithLdap;
 
-class User extends Authenticatable
+class User extends Authenticatable implements LdapAuthenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, Notifiable, HasRoles, AuthenticatesWithLdap;
 
     const ROLE_ADMIN = 1;
     const ROLE_TPC = 2;
     const ROLE_TPR = 3;
     const ROLE_CBO = 4;
     const ROLE_AMS = 5;
+    const ROLE_INIT = 6;
 
     const ROLES = [
         self::ROLE_ADMIN => 'Administrator',
@@ -24,13 +26,9 @@ class User extends Authenticatable
         self::ROLE_TPR => 'TPR',
         self::ROLE_CBO => 'CBO',
         self::ROLE_AMS => 'AMS',
+        self::ROLE_INIT => 'Initial',
     ];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'username',
@@ -41,24 +39,16 @@ class User extends Authenticatable
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $guard_name = 'web';
 
     public function scopeSearch($query, $search)
     {

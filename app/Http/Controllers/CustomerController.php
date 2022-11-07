@@ -30,9 +30,7 @@ class CustomerController extends Controller
 
         $customer = DB::connection('mysql')
                     ->table('customers')
-                    ->select('customers.id AS id',
-                            'customers.code AS code',
-                            'customers.name AS name',
+                    ->select('customers.*',
                             'countries.name AS country',
                             'regions.name AS region')
                     ->join('countries', 'customers.country_id', '=', 'countries.id')
