@@ -8,10 +8,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use LdapRecord\Laravel\Auth\LdapAuthenticatable;
 use LdapRecord\Laravel\Auth\AuthenticatesWithLdap;
+use LdapRecord\Laravel\Auth\HasLdapUser;
 
 class User extends Authenticatable implements LdapAuthenticatable
 {
-    use HasApiTokens, Notifiable, HasRoles, AuthenticatesWithLdap;
+    use HasApiTokens, Notifiable, HasRoles, AuthenticatesWithLdap, HasLdapUser;
 
     const ROLE_ADMIN = 1;
     const ROLE_TPC = 2;

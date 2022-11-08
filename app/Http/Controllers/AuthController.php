@@ -36,7 +36,15 @@ class AuthController extends Controller
             $user = Auth::user();
 
             if (!$user->role_id) {
-                $user->role_id = 6;
+                // TODO : temporary code [delete soon]
+                $unit = $user->ldap->getFirstAttribute('department');
+                if (str_contains($unit, 'TP')) {
+                    $user->role_id = 1;
+                } else {
+                    $user->role_id = 6;
+                }
+                // End-of temproray code
+
                 $user->push();
                 $user->assignRole(User::ROLES[$user->role_id]);
             }
