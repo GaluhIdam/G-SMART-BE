@@ -395,7 +395,7 @@ class Sales extends Model
             } else if ($order == 'product') {
                 $query->withAggregate('product', 'name')
                     ->orderBy('product_name', $by);
-            } else if ($order == 'properties') {
+            } else if ($order == 'registration') {
                 $query->withAggregate('acType', 'name')
                     ->withAggregate('engine', 'name')
                     ->withAggregate('apu', 'name')
@@ -404,7 +404,7 @@ class Sales extends Model
                     ->orderBy('engine_name', $by)
                     ->orderBy('apu_name', $by)
                     ->orderBy('component_name', $by);
-            } else if ($order == 'registration') {
+            } else if ($order == 'acReg') {
                 $query->orderBy('ac_reg', $by);
             } else if ($order == 'other') {
                 $query->orderBy('is_rkap', $by);
