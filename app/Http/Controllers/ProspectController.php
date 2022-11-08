@@ -78,6 +78,22 @@ class ProspectController extends Controller
         ], 200);
     }
 
+    public function tmbOnly(Request $request)
+    {
+        $customer = $request->customer;
+        
+        $prospects = Prospect::where('transaction_type_id', 1)
+                            ->whereHas('amsCustomer', function ($query) use ($customer) {
+                                $query->where('customer_id', $customer);
+                            })->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data successfully',
+            'data' => $prospects,
+        ], 200);
+    }
+
     public function create(Request $request)
     {
         $request->validate([

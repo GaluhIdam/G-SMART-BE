@@ -73,6 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('prospect-show/{id}', [ProspectController::class, 'show'])->middleware(['permission:show_prospects']);
     Route::get('prospect-pbth/{id}', [ProspectController::class, 'pbth'])->middleware(['permission:pickup_prospects']);
     Route::get('prospect-tmb/{id}', [ProspectController::class, 'tmb'])->middleware(['permission:pickup_prospects']);
+    Route::get('prospect-get-tmb', [ProspectController::class, 'tmbOnly'])->middleware(['permission:read_prospects']);
 
     //Customer Routes
     Route::get('customer', [CustomerController::class, 'index'])->middleware(['permission:read_customer|manage_customer']);
