@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\HRM\Employee;
 
 class AuthController extends Controller
 {
@@ -36,17 +37,7 @@ class AuthController extends Controller
             $user = Auth::user();
 
             if (!$user->role_id) {
-                // TODO : temporary code [delete soon]
-                $unit = $user->ldap->getFirstAttribute('department');
-                if (str_contains($unit, 'TP')) {
-                    $user->role_id = 1;
-                } else {
-                    $user->role_id = 6;
-                }
-                // End-of temproray code
-
-                $user->push();
-                $user->assignRole(User::ROLES[$user->role_id]);
+                $this->setRole($user);
             }
             
             return response()->json([
@@ -63,6 +54,26 @@ class AuthController extends Controller
                 'message' => 'These credentials not match our records',
             ], 401);
         }
+    }
+
+    private function setRole(User $user)
+    {
+        $unit = $user->ldap->getFirstAttribute('department');
+        $role = Employee::where('PERNR', $user->username)
+                        ->orWhere('EMAIL', $user->email)
+                        ->first()
+                        ->JABATAN;
+
+        if ($unit == 'TPR') {
+            $user->role_id = 1;
+        } else if (in_array($unit, ['TPW','TPY','TPX']) || ($role == 'Key Account Manager')) {
+            $user->role_id = 5;
+        } else {
+            $user->role_id = 6;
+        }
+
+        $user->push();
+        $user->assignRole(User::ROLES[$user->role_id]);
     }
 
     public function logout(Request $request)
