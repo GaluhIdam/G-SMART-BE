@@ -169,9 +169,12 @@ class SalesController extends Controller
     public function createTmb(Request $request)
     {
         $request->validate([
+            'customer_id' => 'sometimes|required|integer|exists:customers,id',
             'prospect_id' => 'required|integer|exists:prospects,id',
+            'product_id' => 'sometimes|required|integer|exists:products,id',
             'maintenance_id' => 'required|integer|exists:maintenances,id',
             'hangar_id' => 'required|integer|exists:hangars,id',
+            'ac_type_id' => 'sometimes|required|integer|exists:ac_type_id,id',
             'ac_reg' => 'required|string',
             'value' => 'required|numeric',
             'tat' => 'required|integer',
@@ -182,7 +185,7 @@ class SalesController extends Controller
             DB::beginTransaction();
 
             $prospect = Prospect::find($request->prospect_id);
-            $customer = $prospect->amsCustomer->customer;
+            $customer = Customer::find($request->customer_id) ?? $prospect->amsCustomer->customer;
 
             $start_date = Carbon::parse($request->start_date);
             $tat = $request->tat;
@@ -195,6 +198,8 @@ class SalesController extends Controller
             $sales->value = $request->value;
             $sales->maintenance_id = $request->maintenance_id;
             $sales->hangar_id = $request->hangar_id;
+            $sales->product_id = $request->product_id ?? null;
+            $sales->ac_type_id = $request->ac_type_id ?? null;
             $sales->tat = $tat;
             $sales->start_date = $start_date->format('Y-m-d');
             $sales->end_date = $end_date->format('Y-m-d');
@@ -212,12 +217,7 @@ class SalesController extends Controller
                 $requirement = new SalesRequirement;
                 $requirement->sales_id = $sales->id;
                 $requirement->requirement_id = $i;
-                if ($i == 1) {
-                    $customer_cp = $sales->contact_persons;
-                    $requirement->status = $customer_cp->isNotEmpty() ?? 0;
-                } else if ($i == 4) {
-                    $requirement->status = 1;
-                }
+                $requirement->status = ($i == 1 || $i == 4) ? 1 : 0;
                 $requirement->save();
             }
 
