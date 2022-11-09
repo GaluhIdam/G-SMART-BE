@@ -217,12 +217,7 @@ class SalesController extends Controller
                 $requirement = new SalesRequirement;
                 $requirement->sales_id = $sales->id;
                 $requirement->requirement_id = $i;
-                if ($i == 1) {
-                    $customer_cp = $sales->contact_persons;
-                    $requirement->status = $customer_cp->isNotEmpty() ?? 0;
-                } else if ($i == 4) {
-                    $requirement->status = 1;
-                }
+                $requirement->status = ($i == 1 || $i == 4) ? 1 : 0;
                 $requirement->save();
             }
 
