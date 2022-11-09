@@ -82,7 +82,13 @@ class ProspectController extends Controller
     {
         $customer = $request->customer;
         
-        $prospects = Prospect::where('transaction_type_id', 1)
+        $prospects = Prospect::with([
+                                'transactionType',
+                                'prospectType',
+                                'strategicInitiative',
+                                'pm',
+                                'amsCustomer',
+                            ])->where('transaction_type_id', 1)
                             ->whereHas('amsCustomer', function ($query) use ($customer) {
                                 $query->where('customer_id', $customer);
                             })->get();
