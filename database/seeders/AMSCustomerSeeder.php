@@ -42,7 +42,7 @@ class AMSCustomerSeeder extends Seeder
         ]);
         AMSCustomer::create([
             'customer_id' => 6,
-            'area_id' => 5,
+            'area_id' => 2,
             'ams_id' => 3,
         ]);
         AMSCustomer::create([
@@ -52,7 +52,7 @@ class AMSCustomerSeeder extends Seeder
         ]);
         AMSCustomer::create([
             'customer_id' => 8,
-            'area_id' => 6,
+            'area_id' => 1,
             'ams_id' => 2,
         ]);
     }

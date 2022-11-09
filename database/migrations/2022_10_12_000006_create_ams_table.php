@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('initial')->nullable();
 
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->index('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');;
 
             $table->timestamps();
         });

@@ -21,7 +21,7 @@ class ProspectTypeSeeder extends Seeder
         ]);
         ProspectType::create([
             'name'        => 'In Organic',
-            'description' => 'Need to define which Strategic Initiative and selected PM'
+            'description' => 'Need to define which Strategic Initiative and selecting PM'
         ]);
     }
 }
