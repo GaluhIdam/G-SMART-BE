@@ -15,23 +15,19 @@ class ComponentSeeder extends Seeder
      */
     public function run()
     {
-        Component::create([
-            'name' => 'Wheel & Brake',
-        ]);
-        Component::create([
-            'name' => 'Fuselag',
-        ]);
-        Component::create([
-            'name' => 'Wing',
-        ]);
-        Component::create([
-            'name' => 'Landing Gear',
-        ]);
-        Component::create([
-            'name' => 'Kokpit',
-        ]);
-        Component::create([
-            'name' => 'Tail',
-        ]);
+        /*
+            DATASHEET COMPONENT DARI APLIKASI USER
+            - Component Retail
+            - Component PBTH
+            - Landing Gear
+            - Wheel & Brake
+            - 737CL
+        */
+
+        Component::create(['name' => 'Component Retail',]);
+        Component::create(['name' => 'Component PBTH',]);
+        Component::create(['name' => 'Landing Gear',]);
+        Component::create(['name' => 'Wheel & Brake',]);
+        Component::create(['name' => '737CL',]);
     }
 }
