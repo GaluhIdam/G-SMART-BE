@@ -15,25 +15,15 @@ class MaintenanceSeeder extends Seeder
      */
     public function run()
     {
-        Maintenance::create([
-            'name' => 'Engineering',
-            'description' => 'Lorem ipsum dolor sit amet',
-        ]);
-        Maintenance::create([
-            'name' => 'Preparation',
-            'description' => 'Lorem ipsum dolor sit amet',
-        ]);
-        Maintenance::create([
-            'name' => 'Verifying',
-            'description' => 'Lorem ipsum dolor sit amet',
-        ]);
-        Maintenance::create([
-            'name' => 'Maintenance',
-            'description' => 'Lorem ipsum dolor sit amet',
-        ]);
-        Maintenance::create([
-            'name' => 'Testing',
-            'description' => 'Lorem ipsum dolor sit amet',
-        ]);
+        $csv_file = fopen(base_path("database/data/maintenance.csv"), "r");
+
+        $first_line = true;
+        while (($data = fgetcsv($csv_file, 2000, ",")) !== FALSE) {
+            if (!$first_line) {
+                Maintenance::create(['name' => $data['0']]);
+            }
+            $first_line = false;
+        }
+        fclose($csv_file);
     }
 }
