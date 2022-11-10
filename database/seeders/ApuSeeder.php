@@ -15,20 +15,15 @@ class ApuSeeder extends Seeder
      */
     public function run()
     {
-        Apu::create([
-            'name' => 'GTCP85',
-        ]);
-        Apu::create([
-            'name' => 'GPXR19',
-        ]);
-        Apu::create([
-            'name' => 'ZTEE65',
-        ]);
-        Apu::create([
-            'name' => 'RRQH90',
-        ]);
-        Apu::create([
-            'name' => 'OPEQ01',
-        ]);
+        $csv_file = fopen(base_path("database/data/apu.csv"), "r");
+
+        $first_line = true;
+        while (($data = fgetcsv($csv_file, 2000, ",")) !== FALSE) {
+            if (!$first_line) {
+                Apu::create(['name' => $data['0']]);
+            }
+            $first_line = false;
+        }
+        fclose($csv_file);
     }
 }
