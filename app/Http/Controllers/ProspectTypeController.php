@@ -48,21 +48,6 @@ class ProspectTypeController extends Controller
         ], 200);
     }
 
-    public function create(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:prospect_types|max:255',
-            'description' => 'required|max:255',
-        ]);
-
-        $prospect_type = ProspectType::create($request->all());
-
-        return response()->json([
-            'message' => 'Prospect Type has been created successfully!',
-            'data' => $prospect_type,
-        ], 201);
-    }
-
     public function show($id)
     {
         if ($prospect_type = ProspectType::find($id)) {
@@ -81,7 +66,6 @@ class ProspectTypeController extends Controller
     {
         if ($prospect_type = ProspectType::find($id)) {
             $request->validate([
-                'name'        => 'required|unique:prospect_types,name,' . $id . '|max:255',
                 'description' => 'required|max:255',
             ]);
 
@@ -90,21 +74,6 @@ class ProspectTypeController extends Controller
             return response()->json([
                 'message' => 'Prospect Type has been updated successfully!',
                 'data' => $prospect_type,
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Data not found!',
-            ], 404);
-        }
-    }
-
-    public function destroy($id)
-    {
-        if ($prospect_type = ProspectType::find($id)) {
-            $prospect_type->delete();
-            return response()->json([
-                'message' => 'Prospect Type has been deleted successfully!',
-                'data'    => $prospect_type
             ], 200);
         } else {
             return response()->json([

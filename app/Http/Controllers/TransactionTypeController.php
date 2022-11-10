@@ -48,21 +48,6 @@ class TransactionTypeController extends Controller
         ], 200);
     }
 
-    public function create(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:transaction_types|max:255',
-            'description' => 'required|max:255',
-        ]);
-
-        $transaction_type = TransactionType::create($request->all());
-
-        return response()->json([
-            'message' => 'Transaction Type has been created successfully!',
-            'data' => $transaction_type,
-        ], 201);
-    }
-
     public function show($id)
     {
         if ($transaction_type = TransactionType::find($id)) {
@@ -81,7 +66,6 @@ class TransactionTypeController extends Controller
     {
         if ($transaction_type = TransactionType::find($id)) {
             $request->validate([
-                'name' => 'required|unique:transaction_types,name,' . $id . '|max:255',
                 'description' => 'required|max:255',
             ]);
 
@@ -90,21 +74,6 @@ class TransactionTypeController extends Controller
             return response()->json([
                 'message' => 'Transaction Type has been updated successfully!',
                 'data' => $transaction_type,
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Data not found!',
-            ], 404);
-        }
-    }
-
-    public function destroy($id)
-    {
-        if ($transaction_type = TransactionType::find($id)) {
-            $transaction_type->delete();
-
-            return response()->json([
-                'message' => 'Transaction Type has been deleted successfully!',
             ], 200);
         } else {
             return response()->json([
