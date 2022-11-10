@@ -16,55 +16,60 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
+use App\Helpers\PaginationHelper as PG;
 
 class ProspectController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->get('paginate')) {
-            $paginate = $request->get('paginate');
-        } else {
-            $paginate = 10;
-        }
-
-        if ($request->get('filter')){
-            $filter = $request->get('filter');
-        } else {
-            $filter = Carbon::now()->format('Y');
-        }
+        $search = $request->search ?? null;
+        $filter = $request->filter ?? null;
+        $order = $request->order ?? null;
+        $by = $request->by ?? null;
+        $paginate = $request->paginate ?? 10;
 
         $user = auth()->user();
 
         $market_share = Prospect::user($user)->marketYearAgo();
         $total_sales = Sales::user($user)->salesYearAgo();
-
-        $data  = Prospect::with('amsCustomer.customer')
-                        ->when($filter, function ($query) use ($filter) {
-                            $query->where('year', $filter);
-                        })
+        $prospects  = Prospect::search($search)
+                        ->filter($filter)
                         ->user($user)
-                        ->groupBy('ams_customer_id')
-                        ->paginate($paginate)
-                        ->withQueryString();
+                        ->get();
+
+        $grouped_by_customer = $prospects->groupBy('ams_customer_id')->values();
 
         $prospect_by_customer = new Collection();
 
-        foreach ($data as $item) {
-            $id = $item->amsCustomer->customer_id;
+        foreach ($grouped_by_customer as $prospect) {
+            $years = array_unique($prospect->pluck('year')->toArray());
+            $transactions = array_unique($prospect->pluck('transaction')->toArray());
+            $types = array_unique($prospect->pluck('type')->toArray());
+            $strategic_inits = array_unique($prospect->pluck('strategic_init')->toArray());
+
             $prospect_by_customer->push((object)[
-                'year' => $item->year,
-                'transaction' => Customer::transactionTypeGroup($id, $filter),
-                'type' => Customer::prospectTypeGroup($id, $filter),
-                'strategicInitiative' => Customer::strategicInitiativeGroup($id, $filter),
-                'prjoectManager' => Customer::pmGroup($id, $filter),
-                'ams' => Customer::amsGroup($id),
-                'marketShare' => Customer::marketShareGroup($id, $filter),
-                'salesPlan' => Customer::salesPlanGroup($id, $filter),
-                'customer' => Customer::find($id)->only('id', 'code', 'name'),
+                'year' => implode(', ', $years),
+                'transaction' => implode(', ', $transactions),
+                'type' => implode(', ', $types),
+                'strategicInitiative' => implode(', ', $strategic_inits),
+                'projectManager' => $prospect->first()->project_manager,
+                'customer' => $prospect->first()->customer,
+                'ams' => $prospect->first()->ams,
+                'marketShare' => $prospect->sum('market_share'),
+                'salesPlan' => $prospect->sum('sales_plan'),
             ]);
         }
 
-        $data->setCollection($prospect_by_customer);
+        $prospect_by_customer = $prospect_by_customer->sortBy([[$order, $by]])->values();
+        
+        $data = PG::paginate($prospect_by_customer, $paginate);;
+
+        $data->appends([
+            'search' => $search,
+            'filter' => $filter,
+            'order' => $order,
+            'by' => $by,
+        ])->values();
 
         return response()->json([
             'status' => 'Success!',

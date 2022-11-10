@@ -27,10 +27,40 @@ class Prospect extends Model
     ];
 
     protected $appends = [
-        'market_share',
         'registration',
+        'transaction',
+        'type',
+        'strategic_init',
+        'project_manager',
+        'customer',
+        'ams',
+        'market_share',
         'sales_plan',
     ];
+
+    public function scopeSearch($query, $search)
+    {
+        $query->when($search, function ($query) use ($search) {
+            $query->where('year', 'LIKE', "%$search%")
+            ->orWhereRelation('transactionType', 'name', 'LIKE', "%$search%")
+            ->orWhereRelation('prospectType', 'name', 'LIKE', "%$search%")
+            ->orWhereRelation('strategicInitiative', 'name', 'LIKE', "%$search%")
+            ->orWhereRelation('pm', 'name', 'LIKE', "%$search%")
+            ->orWhereRelation('prospectType', 'name', 'LIKE', "%$search%")
+            ->orWhereHas('amsCustomer', function ($query) use ($search) {
+                $query->whereRelation('customer', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('customer', 'code', 'LIKE', "%$search%")
+                    ->orWhereRelation('ams', 'initial', 'LIKE', "%$search%");
+            });
+        });
+    }
+
+    public function scopeFilter($query, $filter)
+    {
+        $query->when($filter, function ($query) use ($filter) {
+            $query->where('year', $filter);
+        });
+    }
 
     public function scopeUser($query, $user)
     {
@@ -39,6 +69,38 @@ class Prospect extends Model
                 $query->where('ams_id', $user->ams->id);
             });
         });
+    }
+
+    public function getAmsAttribute()
+    {
+        return $this->amsCustomer->ams->initial;
+    }
+
+    public function getCustomerAttribute()
+    {
+        return $this->amsCustomer->customer->only('id', 'code', 'name');
+    }
+
+    public function getTransactionAttribute()
+    {
+        return $this->transactionType->name;
+    }
+
+    public function getTypeAttribute()
+    {
+        return $this->prospectType->name;
+    }
+
+    public function getStrategicInitAttribute()
+    {
+        $strategic_init = $this->strategicInitiative;
+        return $strategic_init ? $strategic_init->name : null;
+    }
+
+    public function getProjectManagerAttribute()
+    {
+        $project_manager = $this->pm;
+        return $project_manager ? $project_manager->name : null;
     }
     
     public function getMarketShareAttribute()
