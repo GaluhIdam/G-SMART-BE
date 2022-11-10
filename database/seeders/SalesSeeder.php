@@ -6,6 +6,13 @@ use App\Models\Sales;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use App\Models\Hangar;
+use App\Models\Product;
+use App\Models\AircraftType;
+use App\Models\Component;
+use App\Models\Engine;
+use App\Models\Apu;
+use App\Models\AMS;
 
 class SalesSeeder extends Seeder
 {
@@ -16,6 +23,14 @@ class SalesSeeder extends Seeder
      */
     public function run()
     {
+        $hangar = Hangar::all()->count();
+        $product = Product::all()->count();
+        $ac_type = AircraftType::all()->count();
+        $component = Component::all()->count();
+        $engine = Engine::all()->count();
+        $apu = Apu::all()->count();
+        $ams = AMS::all()->count();
+
         for ($i = 1; $i <= 10; $i++) {
             $acregs = ['PK-GFM', 'PK-CKL', 'PK-GAM', 'PK-GCA', 'PK-ZTE', 'PK-MAN', 'PK-NAN', 'PK-RRQ'];
             $years = ['2020', '2021', '2022'];
@@ -34,14 +49,14 @@ class SalesSeeder extends Seeder
                 'start_date' => $start_date,
                 'end_date' => $end_date, // nullable
                 'so_number' => null, // nullable
-                'hangar_id' => rand(1,4), // nullable
-                'product_id' => rand(1,5), // nullable
-                'ac_type_id' => rand(1,8), // nullable
-                'component_id' => rand(1,6), // nullable
-                'engine_id' => rand(1,5), // nullable
-                'apu_id' => rand(1,5), // nullable
-                'is_rkap' => rand(0,1), // nullable
-                'ams_id' => rand(1,3), // nullable
+                'hangar_id' => rand(1, $hangar), // nullable
+                'product_id' => rand(1, $product), // nullable
+                'ac_type_id' => rand(1, $ac_type), // nullable
+                'component_id' => rand(1, $component), // nullable
+                'engine_id' => rand(1, $engine), // nullable
+                'apu_id' => rand(1, $apu), // nullable
+                'is_rkap' => rand(0, 1), // nullable
+                'ams_id' => rand(1, $ams), // nullable
                 'line_id' => null, // nullable
             ]);
         }
