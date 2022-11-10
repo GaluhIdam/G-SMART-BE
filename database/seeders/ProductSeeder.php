@@ -15,25 +15,27 @@ class ProductSeeder extends Seeder
      */
     public function run()
     {
-        Product::create([
-            'name' => 'Fuselag',
-            'description' => 'Badan pesawat terbang'
-        ]);
-        Product::create([
-            'name' => 'Wing',
-            'description' => 'Sayap pesawat terbang'
-        ]);
-        Product::create([
-            'name' => 'Landing Gear',
-            'description' => 'Roda pesawat terbang'
-        ]);
-        Product::create([
-            'name' => 'Kokpit',
-            'description' => 'Ruang kendali pilot'
-        ]);
-        Product::create([
-            'name' => 'Tail',
-            'description' => 'Ekor pesawat terbang'
-        ]);
+        /*
+            DATASHEET PRODUCT DARI APLIKASI SEEDER
+            - Learning
+            - IGTE
+            - Others
+            - Engine & APU
+            - Material Trading & Logistic
+            - Line
+            - Engineering
+            - Component
+            - Airframe
+        */
+
+        Product::create(['name' => 'Learning']);
+        Product::create(['name' => 'IGTE']);
+        Product::create(['name' => 'Others']);
+        Product::create(['name' => 'Engine & APU']);
+        Product::create(['name' => 'Material Trading & Logistic']);
+        Product::create(['name' => 'Line']);
+        Product::create(['name' => 'Engineering']);
+        Product::create(['name' => 'Component']);
+        Product::create(['name' => 'Airframe']);
     }
 }
