@@ -28,7 +28,7 @@ class TMBSeeder extends Seeder
         TMB::create([
             'product_id' => 2,
             'ac_type_id' => 8,
-            'component_id' => 6,
+            'component_id' => 5,
             'engine_id' => 2,
             'apu_id' => 5,
             'market_share' => 2500,
@@ -108,7 +108,7 @@ class TMBSeeder extends Seeder
         TMB::create([
             'product_id' => 1,
             'ac_type_id' => 1,
-            'component_id' => 6,
+            'component_id' => 3,
             'engine_id' => 3,
             'apu_id' => 5,
             'market_share' => 2200,
