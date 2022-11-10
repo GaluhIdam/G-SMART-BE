@@ -15,29 +15,9 @@ class AreaSeeder extends Seeder
      */
     public function run()
     {
-        Area::create([
-            'name' => 'Area 1',
-            'scope' => 'Garuda Indonesia',
-        ]);
-        Area::create([
-            'name' => 'Area 2',
-            'scope' => 'Citilink',
-        ]);
-        Area::create([
-            'name' => 'Area 3',
-            'scope' => 'Air Asia',
-        ]);
-        Area::create([
-            'name' => 'Area 4',
-            'scope' => 'Lion Air',
-        ]);
-        Area::create([
-            'name' => 'Area 5',
-            'scope' => 'Sriwijaya Air',
-        ]);
-        Area::create([
-            'name' => 'Area 6',
-            'scope' => 'Batik Air',
-        ]);
+        Area::create(['name' => 'III']);
+        Area::create(['name' => 'II']);
+        Area::create(['name' => 'I']);
+        Area::create(['name' => 'KAM']);
     }
 }
