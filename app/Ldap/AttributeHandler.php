@@ -12,7 +12,7 @@ class AttributeHandler
         $local->name = $ldap->getFirstAttribute('cn');
         $local->username = $ldap->getFirstAttribute('samaccountname');
         $local->nopeg = $ldap->getFirstAttribute('samaccountname');
-        $local->unit = $ldap->getFirstAttribute('department');
+        $local->unit = $ldap->getFirstAttribute('description');
         $local->email = $ldap->getFirstAttribute('mail');
     }
 }
