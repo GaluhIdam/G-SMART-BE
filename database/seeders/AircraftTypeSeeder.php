@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\AircraftType;
+use App\Models\AircraftType as ACType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,29 +15,15 @@ class AircraftTypeSeeder extends Seeder
      */
     public function run()
     {
-        AircraftType::create([
-            'name' => 'B707',
-        ]);
-        AircraftType::create([
-            'name' => 'B717',
-        ]);
-        AircraftType::create([
-            'name' => 'B727',
-        ]);
-        AircraftType::create([
-            'name' => 'B737',
-        ]);
-        AircraftType::create([
-            'name' => 'B747',
-        ]);
-        AircraftType::create([
-            'name' => 'B757',
-        ]);
-        AircraftType::create([
-            'name' => 'B767',
-        ]);
-        AircraftType::create([
-            'name' => 'B777',
-        ]);
+        $csv_file = fopen(base_path("database/data/aircraft_types.csv"), "r");
+
+        $first_line = true;
+        while (($data = fgetcsv($csv_file, 2000, ",")) !== FALSE) {
+            if (!$first_line) {
+                ACType::create(['name' => $data['0']]);
+            }
+            $first_line = false;
+        }
+        fclose($csv_file);
     }
 }
