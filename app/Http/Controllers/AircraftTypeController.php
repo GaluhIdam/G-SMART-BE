@@ -23,7 +23,7 @@ class AircraftTypeController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = AircraftType::all()->count();
         }
 
         $ac_type_id = AircraftType::when($search, function ($query) use ($search) {

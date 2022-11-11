@@ -22,7 +22,7 @@ class RegionController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = Region::all()->count();
         }
 
         $region = Region::with('countries')->when($search, function ($query) use ($search) {

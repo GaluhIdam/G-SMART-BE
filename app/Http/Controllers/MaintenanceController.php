@@ -22,7 +22,7 @@ class MaintenanceController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = Maintenance::all()->count();
         }
 
         $maintenance = Maintenance::when($search, function ($query) use ($search) {

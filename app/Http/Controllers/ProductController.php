@@ -22,7 +22,7 @@ class ProductController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = Product::all()->count();
         }
 
         $product = Product::when($search, function ($query) use ($search) {

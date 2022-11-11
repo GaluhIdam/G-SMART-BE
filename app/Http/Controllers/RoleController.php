@@ -24,7 +24,7 @@ class RoleController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = Role::all()->count();
         }
 
         $role = Role::with('permissions')->when($search, function ($query) use ($search) {

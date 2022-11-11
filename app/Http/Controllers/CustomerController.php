@@ -25,7 +25,7 @@ class CustomerController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = Customer::all()->count();
         }
 
         $customer = DB::connection('mysql')

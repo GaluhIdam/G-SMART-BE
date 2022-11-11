@@ -23,7 +23,7 @@ class ApuController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = Apu::all()->count();
         }
 
         $apu = Apu::when($search, function ($query) use ($search) {

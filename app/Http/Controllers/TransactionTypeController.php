@@ -22,7 +22,7 @@ class TransactionTypeController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = TransactionType::all()->all();
         }
 
         $transaction_type = TransactionType::when($search, function ($query) use ($search) {

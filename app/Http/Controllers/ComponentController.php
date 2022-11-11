@@ -22,7 +22,7 @@ class ComponentController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = Component::all()->count();
         }
 
         $component = Component::when($search, function ($query) use ($search) {
