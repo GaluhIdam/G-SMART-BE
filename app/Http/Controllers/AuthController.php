@@ -36,10 +36,14 @@ class AuthController extends Controller
         if (Auth::attempt($this->credentials($request))) {
             $user = Auth::user();
 
+            if (!$user->unit) {
+                $this->setUnit($user);
+            }
+
             if (!$user->role_id) {
                 $this->setRole($user);
             }
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Logged in successfully',
@@ -56,13 +60,24 @@ class AuthController extends Controller
         }
     }
 
+    private function setUnit(User $user)
+    {
+        $empl = Employee::where('PERNR', $user->username)
+                            ->orWhere('EMAIL', $user->email)
+                            ->first();
+
+        $user->unit = $empl->UNIT;
+        $user->push();
+    }
+
     private function setRole(User $user)
     {
-        $unit = $user->ldap->getFirstAttribute('department');
-        $role = Employee::where('PERNR', $user->username)
-                        ->orWhere('EMAIL', $user->email)
-                        ->first()
-                        ->JABATAN;
+        $empl = Employee::where('PERNR', $user->username)
+                            ->orWhere('EMAIL', $user->email)
+                            ->first();
+
+        $unit = $empl->UNIT;
+        $role = $empl->JABATAN;
 
         if ($unit == 'TPR') {
             $user->role_id = 1;
