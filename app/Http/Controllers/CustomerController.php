@@ -7,6 +7,8 @@ use App\Models\AMSCustomer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
+use App\Helpers\PaginationHelper as PG;
 
 class CustomerController extends Controller
 {
@@ -28,42 +30,57 @@ class CustomerController extends Controller
             $paginate = Customer::all()->count();
         }
 
-        $customer = DB::connection('mysql')
-                    ->table('customers')
-                    ->select('customers.*',
-                            'countries.name AS country',
-                            'regions.name AS region')
-                    ->join('countries', 'customers.country_id', '=', 'countries.id')
-                    ->join('regions', 'countries.region_id', '=', 'regions.id')
-                    ->where('customers.code', 'LIKE', "%{$search}%")
-                    ->orWhere('customers.name', 'LIKE', "%{$search}%")
-                    ->orWhere('countries.name', 'LIKE', "%{$search}%")
-                    ->orWhere('regions.name', 'LIKE', "%{$search}%")
-                    ->orderBy($order, $by)
-                    ->paginate($paginate)
-                    ->appends([
-                        'search' => $search,
-                        'order' => $order,
-                        'by' => $by,
-                    ]);
+        $raw = Customer::with('country.region')
+                            ->search($search)
+                            ->get();
+
+        $customer = new Collection();
+        
+        foreach ($raw as $item) {
+            $customer->push((object)[
+                'id' => $item->id,
+                'name' => $item->name,
+                'code' => $item->code,
+                'logo_path' => $item->logo_path,
+                'full_path' => $item->full_path,
+                'status' => $item->status,
+                'country' => $item->country->name,
+                'region' => $item->country->region->name,
+            ]);
+        }
+
+        $customer = $customer->sortBy([[$order, $by]])->values();
+        $data = PG::paginate($customer, $paginate);
+
+        $data->appends([
+            'search' => $search,
+            'order' => $order,
+            'by' => $by,
+        ])->values();
 
         return response()->json([
             'message' => 'Success!',
-            'data' => $customer
+            'data' => $data
         ], 200);
     }
 
     public function create(Request $request)
     {
         $request->validate([
-            'name' => 'required|max:255',
-            'code' => 'required|max:255',
-            'country_id' => 'required',
-            'region_id' => 'required',
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:255',
+            'country_id' => 'required|integer|exists:countries,id',
+            'is_active' => 'required|boolean',
         ]);
 
         DB::beginTransaction();
-        $customer = Customer::create($request->all());
+
+        $customer = new Customer;
+        $customer->code = $request->code;
+        $customer->name = $request->name;
+        $customer->country_id = $request->country_id;
+        $customer->is_active = $request->is_active;
+        $customer->save();
 
         foreach ($request->get('area_ams') as $value) {
             AMSCustomer::create([
@@ -103,14 +120,19 @@ class CustomerController extends Controller
     {
         if ($customer = Customer::with('amsCustomers')->find($id)) {
             $request->validate([
-                'name' => 'required|max:255',
-                'code' => 'required|max:255',
-                'country_id' => 'required',
-                'region_id' => 'required',
+                'name' => 'required|string|max:255',
+                'code' => 'required|string|max:255',
+                'country_id' => 'required|integer|exists:countries,id',
+                'is_active' => 'required|boolean',
             ]);
 
             DB::beginTransaction();
-            $customer->update($request->all());
+            
+            $customer->code = $request->code;
+            $customer->name = $request->name;
+            $customer->country_id = $request->country_id;
+            $customer->is_active = $request->is_active;
+            $customer->push();
 
             AMSCustomer::where('customer_id', $customer->id)->delete();
             foreach ($request->get('area_ams') as $value) {
