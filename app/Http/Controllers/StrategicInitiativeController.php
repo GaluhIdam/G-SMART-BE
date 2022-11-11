@@ -22,7 +22,7 @@ class StrategicInitiativeController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = StrategicInitiative::all()->count();
+            $paginate = StrategicInitiatives::all()->count();
         }
 
         $strategic_initiative = StrategicInitiatives::when($search, function ($query) use ($search) {
