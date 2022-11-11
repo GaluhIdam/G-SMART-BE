@@ -22,7 +22,7 @@ class RequirementController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = Requirement::all()->count();
         }
 
         $requirement = Requirement::with('level')->when($search, function ($query) use ($search) {
