@@ -23,7 +23,7 @@ class PermissionController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = Permission::all()->count();
         }
 
         $permission = Permission::when($search, function ($query) use ($search) {

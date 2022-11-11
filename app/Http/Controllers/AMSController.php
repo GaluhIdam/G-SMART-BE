@@ -23,7 +23,7 @@ class AMSController extends Controller
         if ($request->get('paginate')) {
             $paginate = $request->get('paginate');
         } else {
-            $paginate = 10;
+            $paginate = AMS::all()->count();
         }
 
         $ams = AMS::with('user')
