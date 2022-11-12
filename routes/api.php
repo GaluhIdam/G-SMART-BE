@@ -35,6 +35,7 @@ use App\Http\Controllers\SalesUpdateController;
 use App\Http\Controllers\ContactPersonController;
 use App\Http\Controllers\LineController;
 use App\Http\Controllers\HangarController;
+use App\Http\Controllers\AMSCustomerController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -218,6 +219,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Hangar
     Route::get('hangar', HangarController::class)->middleware(['permission:read_hangars']);
+
+    // AMS Customer (pivot)
+    Route::get('ams-customer/{id}', AMSCustomerController::class)->middleware(['permission:read_ams']);
 
     //File
     Route::get('file', [FileController::class, 'index'])->middleware(['permission:read_files']);
