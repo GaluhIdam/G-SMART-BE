@@ -52,7 +52,7 @@ class ProspectController extends Controller
                 'transaction' => implode(', ', $transactions),
                 'type' => implode(', ', $types),
                 'strategicInitiative' => implode(', ', $strategic_inits),
-                'prjoectManager' => $prospect->first()->project_manager,
+                'projectManager' => $prospect->first()->project_manager,
                 'customer' => $prospect->first()->customer,
                 'ams' => $prospect->first()->ams,
                 'marketShare' => $prospect->sum('market_share'),
