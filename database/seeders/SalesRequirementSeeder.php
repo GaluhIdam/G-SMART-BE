@@ -15,12 +15,15 @@ class SalesRequirementSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 10; $i++) {
-            for ($j = 1; $j <= 10; $j++) {
+        $sales = \App\Models\Sales::all();
+        $requirements = \App\Models\Requirement::all();
+
+        foreach ($sales as $item) {
+            foreach ($requirements as $requirement) {
                 SalesRequirement::create([
-                    'sales_id' => $i,
-                    'requirement_id' => $j,
-                    'status' => ($j == 1 || $j == 4) ? 1 : 0,
+                    'sales_id' => $item->id,
+                    'requirement_id' => $requirement->id,
+                    'status' => in_array($requirement->id, [1,4]) ? 1 : 0,
                 ]);
             }
         }

@@ -16,11 +16,15 @@ class TransactionTypeSeeder extends Seeder
     public function run()
     {
         TransactionType::create([
-            'name'        => 'TMB',
-            'description' => 'Time Material Based',
+            'name' => 'TMB Retail',
+            'description' => 'Time Material Based - Retail',
         ]);
         TransactionType::create([
-            'name'        => 'PBTH',
+            'name' => 'TMB Project',
+            'description' => 'Time Material Based - Project'
+        ]);
+        TransactionType::create([
+            'name' => 'PBTH',
             'description' => 'Power By The Hours',
         ]);
     }
