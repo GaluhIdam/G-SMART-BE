@@ -49,18 +49,7 @@ class SalesController extends Controller
         // get all sales data
         $all_sales = Sales::with('salesLevel')->get();
 
-        $raw_sales = Sales::with([
-                                'customer',
-                                'prospect',
-                                'maintenance',
-                                'hangar',
-                                'product',
-                                'engine',
-                                'component',
-                                'apu',
-                                'salesLevel',
-                                'ams',
-                            ])->search($search)
+        $raw_sales = Sales::search($search)
                             ->filter([$start_date, $end_date, $type])
                             ->user($user)
                             ->get();

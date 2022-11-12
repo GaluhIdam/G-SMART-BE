@@ -26,6 +26,12 @@ class Prospect extends Model
         'ams_customer_id',
     ];
 
+    protected $hidden = [
+        'prospectTmb',
+        'prospectPbth',
+        'amsCustomer',
+    ];
+
     protected $appends = [
         'registration',
         'transaction',

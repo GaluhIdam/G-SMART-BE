@@ -45,6 +45,12 @@ class Sales extends Model
         'is_rkap',
     ];
 
+    protected $hidden = [
+        'prospect',
+        'salesRequirements',
+        'salesLevel',
+    ];
+
     protected $appends = [
         'status',
         'other',

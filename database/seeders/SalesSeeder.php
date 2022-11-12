@@ -41,7 +41,7 @@ class SalesSeeder extends Seeder
         foreach ($prospect as $item) {
             $years = collect($years)->shuffle();
             $year = $years->toArray();
-            $total = rand(1,5);
+            $total = rand(1,3);
             
             for ($i = 0; $i < $total; $i++) {
                 $date = $year[$i].'-'.rand(1,12).'-'.rand(1,30);

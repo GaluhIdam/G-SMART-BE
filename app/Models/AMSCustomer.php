@@ -15,6 +15,18 @@ class AMSCustomer extends Model
         'ams_id',
     ];
 
+    protected $appends = [
+        'label',
+    ];
+
+    public function getLabelAttribute()
+    {
+        $area = $this->area->name;
+        $ams = $this->ams->initial;
+
+        return "{$area} - {$ams}";
+    }
+
     public function area()
     {
         return $this->belongsTo(Area::class, 'area_id');
