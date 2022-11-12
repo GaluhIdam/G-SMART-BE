@@ -26,7 +26,7 @@ class ProspectSeeder extends Seeder
         foreach ($ams_customer as $item) {
             $years = collect($years)->shuffle();
             $year = $years->toArray();
-            $total = rand(1,5);
+            $total = rand(1,3);
 
             for ($i = 0; $i < $total; $i++) {
                 $d_prospect = rand(1, $p_type);
