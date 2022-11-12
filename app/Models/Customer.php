@@ -36,7 +36,15 @@ class Customer extends Model
 
     public function getFullPathAttribute()
     {
-        return Storage::disk('public')->url($this->logo_path);
+        if (!$this->logo_path) {
+            return null;
+        }
+
+        if (Storage::disk('public')->exists($this->logo_path)) {
+            return Storage::disk('public')->url($this->logo_path);
+        } else {
+            return null;
+        }
     }
 
     public function scopeSearch($query, $search)

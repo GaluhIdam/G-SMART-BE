@@ -42,17 +42,17 @@ class ProspectController extends Controller
         $prospect_by_customer = new Collection();
 
         foreach ($grouped_by_customer as $prospect) {
-            $years = array_unique($prospect->pluck('year')->toArray());
-            $transactions = array_unique($prospect->pluck('transaction')->toArray());
-            $types = array_unique($prospect->pluck('type')->toArray());
-            $strategic_inits = array_unique($prospect->pluck('strategic_init')->toArray());
+            $years = array_filter(array_unique($prospect->pluck('year')->toArray()));
+            $transactions = array_filter(array_unique($prospect->pluck('transaction')->toArray()));
+            $types = array_filter(array_unique($prospect->pluck('type')->toArray()));
+            $strategic_inits = array_filter(array_unique($prospect->pluck('strategic_init')->toArray()));
 
             $prospect_by_customer->push((object)[
                 'year' => implode(', ', $years),
                 'transaction' => implode(', ', $transactions),
                 'type' => implode(', ', $types),
                 'strategicInitiative' => implode(', ', $strategic_inits),
-                'projectManager' => $prospect->first()->project_manager,
+                'prjoectManager' => $prospect->first()->project_manager,
                 'customer' => $prospect->first()->customer,
                 'ams' => $prospect->first()->ams,
                 'marketShare' => $prospect->sum('market_share'),
@@ -93,7 +93,7 @@ class ProspectController extends Controller
                                 'strategicInitiative',
                                 'pm',
                                 'amsCustomer',
-                            ])->where('transaction_type_id', 1)
+                            ])->whereIn('transaction_type_id', [1,2])
                             ->whereHas('amsCustomer', function ($query) use ($customer) {
                                 $query->where('customer_id', $customer);
                             })->get();
@@ -131,7 +131,7 @@ class ProspectController extends Controller
             ];
         }
 
-        if ($transaction_type == 1) {
+        if (in_array($transaction_type, [1,2])) {
             $t_type = 'TMB';
             $transaction_rules = [
                 'tmb' => 'required|array',
@@ -142,7 +142,7 @@ class ProspectController extends Controller
                 'tmb.*.product.*.remark' => 'required|string',
                 'tmb.*.product.*.maintenance_id.id' => 'required|integer|exists:maintenances,id',
             ];
-        } else if ($transaction_type == 2) {
+        } else if ($transaction_type == 3) {
             $t_type = 'PBTH';
             $transaction_rules = [
                 'pbth' => 'required|array',
@@ -169,7 +169,7 @@ class ProspectController extends Controller
             $prospect->pm_id = $request->pm_id ?? null;
             $prospect->save();
 
-            if ($transaction_type == 1){
+            if (in_array($transaction_type, [1,2])) {
                 foreach ($request->tmb as $product) {
                     foreach ($product['product'] as $data) {
                         $tmb = new TMB;
@@ -186,7 +186,7 @@ class ProspectController extends Controller
                         $prospect_tmb->save();
                     }
                 }
-            } else if ($transaction_type == 2) {
+            } else if ($transaction_type == 3) {
                 foreach ($request->pbth as $product) {
                     foreach ($product['target'] as $target) {
                         $pbth = new PBTH;

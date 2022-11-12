@@ -105,9 +105,9 @@ class Prospect extends Model
     
     public function getMarketShareAttribute()
     {
-        if ($this->transaction_type_id == 1) {
+        if (in_array($this->transaction_type_id, [1,2])) {
             return $this->prospectTmb->sum('tmb.market_share');
-        } else if ($this->transaction_type_id == 2) {
+        } else if ($this->transaction_type_id == 3) {
             return $this->prospectPbth->sum('market_share');
         }
     }
@@ -129,7 +129,7 @@ class Prospect extends Model
 
     public function getRegistrationAttribute()
     {
-        if ($this->transaction_type_id == 1) {
+        if (in_array($this->transaction_type_id, [1,2])) {
             $tmb = $this->prospectTmb->first()->tmb;
             $ac_type = $tmb->acType ? $tmb->acType->name : '-';
             $engine = $tmb->engine ? $tmb->engine->name : '-';
@@ -137,7 +137,7 @@ class Prospect extends Model
             $component = $tmb->component ? $tmb->component->name : '-';
 
             $registration = "{$ac_type}/{$engine}/{$apu}/{$component}";
-        } else {
+        } else if ($this->transaction_type_id == 3) {
             $registration = $this->prospectPbth ? $this->prospectPbth->first()->acType->name : '-';
         }
 
