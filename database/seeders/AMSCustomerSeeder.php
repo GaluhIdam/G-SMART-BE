@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\AMSCustomer;
+use App\Models\AMS;
+use App\Models\Customer;
+use App\Models\Area;
 
 class AMSCustomerSeeder extends Seeder
 {
@@ -15,45 +18,16 @@ class AMSCustomerSeeder extends Seeder
      */
     public function run()
     {
-        AMSCustomer::create([
-            'customer_id' => 1,
-            'area_id' => 4,
-            'ams_id' => 1,
-        ]);
-        AMSCustomer::create([
-            'customer_id' => 2,
-            'area_id' => 3,
-            'ams_id' => 2,
-        ]);
-        AMSCustomer::create([
-            'customer_id' => 3,
-            'area_id' => 2,
-            'ams_id' => 3,
-        ]);
-        AMSCustomer::create([
-            'customer_id' => 4,
-            'area_id' => 1,
-            'ams_id' => 1,
-        ]);
-        AMSCustomer::create([
-            'customer_id' => 5,
-            'area_id' => 3,
-            'ams_id' => 2,
-        ]);
-        AMSCustomer::create([
-            'customer_id' => 6,
-            'area_id' => 2,
-            'ams_id' => 3,
-        ]);
-        AMSCustomer::create([
-            'customer_id' => 7,
-            'area_id' => 4,
-            'ams_id' => 1,
-        ]);
-        AMSCustomer::create([
-            'customer_id' => 8,
-            'area_id' => 1,
-            'ams_id' => 2,
-        ]);
+        $customer = Customer::all();
+        $ams = AMS::all()->count();
+        $area = Area::all()->count();
+
+        foreach ($customer as $item) {
+            AMSCustomer::create([
+                'customer_id' => $item->id,
+                'area_id' => rand(1, $area),
+                'ams_id' => rand(1, $ams),
+            ]);
+        }
     }
 }

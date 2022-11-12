@@ -15,24 +15,26 @@ class SalesLevelSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 10; $i++) {
+        $sales = \App\Models\Sales::all();
+
+        foreach ($sales as $item) {
             SalesLevel::create([
-                'sales_id' => $i,
+                'sales_id' => $item->id,
                 'level_id' => 1,
                 'status' => 1,
             ]);
             SalesLevel::create([
-                'sales_id' => $i,
+                'sales_id' => $item->id,
                 'level_id' => 2,
                 'status' => 1,
             ]);
             SalesLevel::create([
-                'sales_id' => $i,
+                'sales_id' => $item->id,
                 'level_id' => 3,
                 'status' => 1,
             ]);
             SalesLevel::create([
-                'sales_id' => $i,
+                'sales_id' => $item->id,
                 'level_id' => 4,
                 'status' => 1,
             ]);
