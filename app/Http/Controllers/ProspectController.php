@@ -32,12 +32,13 @@ class ProspectController extends Controller
 
         $market_share = Prospect::user($user)->marketYearAgo();
         $total_sales = Sales::user($user)->salesYearAgo();
-        $prospects  = Prospect::search($search)
+        $prospects  = Prospect::with('amsCustomer')
+                        ->search($search)
                         ->filter($filter)
                         ->user($user)
                         ->get();
 
-        $grouped_by_customer = $prospects->groupBy('ams_customer_id')->values();
+        $grouped_by_customer = $prospects->groupBy('amsCustomer.customer_id')->values();
 
         $prospect_by_customer = new Collection();
 
@@ -46,15 +47,17 @@ class ProspectController extends Controller
             $transactions = array_filter(array_unique($prospect->pluck('transaction')->toArray()));
             $types = array_filter(array_unique($prospect->pluck('type')->toArray()));
             $strategic_inits = array_filter(array_unique($prospect->pluck('strategic_init')->toArray()));
+            $pm = array_filter(array_unique($prospect->pluck('project_manager')->toArray()));
+            $ams = array_filter(array_unique($prospect->pluck('ams')->toArray()));
 
             $prospect_by_customer->push((object)[
                 'year' => implode(', ', $years),
                 'transaction' => implode(', ', $transactions),
                 'type' => implode(', ', $types),
                 'strategicInitiative' => implode(', ', $strategic_inits),
-                'projectManager' => $prospect->first()->project_manager,
+                'projectManager' => implode(', ', $pm),
                 'customer' => $prospect->first()->customer,
-                'ams' => $prospect->first()->ams,
+                'ams' => implode(', ', $ams),
                 'marketShare' => $prospect->sum('market_share'),
                 'salesPlan' => $prospect->sum('sales_plan'),
             ]);
