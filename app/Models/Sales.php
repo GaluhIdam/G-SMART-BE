@@ -382,49 +382,6 @@ class Sales extends Model
         });
     }
 
-    // query untuk sorting data tabel salesplan
-    public function scopeSort($query, array $orders)
-    {
-        $order = $orders[0];
-        $by = $orders[1];
-
-        $query->when(($order && $by), function ($query) use ($order, $by) {
-            if ($order == 'customer') {
-                $query->withAggregate('customer', 'name')
-                    ->orderBy('customer_name', $by);
-            } else if ($order == 'product') {
-                $query->withAggregate('product', 'name')
-                    ->orderBy('product_name', $by);
-            } else if ($order == 'registration') {
-                $query->withAggregate('acType', 'name')
-                    ->withAggregate('engine', 'name')
-                    ->withAggregate('apu', 'name')
-                    ->withAggregate('component', 'name')
-                    ->orderBy('ac_type_name', $by)
-                    ->orderBy('engine_name', $by)
-                    ->orderBy('apu_name', $by)
-                    ->orderBy('component_name', $by);
-            } else if ($order == 'acReg') {
-                $query->orderBy('ac_reg', $by);
-            } else if ($order == 'other') {
-                $query->orderBy('is_rkap', $by);
-            } else if ($order == 'type') {
-                $query->withAggregate('prospect', 'transaction_type_id')
-                    ->orderBy('prospect_transaction_type_id', $by);
-            // TODO doesn't work bree...  accessor gak akan kebaca di query database!
-            // } else if ($order == 'level') {
-            //     $query->orderBy('level', $by);
-            // } else if ($order == 'status') {
-            //     $query->orderBy('status', $by);
-            } else if ($order == 'progress') {
-                $query->withCount('requirementDone')
-                    ->orderBy('requirement_done_count', $by);
-            } else if ($order == 'id') {
-                $query->orderBy('id', $by);
-            }
-        });
-    }
-
     public function requirementDone()
     {
         return $this->hasMany(SalesRequirement::class)->where('status', 1);

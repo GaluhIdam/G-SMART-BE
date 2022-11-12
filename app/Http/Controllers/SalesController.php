@@ -18,7 +18,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Notification;
-// use Illuminate\Support\Facades\Gate;
+use App\Helpers\PaginationHelper as PG;
 
 class SalesController extends Controller
 {
@@ -50,22 +50,20 @@ class SalesController extends Controller
         $all_sales = Sales::with('salesLevel')->get();
 
         $raw_sales = Sales::with([
-            'customer',
-            'prospect',
-            'maintenance',
-            'hangar',
-            'product',
-            'engine',
-            'component',
-            'apu',
-            'salesLevel',
-            'ams',
-        ])->search($search)
-        ->filter([$start_date, $end_date, $type])
-        ->user($user)
-        ->sort([$order, $by])
-        ->paginate($paginate)
-        ->withQueryString();
+                                'customer',
+                                'prospect',
+                                'maintenance',
+                                'hangar',
+                                'product',
+                                'engine',
+                                'component',
+                                'apu',
+                                'salesLevel',
+                                'ams',
+                            ])->search($search)
+                            ->filter([$start_date, $end_date, $type])
+                            ->user($user)
+                            ->get();
 
         // define empty collection untuk menampung data [tabel salesplan user]
         $table_salesplan = new Collection();
@@ -89,6 +87,17 @@ class SalesController extends Controller
                 'endDate' => Carbon::parse($item->end_date)->format('Y-m-d'),
             ]);
         }
+
+        $table_salesplan = $table_salesplan->sortBy([[$order, $by]])->values();
+        $salesplan = PG::paginate($table_salesplan, $paginate);
+
+        $salesplan->appends([
+            'search' => $search,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'type' => $type,
+            'by' => $by,
+        ]);
 
         // data untuk 5 overview card [ter-atas] user sales
         if ($user->hasRole('AMS')) {
@@ -121,18 +130,6 @@ class SalesController extends Controller
             ];
         }
 
-        // TODO temproray -> sorting in collection directly instead of eloquent query
-        if ($order == 'level') {
-            $table_salesplan = ($by == 'asc') ? $table_salesplan->sortBy('level')->values()
-                                            : $table_salesplan->sortByDesc('level')->values();
-        } else if ($order == 'status') {
-            $table_salesplan = ($by == 'asc') ? $table_salesplan->sortBy('status')->values()
-                                            : $table_salesplan->sortByDesc('status')->values();
-        }
-
-        // modifikasi data pagination
-        $raw_sales->setCollection($table_salesplan);
-
         // overview data (all sales) untuk [modal salesplan total]
         $all_open = $all_sales->where('status', 'Open')->sum('value'); // total all sales [open]
         $all_closed = $all_sales->where('status', 'Closed')->sum('value'); // total all sales [closed]
@@ -155,7 +152,7 @@ class SalesController extends Controller
                 'level3' => $level3,
                 'level2' => $level2,
                 'level1' => $level1,
-                'salesPlan' => $raw_sales,
+                'salesPlan' => $salesplan,
             ]
         ];
 
@@ -328,14 +325,9 @@ class SalesController extends Controller
             ], 404);
         }
 
-        $total_sales = (int)$sales->value;
-        if (!strcasecmp($sales->type, 'TMB')) {
-            $market_share = $sales->prospect->market_share;
-            $deviasi = $market_share - $total_sales;
-        } else {
-            $market_share = null;
-            $deviasi = null;
-        }
+        $total_sales = $sales->value;
+        $market_share = $sales->prospect->market_share;
+        $deviasi = $market_share - $total_sales;
 
         if ($sales->salesReschedule) {
             $sales_reschedule = [
