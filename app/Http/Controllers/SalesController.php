@@ -24,24 +24,13 @@ class SalesController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->get('search');
-        $start_date = $request->get('start_date');
-        $end_date = $request->get('end_date');
-        $type = $request->get('type');
-
-        if ($request->get('order') && $request->get('by')) {
-            $order = $request->get('order');
-            $by = $request->get('by');
-        } else {
-            $order = 'id';
-            $by = 'desc';
-        }
-
-        if ($request->get('paginate')) {
-            $paginate = $request->get('paginate');
-        } else {
-            $paginate = 10;
-        }
+        $search = $request->search ?? false;
+        $start_date = $request->start_date ?? false;
+        $end_date = $request->end_date ?? false;
+        $type = $request->type ?? false;
+        $order = $request->order ?? 'id';
+        $by = $request->by ?? 'desc';
+        $paginate = $request->paginate ?? 10;
 
         // get authenticated user info
         $user = auth()->user();
@@ -70,7 +59,7 @@ class SalesController extends Controller
                 'progress' => $item->progress,
                 'status' => $item->status,
                 'location' => $item->hangar ? $item->hangar->name : null,
-                'maintenance' => $item->maintenance ? $item->maintenance->description : null,
+                'maintenance' => $item->maintenance ? $item->maintenance->name : null,
                 'upgrade' => $item->upgrade_level,
                 'startDate' => Carbon::parse($item->start_date)->format('Y-m-d'),
                 'endDate' => Carbon::parse($item->end_date)->format('Y-m-d'),
@@ -85,6 +74,7 @@ class SalesController extends Controller
             'start_date' => $start_date,
             'end_date' => $end_date,
             'type' => $type,
+            'order' => $order,
             'by' => $by,
         ]);
 
@@ -381,20 +371,45 @@ class SalesController extends Controller
 
     public function showTmbSales($id, Request $request)
     {
-        $search = $request->get('search');
+        $search = $request->search ?? false;
+        $order = $request->order ?? 'id';
+        $by = $request->by ?? 'desc';
         $paginate = $request->paginate ?? 10;
 
-        $data = Sales::with('hangar', 'maintenance')
-                    ->when($search, function ($query) use ($search) {
-                        $query->where('ac_reg', 'LIKE', "%$search%");
-                    })
-                    ->where('prospect_id', $id)
-                    ->paginate($paginate);
-                    
-        $prospect = Prospect::find($id);
+        $prospect = Prospect::findOrFail($id);
         $sales_plan = $prospect->sales_plan;
         $market_share = $prospect->market_share;
         $deviation = $market_share - $sales_plan;
+
+        $data = Sales::search($search)
+                    ->where('prospect_id', $prospect->id)
+                    ->get();
+        
+        $sales_by_prospect = new Collection();
+
+        foreach ($data as $sales) {
+            $sales_by_prospect->push((object)[
+                'id' => $sales->id,
+                'registration' => $sales->ac_reg,
+                'maintenance' => $sales->maintenance ? $sales->maintenance->name : null,
+                'location' => $sales->hangar ? $sales->hangar->name : null,
+                'salesPlan' => $sales->value,
+                'tat' => $sales->tat,
+                'startDate' => Carbon::parse($sales->start_date)->format('d-m-Y'),
+                'endDate' => Carbon::parse($sales->end_date)->format('d-m-Y'),
+                'level' => $sales->level,
+                'status' => $sales->status,
+            ]);
+        }
+
+        $sales_by_prospect = $sales_by_prospect->sortBy([[$order, $by]])->values();
+        $salesplan = PG::paginate($sales_by_prospect, $paginate);
+
+        $salesplan->appends([
+            'search' => $search,
+            'order' => $order,
+            'by' => $by,
+        ]);
 
         return response()->json([
             'logo' => $prospect->amsCustomer->customer->full_path,
@@ -402,7 +417,7 @@ class SalesController extends Controller
             'market_share' => $market_share,
             'deviation' => $deviation,
             'customer' => $prospect->amsCustomer->customer,
-            'sales' => $data
+            'sales' => $salesplan,
         ], 200);
     }
 

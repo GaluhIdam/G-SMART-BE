@@ -351,9 +351,15 @@ class Sales extends Model
                     ->orWhereRelation('engine', 'name', 'LIKE', "%$search%")
                     ->orWhereRelation('apu', 'name', 'LIKE', "%$search%")
                     ->orWhereRelation('component', 'name', 'LIKE', "%$search%")
-                    ->orWhereRelation('salesLevel', 'level_id', 'LIKE', '%'.substr($search, -1).'%')
+                    ->orWhereRelation('maintenance', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('hangar', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('salesLevel', 'level_id', 'LIKE', "%$search%")
                     ->orWhere('ac_reg', 'LIKE', "%$search%")
                     ->orWhere('value', 'LIKE', "%$search%")
+                    ->orWhere('value', 'LIKE', "%$search%")
+                    ->orWhere('tat', 'LIKE', "%$search%")
+                    ->orWhere('start_date', 'LIKE', "%$search%")
+                    ->orWhere('end_date', 'LIKE', "%$search%")
                     ->orWhereHas('prospect', function ($query) use ($search) {
                         $query->whereHas('transactionType', function ($query) use ($search) {
                             $query->where('name', 'LIKE', "%$search%");
