@@ -399,6 +399,7 @@ class SalesController extends Controller
                 'endDate' => Carbon::parse($sales->end_date)->format('d-m-Y'),
                 'level' => $sales->level,
                 'status' => $sales->status,
+                'customer' => $sales->customer,
             ]);
         }
 
