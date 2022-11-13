@@ -75,11 +75,18 @@ class Sales extends Model
         return $data->sum('value');
     }
 
-    public function scopeTotalSalesByCustomer($query, $customer)
+    public function scopeTotalSalesByCustomer($query, $customer, $user)
     {
         $data = $query->whereHas('customer', function ($query) use ($customer) {
-        $query->where('customer_id', $customer);
-        })->get();
+                    $query->where('customer_id', $customer);
+                })->when($user->hasRole('AMS'), function ($query) use ($user) {
+                    $query->whereHas('prospect', function ($query) use ($user) {
+                        $query->whereHas('amsCustomer', function ($query) use ($user) {
+                            $query->whereRelation('ams', 'user_id', '=', $user->id);
+                        });
+                    });
+                })->get();
+
         return $data->sum('value');
     }
 
