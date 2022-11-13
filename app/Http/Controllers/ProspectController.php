@@ -112,7 +112,7 @@ class ProspectController extends Controller
     {
         $request->validate([
             'prospect_type_id' => 'required|integer|between:1,2',
-            'transaction_type_id' => 'required|integer|between:1,2',
+            'transaction_type_id' => 'required|integer|between:1,3',
         ]);
 
         $prospect_type = $request->prospect_type_id;
@@ -122,20 +122,20 @@ class ProspectController extends Controller
             $p_type = 'Organic';
             $prospect_rules = [
                 'year' => 'required|date_format:Y',
-                'ams_customer_id' => 'required|integer|exists:ams,id',
+                'ams_customer_id' => 'required|integer|exists:ams_customers,id',
             ];
         } else if ($prospect_type == 2) {
             $p_type = 'In-organic';
             $prospect_rules = [
                 'year' => 'required|date_format:Y',
-                'ams_customer_id' => 'required|integer|exists:ams,id',
+                'ams_customer_id' => 'required|integer|exists:ams_customers,id',
                 'strategic_initiative_id' => 'required|integer|exists:strategic_initiatives,id',
                 'pm_id' => 'required|integer|exists:users,id',
             ];
         }
 
         if (in_array($transaction_type, [1,2])) {
-            $t_type = 'TMB';
+            $t_type = ($transaction_type == 1) ? 'TMB Retail' : 'TMB Project';
             $transaction_rules = [
                 'tmb' => 'required|array',
                 'tmb.*.product' => 'required|array',

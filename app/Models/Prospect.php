@@ -30,6 +30,7 @@ class Prospect extends Model
         'prospectTmb',
         'prospectPbth',
         'amsCustomer',
+        'sales',
     ];
 
     protected $appends = [
