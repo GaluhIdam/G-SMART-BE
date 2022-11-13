@@ -231,26 +231,28 @@ class ProspectController extends Controller
         $user = auth()->user();
         $customer = Customer::find($id);
 
-        if ($user->hasRole('AMS')) {
-            $amsCustomers = $customer->amsCustomers;
-            foreach ($amsCustomers as $item) {
-                if ($item->ams_id == $user->ams->id) {
-                    $ams = true;
-                } else {
-                    $ams = false;
-                }
-            }
-        } else {
-            $ams = true;
-        }
+        // TODO: authorize only registered AMS
+        // if ($user->hasRole('AMS')) {
+        //     $amsCustomers = $customer->amsCustomers;
+        //     foreach ($amsCustomers as $item) {
+        //         if ($item->ams_id == $user->ams->id) {
+        //             $ams = true;
+        //         } else {
+        //             $ams = false;
+        //         }
+        //     }
+        // } else {
+        //     $ams = true;
+        // }
 
-        if (!$customer || !$ams) {
+        if (!$customer) {
             return response()->json([
                 'message' => 'Data not found!',
             ], 404);
         }
 
-        $data = Prospect::with(
+        $data = Prospect::user($user)
+                        ->with(
                         'transactionType',
                         'prospectType',
                         'strategicInitiative',
@@ -270,8 +272,8 @@ class ProspectController extends Controller
                             $query->where('customer_id', $customer->id);
                         })->get();
 
-        $market_share = Prospect::marketShareByCustomer($id);
-        $total_sales = Sales::totalSalesByCustomer($id);
+        $market_share = Prospect::marketShareByCustomer($id, $user);
+        $total_sales = Sales::totalSalesByCustomer($id, $user);
 
         return response()->json([
             'message' => 'Success Get Prospect By Customer!',

@@ -124,11 +124,15 @@ class Prospect extends Model
         return $sales->sum('value');
     }
 
-    public function scopeMarketShareByCustomer($query, $customer)
+    public function scopeMarketShareByCustomer($query, $customer, $user)
     {
         $data = $query->whereHas('amsCustomer', function ($query) use ($customer) {
-            $query->where('customer_id', $customer);
-        })->get();
+                    $query->where('customer_id', $customer);
+                })->when($user->hasRole('AMS'), function ($query) use ($user) {
+                    $query->whereHas('amsCustomer', function ($query) use ($user) {
+                        $query->whereRelation('ams', 'user_id', '=', $user->id);
+                    });
+                })->get();
 
         return $data->sum('market_share');
     }

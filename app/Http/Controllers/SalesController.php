@@ -291,13 +291,14 @@ class SalesController extends Controller
         $sales = Sales::find($id);
         $user = auth()->user();
 
-        if ($user->hasRole('AMS')) {
-            $ams = ($user->ams->id == $sales->ams_id);
-        } else {
-            $ams = true;
-        }
+        // TODO: authorize only registered AMS
+        // if ($user->hasRole('AMS')) {
+        //     $ams = ($user->ams->id == $sales->prospect->amsCustomer->ams->user_id);
+        // } else {
+        //     $ams = true;
+        // }
 
-        if (!$sales || !$ams) {
+        if (!$sales) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data not found',
