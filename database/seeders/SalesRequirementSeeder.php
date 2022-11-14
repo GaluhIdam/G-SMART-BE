@@ -15,15 +15,21 @@ class SalesRequirementSeeder extends Seeder
      */
     public function run()
     {
-        $sales = \App\Models\Sales::all();
+        $salesplans = \App\Models\Sales::all();
         $requirements = \App\Models\Requirement::all();
 
-        foreach ($sales as $item) {
+        foreach ($salesplans as $sales) {
             foreach ($requirements as $requirement) {
+                if ($sales->type == 'PBTH') {
+                    $status = ($requirement->id != 9) ? 1 : 0;
+                } else {
+                    $status = in_array($requirement->id, [1,4]) ? 1 : 0;
+                }
+
                 SalesRequirement::create([
-                    'sales_id' => $item->id,
+                    'sales_id' => $sales->id,
                     'requirement_id' => $requirement->id,
-                    'status' => in_array($requirement->id, [1,4]) ? 1 : 0,
+                    'status' => $status,
                 ]);
             }
         }
