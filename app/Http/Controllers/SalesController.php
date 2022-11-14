@@ -161,7 +161,9 @@ class SalesController extends Controller
             DB::beginTransaction();
 
             $prospect = Prospect::find($request->prospect_id);
-            $customer = Customer::find($request->customer_id) ?? $prospect->amsCustomer->customer;
+            $customer = $request->customer_id ? 
+                        Customer::find($request->customer_id) : 
+                        $prospect->amsCustomer->customer;
 
             $start_date = Carbon::parse($request->start_date);
             $tat = $request->tat;
