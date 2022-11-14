@@ -15,29 +15,23 @@ class SalesLevelSeeder extends Seeder
      */
     public function run()
     {
-        $sales = \App\Models\Sales::all();
+        $salesplan = \App\Models\Sales::all();
+        $levels = \App\Models\Level::all();
 
-        foreach ($sales as $item) {
-            SalesLevel::create([
-                'sales_id' => $item->id,
-                'level_id' => 1,
-                'status' => 1,
-            ]);
-            SalesLevel::create([
-                'sales_id' => $item->id,
-                'level_id' => 2,
-                'status' => 1,
-            ]);
-            SalesLevel::create([
-                'sales_id' => $item->id,
-                'level_id' => 3,
-                'status' => 1,
-            ]);
-            SalesLevel::create([
-                'sales_id' => $item->id,
-                'level_id' => 4,
-                'status' => 1,
-            ]);
+        foreach ($salesplan as $sales) {
+            foreach ($levels as $level) {
+                if ($sales->type == 'PBTH') {
+                    $status = ($level->id == 1) ? 1 : 2;
+                } else {
+                    $status = 1;
+                }
+
+                SalesLevel::create([
+                    'sales_id' => $sales->id,
+                    'level_id' => $level->id,
+                    'status' => $status,
+                ]);
+            }
         }
     }
 }
