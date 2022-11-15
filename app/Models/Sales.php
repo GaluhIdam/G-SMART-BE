@@ -64,6 +64,7 @@ class Sales extends Model
         'level2',
         'level1',
         'upgrade_level',
+        'month_sales',
     ];
 
     public function scopeSalesYearAgo($query)
@@ -114,6 +115,11 @@ class Sales extends Model
         }
 
         return $requirement;
+    }
+
+    public function getMonthSalesAttribute()
+    {
+        return Carbon::parse($this->start_date)->format('F');
     }
 
     public function getStatusAttribute()
@@ -320,10 +326,7 @@ class Sales extends Model
     public function getUpgradeLevelAttribute()
     {
         $requirements = Requirement::where('level_id', $this->level)->pluck('id');
-        $requirement_done = SalesRequirement::where('sales_id', $this->id)
-                                            ->where('status', 1)
-                                            ->whereIn('requirement_id', $requirements)
-                                            ->get();
+        $requirement_done = $this->requirementDone->whereIn('requirement_id', $requirements);
         
         return ($requirement_done->count() == $requirements->count());
     }
