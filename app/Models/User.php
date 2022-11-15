@@ -49,7 +49,16 @@ class User extends Authenticatable implements LdapAuthenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'photo',
+    ];
+
     protected $guard_name = 'web';
+
+    public function getPhotoAttribute()
+    {
+        return "https://talentlead.gmf-aeroasia.co.id/images/avatar/{$this->nopeg}";
+    }
 
     public function scopeSearch($query, $search)
     {
