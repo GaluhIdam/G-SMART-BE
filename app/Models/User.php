@@ -57,7 +57,7 @@ class User extends Authenticatable implements LdapAuthenticatable
 
     public function getPhotoAttribute()
     {
-        return "https://talentlead.gmf-aeroasia.co.id/images/avatar/{$this->nopeg}";
+        return "https://talentlead.gmf-aeroasia.co.id/images/avatar/{$this->nopeg}.jpg";
     }
 
     public function scopeSearch($query, $search)
