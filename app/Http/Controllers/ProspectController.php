@@ -17,6 +17,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 use App\Helpers\PaginationHelper as PG;
+use App\Http\Requests\ProspectRequest;
 
 class ProspectController extends Controller
 {
@@ -108,57 +109,22 @@ class ProspectController extends Controller
         ], 200);
     }
 
-    public function create(Request $request)
+    public function create(ProspectRequest $request)
     {
-        $request->validate([
-            'prospect_type_id' => 'required|integer|between:1,2',
-            'transaction_type_id' => 'required|integer|between:1,3',
-        ]);
-
         $prospect_type = $request->prospect_type_id;
         $transaction_type = $request->transaction_type_id;
         
         if ($prospect_type == 1) {
             $p_type = 'Organic';
-            $prospect_rules = [
-                'year' => 'required|date_format:Y',
-                'ams_customer_id' => 'required|integer|exists:ams_customers,id',
-            ];
         } else if ($prospect_type == 2) {
             $p_type = 'In-organic';
-            $prospect_rules = [
-                'year' => 'required|date_format:Y',
-                'ams_customer_id' => 'required|integer|exists:ams_customers,id',
-                'strategic_initiative_id' => 'required|integer|exists:strategic_initiatives,id',
-                'pm_id' => 'required|integer|exists:users,id',
-            ];
         }
 
         if (in_array($transaction_type, [1,2])) {
             $t_type = ($transaction_type == 1) ? 'TMB Retail' : 'TMB Project';
-            $transaction_rules = [
-                'tmb' => 'required|array',
-                'tmb.*.product' => 'required|array',
-                'tmb.*.product.*.product_id' => 'required|integer|exists:products,id',
-                'tmb.*.product.*.aircraft_type.id' => 'required|integer|exists:ac_type_id,id',
-                'tmb.*.product.*.market_share' => 'required|numeric',
-                'tmb.*.product.*.remark' => 'required|string',
-                'tmb.*.product.*.maintenance_id.id' => 'required|integer|exists:maintenances,id',
-            ];
         } else if ($transaction_type == 3) {
             $t_type = 'PBTH';
-            $transaction_rules = [
-                'pbth' => 'required|array',
-                'pbth.*.product_id' => 'required|integer|exists:products,id',
-                'pbth.*.aircraft_type_id' => 'required|integer|exists:ac_type_id,id',
-                'pbth.*.target' => 'required|array',
-                'pbth.*.target.*.month' => 'required|date_format:F',
-                'pbth.*.target.*.rate' => 'required|numeric',
-                'pbth.*.target.*.flight_hour' => 'required|numeric',
-            ];
         }
-
-        $request->validate(array_merge($prospect_rules, $transaction_rules));
 
         try {
             DB::beginTransaction();
@@ -177,7 +143,10 @@ class ProspectController extends Controller
                     foreach ($product['product'] as $data) {
                         $tmb = new TMB;
                         $tmb->product_id = $data['product_id'];
-                        $tmb->ac_type_id = $data['aircraft_type']['id'];
+                        $tmb->ac_type_id = $data['aircraft_type']['id'] ?? null;
+                        $tmb->component_id = $data['component']['id'] ?? null;
+                        $tmb->engine_id = $data['apu']['id'] ?? null;
+                        $tmb->apu_id = $data['engine']['id'] ?? null;
                         $tmb->market_share = $data['market_share'];
                         $tmb->remarks = $data['remark'];
                         $tmb->maintenance_id = $data['maintenance_id']['id'];

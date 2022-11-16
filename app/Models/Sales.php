@@ -141,7 +141,13 @@ class Sales extends Model
         $apu = $this->apu ? $this->apu->name : '-';
         $component = $this->component ? $this->component->name : '-';
 
-        return "{$ac_type}/{$engine}/{$apu}/{$component}";
+        if (in_array($this->prospect->transaction_type_id, [1,2])) {    
+            $registration = "{$ac_type}/{$engine}/{$apu}/{$component}";
+        } else {
+            $registration = $ac_type;
+        }
+
+        return $registration;
     }
 
     public function getTypeAttribute()

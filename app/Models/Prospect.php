@@ -140,11 +140,17 @@ class Prospect extends Model
     public function getRegistrationAttribute()
     {
         if (in_array($this->transaction_type_id, [1,2])) {
-            $tmb = $this->prospectTmb->first()->tmb;
-            $ac_type = $tmb->acType ? $tmb->acType->name : '-';
-            $engine = $tmb->engine ? $tmb->engine->name : '-';
-            $apu = $tmb->apu ? $tmb->apu->name : '-';
-            $component = $tmb->component ? $tmb->component->name : '-';
+            $prospect_tmb = $this->prospectTmb;
+
+            $ac_types = $prospect_tmb->pluck('tmb.acType.name');
+            $engines = $prospect_tmb->pluck('tmb.engine.name');
+            $apus = $prospect_tmb->pluck('tmb.apu.name');
+            $components = $prospect_tmb->pluck('tmb.component.name');
+            
+            $ac_type = $ac_types ? $ac_types[0] : '-';
+            $engine = $engines ? $engines[0] : '-';
+            $apu = $apus ? $apus[0] : '-';
+            $component = $components ? $components[0] : '-';
 
             $registration = "{$ac_type}/{$engine}/{$apu}/{$component}";
         } else if ($this->transaction_type_id == 3) {

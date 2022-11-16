@@ -23,28 +23,6 @@ class tmb extends Model
         'maintenance_id',
     ];
 
-    protected $appends = [
-        'registration',
-        'full_path'
-    ];
-
-    public function getFullPathAttribute()
-    {
-        
-        return Storage::disk('public')->url($this->prospectTmb);
-    }
-
-    public function getRegistrationAttribute()
-    {
-            $ac_type = $this->acType ? $this->acType->name : '-';
-            $engine = $this->engine ? $this->engine->name : '-';
-            $apu = $this->apu ? $this->apu->name : '-';
-            $component = $this->component ? $this->component->name : '-';
-
-            $registration = "{$ac_type}/{$engine}/{$apu}/{$component}";
-            return $registration;
-    }
-
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');
