@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Mail\Notification;
+use App\Models\User;
 use App\Models\Sales;
-use App\Models\SalesLevel;
-use App\Models\SalesRequirement;
 use App\Models\Customer;
 use App\Models\Prospect;
+use App\Models\SalesLevel;
+use App\Models\SalesReject;
 use App\Models\Requirement;
 use App\Models\SalesReschedule;
+use App\Models\SalesRequirement;
 use App\Models\XpreamPlanningGates;
-use App\Models\SalesReject;
-use App\Models\User;
+use App\Helpers\PaginationHelper as PG;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\Notification;
-use App\Helpers\PaginationHelper as PG;
+use Illuminate\Support\Facades\Storage;
 
 class SalesController extends Controller
 {
@@ -134,10 +136,10 @@ class SalesController extends Controller
         $request->validate([
             'customer_id' => 'sometimes|required|integer|exists:customers,id',
             'prospect_id' => 'required|integer|exists:prospects,id',
-            'product_id' => 'required|integer|exists:products,id',
+            'product_id' => 'sometimes|required|integer|exists:products,id',
             'maintenance_id' => 'required|integer|exists:maintenances,id',
             'hangar_id' => 'required|integer|exists:hangars,id',
-            'ac_type_id' => 'required|integer|exists:ac_type_id,id',
+            'ac_type_id' => 'sometimes|required|integer|exists:ac_type_id,id',
             'ac_reg' => 'required|string',
             'value' => 'required|numeric',
             'tat' => 'required|integer',

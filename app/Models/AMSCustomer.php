@@ -39,7 +39,7 @@ class AMSCustomer extends Model
 
     public function prospects()
     {
-        return $this->hasMany(Prospect::class);
+        return $this->hasMany(Prospect::class, 'ams_customer_id', 'id');
     }
 
     public function customer()
