@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use App\Http\Requests\FileRequest;
 
 class FileController extends Controller
 {
@@ -30,15 +31,8 @@ class FileController extends Controller
         ], 200);
     }
 
-    public function store(Request $request)
+    public function store(FileRequest $request)
     {
-        $request->validate([
-            'files' => 'required|array',
-            'files.*' => 'required|file|mimes:jpeg,jpg,png,pdf,doc,docx,xlsx,eml|max:5120',
-            'sales_id' => 'required|integer|exists:sales,id',
-            'requirement_id' => 'required|integer|exists:requirements,id',
-        ]);
-
         try {
             DB::beginTransaction();
 

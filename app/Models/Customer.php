@@ -17,7 +17,6 @@ class Customer extends Model
     ];
 
     protected $appends = [
-        'full_path',
         'status',
     ];
 
@@ -32,19 +31,6 @@ class Customer extends Model
     public function getStatusAttribute()
     {
         return self::STATUS_ARRAY[$this->is_active];
-    }
-
-    public function getFullPathAttribute()
-    {
-        if (!$this->logo_path) {
-            return null;
-        }
-
-        if (Storage::disk('public')->exists($this->logo_path)) {
-            return Storage::disk('public')->url($this->logo_path);
-        } else {
-            return null;
-        }
     }
 
     public function scopeSearch($query, $search)

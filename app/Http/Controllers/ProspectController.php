@@ -66,7 +66,7 @@ class ProspectController extends Controller
 
         $prospect_by_customer = $prospect_by_customer->sortBy([[$order, $by]])->values();
         
-        $data = PG::paginate($prospect_by_customer, $paginate);;
+        $data = PG::paginate($prospect_by_customer, $paginate);
 
         $data->appends([
             'search' => $search,
