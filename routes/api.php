@@ -196,7 +196,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('requirement-delete/{id}', [RequirementController::class, 'destroy'])->middleware(['permission:delete_requirement|manage_requirement']);
     
     //Sales
-    Route::get('sales', [SalesController::class, 'index'])->middleware(['permission:read_sales']);
+    Route::get('sales-dashboard', [SalesController::class, 'index'])->middleware(['permission:read_sales']);
+    Route::get('sales-table', [SalesController::class, 'table'])->middleware(['permission:read_sales']);
     Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales']);
     Route::post('sales-create-tmb', [SalesController::class, 'createTmb'])->middleware(['permission:create_sales']);
     Route::post('sales-create-pbth', [SalesController::class, 'createPbth'])->middleware(['permission:create_sales']);

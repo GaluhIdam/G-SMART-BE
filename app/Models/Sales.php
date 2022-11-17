@@ -124,9 +124,7 @@ class Sales extends Model
 
     public function getStatusAttribute()
     {
-        $level = $this->salesLevel->firstWhere('level_id', $this->level);
-
-        return self::STATUS_ARRAY[$level->status];
+        return self::STATUS_ARRAY[$this->salesLevel->status];
     }
 
     public function getOtherAttribute()
@@ -136,10 +134,10 @@ class Sales extends Model
 
     public function getRegistrationAttribute()
     {
-        $ac_type = $this->acType ? $this->acType->name : '-';
-        $engine = $this->engine ? $this->engine->name : '-';
-        $apu = $this->apu ? $this->apu->name : '-';
-        $component = $this->component ? $this->component->name : '-';
+        $ac_type = $this->acType ? trim($this->acType->name) : '-';
+        $engine = $this->engine ? trim($this->engine->name) : '-';
+        $apu = $this->apu ? trim($this->apu->name) : '-';
+        $component = $this->component ? trim($this->component->name) : '-';
 
         if (in_array($this->prospect->transaction_type_id, [1,2])) {    
             $registration = "{$ac_type}/{$engine}/{$apu}/{$component}";
@@ -157,31 +155,7 @@ class Sales extends Model
 
     public function getLevelAttribute()
     {
-        $levels = $this->salesLevel->sortBy('level_id');
-
-        foreach ($levels as $item) {
-            if ($item->status == 4) {
-                return $item->level_id;
-            } else if ($item->status == 3)  {
-                if ($item->level_id != 1) {
-                    continue;
-                } else {
-                    return $item->level_id;
-                }
-            } else if ($item->status == 2) {
-                if ($item->level_id == 1) {
-                    return $item->level_id;
-                } else {
-                    return $item->level_id - 1;
-                }
-            } else {
-                if ($item->level_id != 4) {
-                    continue;
-                } else {
-                    return $item->level_id;
-                }
-            }
-        }
+        return $this->salesLevel->level_id;
     }
 
     public function getProgressAttribute()
@@ -337,7 +311,11 @@ class Sales extends Model
         return ($requirement_done->count() == $requirements->count());
     }
 
-    // query untuk global search tabel salesplan
+    public function scopeThisYear($query)
+    {
+        $query->whereYear('start_date', Carbon::now()->format('Y'));
+    }
+
     public function scopeSearch($query, $search)
     {
         $query->when($search, function ($query) use ($search) {
@@ -385,7 +363,6 @@ class Sales extends Model
         });
     }
 
-    // query untuk filtering data tabel salesplan
     public function scopeFilter($query, array $filters)
     {
         $start_date = $filters[0];
@@ -402,7 +379,47 @@ class Sales extends Model
         });
     }
 
-    // query untuk get data salesplan by user
+    public function scopeSort($query, $order, $by)
+    {
+        $query->when(($order && $by), function ($query) use ($order, $by) {
+            if ($order == 'customer') {
+                $query->withAggregate('customer', 'name')
+                    ->orderBy('customer_name', $by);
+            } else if ($order == 'product') {
+                $query->withAggregate('product', 'name')
+                    ->orderBy('product_name', $by);
+            } else if ($order == 'registration') {
+                $query->withAggregate('acType', 'name')
+                    ->withAggregate('engine', 'name')
+                    ->withAggregate('apu', 'name')
+                    ->withAggregate('component', 'name')
+                    ->orderBy('ac_type_name', $by)
+                    ->orderBy('engine_name', $by)
+                    ->orderBy('apu_name', $by)
+                    ->orderBy('component_name', $by);
+            } else if ($order == 'acReg') {
+                $query->orderBy('ac_reg', $by);
+            } else if ($order == 'other') {
+                $query->orderBy('is_rkap', $by);
+            } else if ($order == 'type') {
+                $query->withAggregate('prospect', 'transaction_type_id')
+                    ->orderBy('prospect_transaction_type_id', $by);
+            // TODO atribut accessor gak akan kebaca di query database!
+            } else if ($order == 'level') {
+                $query->withAggregate('salesLevel', 'level_id')
+                    ->orderBy('sales_level_level_id', $by);
+            } else if ($order == 'status') {
+                $query->withAggregate('salesLevel', 'status')
+                    ->orderBy('sales_level_status', $by);
+            } else if ($order == 'progress') {
+                $query->withCount('requirementDone')
+                    ->orderBy('requirement_done_count', $by);
+            } else if ($order == 'id') {
+                $query->orderBy('id', $by);
+            }
+        });
+    }
+
     public function scopeUser($query, $user)
     {
         $query->when($user->hasRole('AMS'), function ($query) use ($user) {
@@ -487,7 +504,7 @@ class Sales extends Model
 
     public function salesLevel()
     {
-        return $this->hasMany(SalesLevel::class);
+        return $this->hasOne(SalesLevel::class);
     }
 
     public function ams()

@@ -24,6 +24,66 @@ class SalesController extends Controller
 {
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $start_date = $request->start_date ?? false;
+        $end_date = $request->end_date ?? false;
+        $type = $request->type ?? false;
+
+        $salesplan = Sales::thisYear()
+                            ->filter([$start_date, $end_date, $type])
+                            ->user($user)
+                            ->get();
+
+        if ($user->hasRole('AMS')) {
+            $target = $user->ams->amsTargets->sum('target');
+        } else {
+            $target = 0;
+            foreach ($salesplan as $sales) {
+                if ($sales->ams) {
+                    $target += $sales->ams->amsTargets->sum('target');
+                }
+            }
+        }
+        $open = $salesplan->where('status', 'Open')->sum('value');
+        $closed = $salesplan->where('status', 'Closed')->sum('value');
+        $cancel = $salesplan->where('status', 'Cancel')->sum('value');
+        $open_closed = $open + $closed;
+
+        for ($i = 1; $i <= 4; $i++){
+            $level_sales = $salesplan->where('level', $i);
+            ${"level$i"} = [
+                'total' => $level_sales->sum('value'),
+                'open' => $level_sales->where('status', 'Open')->sum('value'),
+                'closed' => $level_sales->where('status', 'Closed')->sum('value'),
+                'closeIn' => $level_sales->where('status', 'Close in')->sum('value'),
+                'cancel' => $level_sales->where('status', 'Cancel')->sum('value'),
+                'countOpen' => $level_sales->where('status', 'Open')->count(),
+                'countClosed' => $level_sales->where('status', 'Closed')->count(),
+                'countCloseIn' => $level_sales->where('status', 'Close in')->count(),
+                'countCancel' => $level_sales->where('status', 'Cancel')->count(),
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data successfully',
+            'data' => [
+                'totalTarget' => $target,
+                'totalOpen' => $open,
+                'totalClosed' => $closed,
+                'totalCancel' => $cancel,
+                'totalOpenClosed' => $open_closed,
+                'level4' => $level4,
+                'level3' => $level3,
+                'level2' => $level2,
+                'level1' => $level1,
+            ],
+        ], 200);
+    }
+
+    public function table(Request $request)
+    {
         $search = $request->search ?? false;
         $start_date = $request->start_date ?? false;
         $end_date = $request->end_date ?? false;
@@ -32,114 +92,40 @@ class SalesController extends Controller
         $by = $request->by ?? 'desc';
         $paginate = $request->paginate ?? 10;
 
-        // get authenticated user info
-        $user = auth()->user();
-
-        // get all sales data
-        $all_sales = Sales::with('salesLevel')->get();
-
-        $raw_sales = Sales::search($search)
+        $salesplan = Sales::search($search)
                             ->filter([$start_date, $end_date, $type])
-                            ->user($user)
-                            ->get();
+                            ->user(auth()->user())
+                            ->sort($order, $by)
+                            ->paginate($paginate)
+                            ->withQueryString();
 
-        // define empty collection untuk menampung data [tabel salesplan user]
-        $table_salesplan = new Collection();
+        $data = new Collection();
 
-        foreach ($raw_sales as $item) {
-            $table_salesplan->push((object)[
-                'id' => $item->id,
-                'customer' => $item->customer->name,
-                'product' => $item->product ? $item->product->name : null,
-                'month' => $item->month_sales,
-                'registration' => $item->registration,
-                'acReg' => $item->ac_reg ?? null,
-                'other' => $item->other,
-                'type' => $item->type,
-                'level' => $item->level,
-                'progress' => $item->progress,
-                'status' => $item->status,
-                'location' => $item->hangar ? $item->hangar->name : null,
-                'maintenance' => $item->maintenance ? $item->maintenance->name : null,
-                'upgrade' => $item->upgrade_level,
-                'startDate' => Carbon::parse($item->start_date)->format('Y-m-d'),
-                'endDate' => Carbon::parse($item->end_date)->format('Y-m-d'),
+        foreach ($salesplan as $sales) {
+            $data->push((object)[
+                'id' => $sales->id,
+                'customer' => $sales->customer->name,
+                'product' => $sales->product ? $sales->product->name : null,
+                'month' => $sales->month_sales,
+                'registration' => $sales->registration,
+                'acReg' => $sales->ac_reg ?? null,
+                'other' => $sales->other,
+                'type' => $sales->type,
+                'level' => $sales->level,
+                'progress' => $sales->progress,
+                'status' => $sales->status,
+                'upgrade' => $sales->upgrade_level,
+                'startDate' => Carbon::parse($sales->start_date)->format('Y-m-d'),
+                'endDate' => Carbon::parse($sales->end_date)->format('Y-m-d'),
             ]);
         }
 
-        $table_salesplan = $table_salesplan->sortBy([[$order, $by]])->values();
-        $salesplan = PG::paginate($table_salesplan, $paginate);
-
-        $salesplan->appends([
-            'search' => $search,
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-            'type' => $type,
-            'order' => $order,
-            'by' => $by,
-        ]);
-
-        // data untuk 5 overview card [ter-atas] user sales
-        if ($user->hasRole('AMS')) {
-            $total_target = $user->ams->amsTargets->sum('target'); // total user sales [target]
-        } else {
-            $total_target = 0;
-            foreach ($raw_sales as $sales) {
-                if ($sales->ams) {
-                    $total_target += $sales->ams->amsTargets->sum('target');
-                }
-            }
-        }
-        $total_open = $raw_sales->where('status', 'Open')->sum('value'); // total user sales [open]
-        $total_closed = $raw_sales->where('status', 'Closed')->sum('value'); // total user sales [closed]
-        $total_cancel = $raw_sales->where('status', 'Cancel')->sum('value'); // total user sales [cancel]
-
-        // menampung overview data untuk [4 card level]
-        for ($i = 1; $i <= 4; $i++){
-            $user_sales = $raw_sales->where('level', $i); // get data user sales [per-level]
-            ${"level$i"} = [ // level[1-4]
-                'total' => $user_sales->sum('value'), // user total [all] sales 
-                'open' => $user_sales->where('status', 'Open')->sum('value'), // user total [open] sales
-                'closeIn' => $user_sales->where('status', 'Close in')->sum('value'), // user total [close-in] sales
-                'closed' => $user_sales->where('status', 'Closed')->sum('value'), // user total [closed] sales
-                'cancel' => $user_sales->where('status', 'Cancel')->sum('value'), // user total [cancel] sales
-                'countOpen' => $user_sales->where('status', 'Open')->count(), // user [open] sales count
-                'countCloseIn' => $user_sales->where('status', 'Close in')->count(), // user [close-in] sales count
-                'countClosed' => $user_sales->where('status', 'Closed')->count(), // user [closed] sales count
-                'countCancel' => $user_sales->where('status', 'Cancel')->count(), // user [cancel] sales count
-            ];
-        }
-
-        // overview data (all sales) untuk [modal salesplan total]
-        $all_open = $all_sales->where('status', 'Open')->sum('value'); // total all sales [open]
-        $all_closed = $all_sales->where('status', 'Closed')->sum('value'); // total all sales [closed]
-        $all_cancel = $all_sales->where('status', 'Cancel')->sum('value'); // total all sales [cancel]
-
-        $data = [
-            'all' => [
-                'totalOpen' => $all_open,
-                'totalClosed' => $all_closed,
-                'totalOpenClosed' => $all_open + $all_closed,
-                'totalCancel' => $all_cancel,
-            ],
-            'user' => [
-                'totalTarget' => $total_target,
-                'totalOpen' => $total_open,
-                'totalClosed' => $total_closed,
-                'totalOpenClosed' => $total_open + $total_closed,
-                'totalCancel' => $total_cancel,
-                'level4' => $level4,
-                'level3' => $level3,
-                'level2' => $level2,
-                'level1' => $level1,
-                'salesPlan' => $salesplan,
-            ]
-        ];
+        $salesplan->setCollection($data);
 
         return response()->json([ 
             'success' => true,
             'message' => 'Retrieve data successfully',
-            'data' => $data,
+            'data' => $salesplan,
         ], 200);
     }
 
@@ -148,10 +134,10 @@ class SalesController extends Controller
         $request->validate([
             'customer_id' => 'sometimes|required|integer|exists:customers,id',
             'prospect_id' => 'required|integer|exists:prospects,id',
-            'product_id' => 'sometimes|required|integer|exists:products,id',
+            'product_id' => 'required|integer|exists:products,id',
             'maintenance_id' => 'required|integer|exists:maintenances,id',
             'hangar_id' => 'required|integer|exists:hangars,id',
-            'ac_type_id' => 'sometimes|required|integer|exists:ac_type_id,id',
+            'ac_type_id' => 'required|integer|exists:ac_type_id,id',
             'ac_reg' => 'required|string',
             'value' => 'required|numeric',
             'tat' => 'required|integer',
@@ -179,18 +165,17 @@ class SalesController extends Controller
             $sales->hangar_id = $request->hangar_id;
             $sales->product_id = $request->product_id ?? null;
             $sales->ac_type_id = $request->ac_type_id ?? null;
+            $sales->is_rkap = 0;
             $sales->tat = $tat;
             $sales->start_date = $start_date->format('Y-m-d');
             $sales->end_date = $end_date->format('Y-m-d');
             $sales->save();
 
-            for ($i = 1; $i <= 4; $i++) { 
-                $level = new SalesLevel;
-                $level->level_id = $i;
-                $level->sales_id = $sales->id;
-                $level->status = 1;
-                $level->save();
-            }
+            $level = new SalesLevel;
+            $level->level_id = 4;
+            $level->sales_id = $sales->id;
+            $level->status = 1;
+            $level->save();
 
             for ($i = 1; $i <= 10; $i++) { 
                 $requirement = new SalesRequirement;
@@ -255,13 +240,11 @@ class SalesController extends Controller
 
                 $temp_sales[] = $sales;
 
-                for ($i = 1; $i <= 4; $i++) {  
-                    $level = new SalesLevel;
-                    $level->level_id = $i;
-                    $level->sales_id = $sales->id;
-                    $level->status = ($i == 1) ? 1 : 2;
-                    $level->save();
-                }
+                $level = new SalesLevel;
+                $level->level_id = 1;
+                $level->sales_id = $sales->id;
+                $level->status = 1;
+                $level->save();
 
                 for ($i = 1; $i <= 10; $i++) { 
                     $requirement = new SalesRequirement;
@@ -431,12 +414,9 @@ class SalesController extends Controller
             try {
                 DB::beginTransaction();
 
-                $levels = $tmbSales->salesLevel;
                 $requirements = $tmbSales->salesRequirements;
 
-                foreach ($levels as $level) {
-                    $level->delete();
-                }
+                $tmbSales->salesLevel->delete();
 
                 $temp_files = [];
                 foreach ($requirements as $requirement) {
@@ -550,20 +530,26 @@ class SalesController extends Controller
     {
         $sales = Sales::findOrFail($id);
 
+        $message = ($sales->level == 1) ? 'closed' : 'upgraded';
+
         if (!$sales->upgrade_level) {
             return response()->json([
                 'success' => false,
-                'message' => 'Oops, sales level cannot be upgraded',
+                'message' => "Oops, sales level cannot be {$message}",
             ], 422);
         }
 
-        $level = $sales->salesLevel->firstWhere('level_id', $sales->level);
-        $level->status = 2;
-        $level->push();
+        $sales_level = $sales->salesLevel;
+        if ($sales_level->level_id == 1) {
+            $sales_level->status = 2;
+        } else {
+            $sales_level->level_id = $sales_level->level_id-1;
+        }
+        $sales_level->push();
 
         return response()->json([
             'success' => true,
-            'message' => 'Sales level upgraded successfully',
+            'message' => "Sales level {$message} successfully",
             'data' => $sales,
         ], 200);
     }
@@ -890,7 +876,7 @@ class SalesController extends Controller
             $reject->reason = $request->reason;
             $reject->save();
 
-            $sales_level = $sales->salesLevel->firstWhere('level_id', $sales->level);
+            $sales_level = $sales->salesLevel;
             $sales_level->status = 4;
             $sales_level->push();
 
@@ -914,7 +900,7 @@ class SalesController extends Controller
     public function closeSales($id)
     {
         $sales = Sales::findOrFail($id);
-        $sales_level = $sales->salesLevel->firstWhere('level_id', $sales->level);
+        $sales_level = $sales->salesLevel;
 
         if (($sales_level->level_id != 1) && ($sales_level->status != 2)) {
             return response()->json([

@@ -29,7 +29,7 @@ class SalesLevelController extends Controller
             $query->where(function ($sub_query) use ($search) {
                 $sub_query->where('sales_id', 'LIKE', "%$search%")
                     ->orWhere('level_id', 'LIKE', "%$search%")
-                    ->orWhere('status_id', 'LIKE', "%$search%");
+                    ->orWhere('status', 'LIKE', "%$search%");
             });
         })->when(($order && $by), function ($query) use ($order, $by) {
             $query->orderBy($order, $by);
