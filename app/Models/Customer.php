@@ -63,7 +63,7 @@ class Customer extends Model
 
     public function amsCustomers()
     {
-        return $this->hasMany(AMSCustomer::class);
+        return $this->hasMany(AMSCustomer::class, 'customer_id', 'id');
     }
 
     public function contactPersons()
