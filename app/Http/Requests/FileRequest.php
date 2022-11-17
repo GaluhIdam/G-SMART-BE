@@ -37,7 +37,7 @@ class FileRequest extends FormRequest
     {
         return [
             'files' => 'required|array',
-            'files.*' => 'required|file|mimes:jpeg,jpg,png,doc,docx,xlsx,eml|max:5120',
+            'files.*' => 'required|file|mimes:jpeg,jpg,png,pdf,doc,docx,xlsx,eml|max:5120',
             'sales_id' => 'required|integer|exists:sales,id',
             'requirement_id' => 'required|integer|exists:requirements,id',
         ];
