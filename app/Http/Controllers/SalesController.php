@@ -21,6 +21,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\PbthSalesRequest;
 
 class SalesController extends Controller
 {
@@ -204,15 +205,8 @@ class SalesController extends Controller
         }
     }
 
-    public function createPbth(Request $request)
+    public function createPbth(PbthSalesRequest $request)
     {
-        $request->validate([
-            'prospect_id' => 'required|integer|exists:prospects,id',
-            'pbth' => 'required|array',
-            'pbth.*.month' => 'required|string',
-            'pbth.*.value' => 'required|numeric',
-        ]);
-
         try {
             DB::beginTransaction();
 
