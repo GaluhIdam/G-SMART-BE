@@ -147,10 +147,10 @@ class Prospect extends Model
             $apus = $prospect_tmb->pluck('tmb.apu.name');
             $components = $prospect_tmb->pluck('tmb.component.name');
             
-            $ac_type = $ac_types ? $ac_types[0] : '-';
-            $engine = $engines ? $engines[0] : '-';
-            $apu = $apus ? $apus[0] : '-';
-            $component = $components ? $components[0] : '-';
+            $ac_type = $ac_types ? trim($ac_types[0]) : '-';
+            $engine = $engines ? trim($engines[0]) : '-';
+            $apu = $apus ? trim($apus[0]) : '-';
+            $component = $components ? trim($components[0]) : '-';
 
             $registration = "{$ac_type}/{$engine}/{$apu}/{$component}";
         } else if ($this->transaction_type_id == 3) {
