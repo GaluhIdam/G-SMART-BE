@@ -19,12 +19,12 @@ class FileRequest extends FormRequest
     public function messages()
     {
         return [
-            'files.required' => 'The Files field is required.',
-            'files.array' => 'The Files field must be an array.',
-            'files.*.required' => 'The Files field is required.',
-            'files.*.file' => 'The Files field must be a file.',
-            'files.*.mimes' => 'The Files must be a file of type jpeg, jpg, png, pdf, doc, docx, xlsx, eml.',
-            'files.*.max' => 'The Files must not be greater than 5 MB.',
+            'files.required' => 'The File field is required.',
+            'files.array' => 'The File field must be an array.',
+            'files.*.required' => 'The File field is required.',
+            'files.*.file' => 'The File field must be a file.',
+            'files.*.mimes' => 'Allowed File type are jpeg, jpg, png, pdf, docx, xlsx and eml.',
+            'files.*.max' => 'The File must not be greater than 5 MB.',
         ];
     }
 
