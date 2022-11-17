@@ -337,7 +337,7 @@ class SalesController extends Controller
             'user' => auth()->user(),
             'salesDetail' => [
                 'id' => $sales->id,
-                'customer' => $sales->customer->only(['id', 'name', 'full_path']),
+                'customer' => $sales->customer->only(['id', 'name']),
                 'acReg' => $sales->ac_reg ?? null,
                 'registration' => $sales->registration,
                 'level' => $sales->level,
@@ -417,7 +417,6 @@ class SalesController extends Controller
         ]);
 
         return response()->json([
-            'logo' => $prospect->amsCustomer->customer->full_path,
             'salesplan' => $sales_plan,
             'market_share' => $market_share,
             'deviation' => $deviation,

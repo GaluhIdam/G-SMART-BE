@@ -41,8 +41,6 @@ class CustomerController extends Controller
                 'id' => $item->id,
                 'name' => $item->name,
                 'code' => $item->code,
-                'logo_path' => $item->logo_path,
-                'full_path' => $item->full_path,
                 'status' => $item->status,
                 'country' => $item->country->name,
                 'region' => $item->country->region->name,
