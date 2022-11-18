@@ -20,7 +20,7 @@ class MaintenanceSeeder extends Seeder
         $first_line = true;
         while (($data = fgetcsv($csv_file, 2000, ",")) !== FALSE) {
             if (!$first_line) {
-                Maintenance::create(['name' => $data['0']]);
+                Maintenance::create(['name' => pg_escape_string(utf8_encode($data['0']))]);
             }
             $first_line = false;
         }
