@@ -23,66 +23,81 @@ class ProspectController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->search ?? null;
-        $filter = $request->filter ?? null;
-        $order = $request->order ?? null;
-        $by = $request->by ?? null;
+        $search = $request->search;
+        $filter = $request->filter;
+        $order = $request->order ?? 'id';
+        $by = $request->by ?? 'desc';
         $paginate = $request->paginate ?? 10;
 
         $user = auth()->user();
 
-        $market_share = Prospect::user($user)->marketShareThisYear();
+        $total_market = Prospect::user($user)->marketShareThisYear();
         $total_sales = Sales::user($user)->thisYear()->rkap()->sum('value');
-        $prospects  = Prospect::with('amsCustomer')
-                        ->search($search)
-                        ->filter($filter)
-                        ->user($user)
-                        ->get();
+        $customer_prospect = Customer::with(['amsCustomers.prospects' => function ($query) use ($filter) {
+                                        $query->when($filter, function ($query) use ($filter) {
+                                            $query->where('year', $filter);
+                                        });
+                                    }])
+                                    ->filterProspect($filter)
+                                    ->searchProspect($search)
+                                    ->userProspect($user)
+                                    ->sortProspect($order, $by)
+                                    ->paginate($paginate)
+                                    ->withQueryString();
 
-        $grouped_by_customer = $prospects->groupBy('amsCustomer.customer_id')->values();
+        $data = new Collection();
 
-        $prospect_by_customer = new Collection();
+        foreach ($customer_prospect as $customer) {
+            $p_years = [];
+            $p_transactions = [];
+            $p_types = [];
+            $p_strategics = [];
+            $p_pm_s = [];
+            $market_share = 0;
+            $sales_plan = 0;
 
-        foreach ($grouped_by_customer as $prospect) {
-            $years = array_filter(array_unique($prospect->pluck('year')->toArray()));
-            $transactions = array_filter(array_unique($prospect->pluck('transaction')->toArray()));
-            $types = array_filter(array_unique($prospect->pluck('type')->toArray()));
-            $strategic_inits = array_filter(array_unique($prospect->pluck('strategic_init')->toArray()));
-            $pm = array_filter(array_unique($prospect->pluck('project_manager')->toArray()));
-            $ams = array_filter(array_unique($prospect->pluck('ams')->toArray()));
+            foreach ($customer->amsCustomers as $ams_customer) {
+                foreach ($ams_customer->prospects as $prospect) {
+                    $p_years[] = $prospect->year;
+                    $p_transactions[] = $prospect->transaction;
+                    $p_types[] = $prospect->type;
+                    $p_strategics[] = $prospect->strategic_init;
+                    $p_pm_s[] = $prospect->project_manager;
+                    $market_share += $prospect->market_share;
+                    $sales_plan += $prospect->sales_plan;
+                }
+            }
 
-            $prospect_by_customer->push((object)[
+            $years = array_filter(array_unique($p_years));
+            $transactions = array_filter(array_unique($p_transactions));
+            $types = array_filter(array_unique($p_types));
+            $strategic_inits = array_filter(array_unique($p_strategics));
+            $pm = array_filter(array_unique($p_pm_s));
+            $ams = array_filter(array_unique($customer->amsCustomers->pluck('ams.initial')->toArray()));
+
+            $data->push((object)[
                 'year' => implode(', ', $years),
                 'transaction' => implode(', ', $transactions),
                 'type' => implode(', ', $types),
                 'strategicInitiative' => implode(', ', $strategic_inits),
                 'projectManager' => implode(', ', $pm),
-                'customer' => $prospect->first()->customer,
+                'customer' => $customer->only('id', 'name', 'code'),
                 'ams' => implode(', ', $ams),
-                'marketShare' => $prospect->sum('market_share'),
-                'salesPlan' => $prospect->sum('sales_plan'),
+                'marketShare' => $market_share,
+                'salesPlan' => $sales_plan,
             ]);
         }
 
-        $prospect_by_customer = $prospect_by_customer->sortBy([[$order, $by]])->values();
-        
-        $data = PG::paginate($prospect_by_customer, $paginate);
-
-        $data->appends([
-            'search' => $search,
-            'filter' => $filter,
-            'order' => $order,
-            'by' => $by,
-        ])->values();
+        $customer_prospect->setCollection($data);
 
         return response()->json([
             'status' => 'Success!',
             'message' => 'Successfully Get Prospect',
             'data' => [
-                'prospect' => $data,
-                'totalMarketShare' => $market_share,
+                'prospect' => $customer_prospect,
+                'totalMarketShare' => $total_market,
                 'totalSalesPlan' => $total_sales,
-                'deviation' => $market_share - $total_sales,
+                'deviation' => $total_market - $total_sales,
             ]
         ], 200);
     }
