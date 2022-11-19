@@ -42,7 +42,7 @@ class SalesSeeder extends Seeder
             $years = collect($years)->shuffle()->toArray();
             $total = rand(1,5);
             
-            for ($i = 0; $i < $total); $i++) {
+            for ($i = 0; $i < $total; $i++) {
                 $date = $years[$i].'-'.rand(1,12).'-'.rand(1,30);
                 $start_date = Carbon::parse($date)->format('Y-m-d');
                 $tat = rand(10, 50);
