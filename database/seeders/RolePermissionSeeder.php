@@ -13,7 +13,6 @@ class RolePermissionSeeder extends Seeder
 {
     public function run()
     {
-        // TODO MANAGE ROLE PERMISSION
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         //User Permission

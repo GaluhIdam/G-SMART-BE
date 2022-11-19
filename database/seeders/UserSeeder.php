@@ -12,8 +12,6 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        // TODO role mapping -> [Admin, TPC, TD, TP, TPR, AMS, CBO]
-
         // Administrator
         $admin = User::create([
             'name'              => 'Super Admin',

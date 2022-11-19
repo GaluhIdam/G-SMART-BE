@@ -31,8 +31,8 @@ class ProspectController extends Controller
 
         $user = auth()->user();
 
-        $market_share = Prospect::user($user)->marketYearAgo();
-        $total_sales = Sales::user($user)->salesYearAgo();
+        $market_share = Prospect::user($user)->marketShareThisYear();
+        $total_sales = Sales::user($user)->thisYear()->rkap()->sum('value');
         $prospects  = Prospect::with('amsCustomer')
                         ->search($search)
                         ->filter($filter)
@@ -242,7 +242,7 @@ class ProspectController extends Controller
                         })->get();
 
         $market_share = Prospect::marketShareByCustomer($id, $user);
-        $total_sales = Sales::totalSalesByCustomer($id, $user);
+        $total_sales = Sales::user($user)->customer($id)->sum('value');
 
         return response()->json([
             'message' => 'Success Get Prospect By Customer!',
