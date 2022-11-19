@@ -40,9 +40,6 @@ use App\Http\Controllers\AMSCustomerController;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
-// TODO route untuk testing tanpe perlu autentikasi
-// Route::get('test/{id}', [FileController::class, 'show']);
-
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('logout', [AuthController::class, 'logout']);

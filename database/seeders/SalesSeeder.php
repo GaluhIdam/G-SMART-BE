@@ -39,12 +39,11 @@ class SalesSeeder extends Seeder
         $years = ['2019', '2020', '2021', '2022', '2023'];
 
         foreach ($prospect as $item) {
-            $years = collect($years)->shuffle();
-            $year = $years->toArray();
-            $total = rand(1,3);
+            $years = collect($years)->shuffle()->toArray();
+            $total = rand(1,5);
             
             for ($i = 0; $i < $total; $i++) {
-                $date = $year[$i].'-'.rand(1,12).'-'.rand(1,30);
+                $date = $years[$i].'-'.rand(1,12).'-'.rand(1,30);
                 $start_date = Carbon::parse($date)->format('Y-m-d');
                 $tat = rand(10, 50);
                 $end_date = Carbon::parse($date)->addDays($tat)->format('Y-m-d');

@@ -124,19 +124,7 @@ class Prospect extends Model
         return $sales->sum('value');
     }
 
-    public function scopeMarketShareByCustomer($query, $customer, $user)
-    {
-        $data = $query->whereHas('amsCustomer', function ($query) use ($customer) {
-                    $query->where('customer_id', $customer);
-                })->when($user->hasRole('AMS'), function ($query) use ($user) {
-                    $query->whereHas('amsCustomer', function ($query) use ($user) {
-                        $query->whereRelation('ams', 'user_id', '=', $user->id);
-                    });
-                })->get();
-
-        return $data->sum('market_share');
-    }
-
+     // TODO: confirmation needed!!
     public function getRegistrationAttribute()
     {
         if (in_array($this->transaction_type_id, [1,2])) {
@@ -160,7 +148,20 @@ class Prospect extends Model
         return $registration;
     }
 
-    public function scopeMarketYearAgo($query)
+    public function scopeMarketShareByCustomer($query, $customer, $user)
+    {
+        $data = $query->whereHas('amsCustomer', function ($query) use ($customer) {
+                    $query->where('customer_id', $customer);
+                })->when($user->hasRole('AMS'), function ($query) use ($user) {
+                    $query->whereHas('amsCustomer', function ($query) use ($user) {
+                        $query->whereRelation('ams', 'user_id', '=', $user->id);
+                    });
+                })->get();
+
+        return $data->sum('market_share');
+    }
+
+    public function scopeMarketShareThisYear($query)
     {
         $data = $query->where('year', Carbon::now()->format('Y'))->get();
 

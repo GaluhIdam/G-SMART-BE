@@ -27,7 +27,51 @@ class Customer extends Model
         self::STATUS_ACTIVE => 'Active',
         self::STATUS_INACTIVE => 'Inactive',
     ];
-    
+
+    public function scopeSearchProspect($query, $search)
+    {
+        $query->when($search, function ($query) use ($search) {
+            $query->where('name', 'LIKE', "%$search%")
+                ->orWhere('code', 'LIKE', "%$search%")
+                ->orWhereHas('amsCustomers', function ($query) use ($search) {
+                    $query->whereRelation('ams', 'initial', 'LIKE', "%$search%")
+                        ->orWhereHas('prospects', function ($query) use ($search) {
+                            $query->where('year', 'LIKE', "%$search%")
+                                ->orWhereRelation('transactionType', 'name', 'LIKE', "%$search%")
+                                ->orWhereRelation('prospectType', 'name', 'LIKE', "%$search%")
+                                ->orWhereRelation('strategicInitiative', 'name', 'LIKE', "%$search%")
+                                ->orWhereRelation('pm', 'name', 'LIKE', "%$search%")
+                                ->orWhereRelation('prospectType', 'name', 'LIKE', "%$search%");
+                        });
+                });
+        });
+    }
+
+    public function scopeFilterProspect($query, $filter)
+    {
+        $query->when($filter, function ($query) use ($filter) {
+            $query->whereHas('amsCustomers', function ($query) use ($filter) {
+                $query->whereHas('prospects', function ($query) use ($filter) {
+                    $query->where('year', $filter);
+                });
+            });
+        });
+    }
+
+    public function scopeUserProspect($query, $user)
+    {
+        $query->when($user->hasRole('AMS'), function ($query) use ($user) {   
+            $query->whereHas('amsCustomers', function ($query) use ($user) {
+                $query->where('ams_id', $user->ams->id);
+            });
+        });
+    }
+
+    public function scopeSortProspect($query, $user)
+    {
+        // code here..
+    }
+
     public function getStatusAttribute()
     {
         return self::STATUS_ARRAY[$this->is_active];

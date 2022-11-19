@@ -27,44 +27,31 @@ class SalesController extends Controller
 {
     public function index(Request $request)
     {
+        $filters = [
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'type' => $request->type,
+        ];
+
         $user = auth()->user();
 
-        $start_date = $request->start_date ?? false;
-        $end_date = $request->end_date ?? false;
-        $type = $request->type ?? false;
-
-        $salesplan = Sales::thisYear()
-                            ->filter([$start_date, $end_date, $type])
-                            ->user($user)
-                            ->get();
-
-        if ($user->hasRole('AMS')) {
-            $target = $user->ams->amsTargets->sum('target');
-        } else {
-            $target = 0;
-            foreach ($salesplan as $sales) {
-                if ($sales->ams) {
-                    $target += $sales->ams->amsTargets->sum('target');
-                }
-            }
-        }
-        $open = $salesplan->where('status', 'Open')->sum('value');
-        $closed = $salesplan->where('status', 'Closed')->sum('value');
-        $cancel = $salesplan->where('status', 'Cancel')->sum('value');
+        $target = Sales::filter($filters)->user($user)->thisYear()->rkap()->sum('value');
+        $open = Sales::filter($filters)->user($user)->thisYear()->rkap()->open()->sum('value');
+        $closed = Sales::filter($filters)->user($user)->thisYear()->rkap()->closed()->sum('value');
+        $cancel = Sales::filter($filters)->user($user)->thisYear()->rkap()->cancel()->sum('value');
         $open_closed = $open + $closed;
 
         for ($i = 1; $i <= 4; $i++){
-            $level_sales = $salesplan->where('level', $i);
             ${"level$i"} = [
-                'total' => $level_sales->sum('value'),
-                'open' => $level_sales->where('status', 'Open')->sum('value'),
-                'closed' => $level_sales->where('status', 'Closed')->sum('value'),
-                'closeIn' => $level_sales->where('status', 'Close in')->sum('value'),
-                'cancel' => $level_sales->where('status', 'Cancel')->sum('value'),
-                'countOpen' => $level_sales->where('status', 'Open')->count(),
-                'countClosed' => $level_sales->where('status', 'Closed')->count(),
-                'countCloseIn' => $level_sales->where('status', 'Close in')->count(),
-                'countCancel' => $level_sales->where('status', 'Cancel')->count(),
+                'total' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->sum('value'),
+                'open' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->open()->sum('value'),
+                'closed' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->closed()->sum('value'),
+                'closeIn' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->closeIn()->sum('value'),
+                'cancel' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->cancel()->sum('value'),
+                'countOpen' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->open()->count(),
+                'countClosed' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->closed()->count(),
+                'countCloseIn' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->closeIn()->count(),
+                'countCancel' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->cancel()->count(),
             ];
         }
 
@@ -87,16 +74,19 @@ class SalesController extends Controller
 
     public function table(Request $request)
     {
-        $search = $request->search ?? false;
-        $start_date = $request->start_date ?? false;
-        $end_date = $request->end_date ?? false;
-        $type = $request->type ?? false;
+        $filters = [
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'type' => $request->type,
+        ];
+
+        $search = $request->search;
         $order = $request->order ?? 'id';
         $by = $request->by ?? 'desc';
         $paginate = $request->paginate ?? 10;
 
         $salesplan = Sales::search($search)
-                            ->filter([$start_date, $end_date, $type])
+                            ->filter($filters)
                             ->user(auth()->user())
                             ->sort($order, $by)
                             ->paginate($paginate)
@@ -132,6 +122,7 @@ class SalesController extends Controller
         ], 200);
     }
 
+    // TODO: confirmation needed!!
     public function createTmb(Request $request)
     {
         $request->validate([
@@ -168,7 +159,7 @@ class SalesController extends Controller
             $sales->hangar_id = $request->hangar_id;
             $sales->product_id = $request->product_id ?? null;
             $sales->ac_type_id = $request->ac_type_id ?? null;
-            $sales->is_rkap = 0;
+            $sales->is_rkap = $request->is_rkap;
             $sales->tat = $tat;
             $sales->start_date = $start_date->format('Y-m-d');
             $sales->end_date = $end_date->format('Y-m-d');
@@ -205,6 +196,7 @@ class SalesController extends Controller
         }
     }
 
+    // TODO: confirmation needed!!
     public function createPbth(PbthSalesRequest $request)
     {
         try {
@@ -229,6 +221,7 @@ class SalesController extends Controller
                 $sales->customer_id = $customer->id;
                 $sales->prospect_id = $prospect->id;
                 $sales->value = $value;
+                $sales->is_rkap = 1;
                 $sales->tat = $tat;
                 $sales->start_date = $start_date;
                 $sales->end_date = $end_date;

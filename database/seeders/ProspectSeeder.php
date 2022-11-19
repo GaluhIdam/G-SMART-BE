@@ -24,9 +24,8 @@ class ProspectSeeder extends Seeder
         $years = [2019, 2020, 2021, 2022, 2023];
 
         foreach ($ams_customer as $item) {
-            $years = collect($years)->shuffle();
-            $year = $years->toArray();
-            $total = rand(1,3);
+            $years = collect($years)->shuffle()->toArray();
+            $total = rand(1,5);
 
             for ($i = 0; $i < $total; $i++) {
                 $d_prospect = rand(1, $p_type);
@@ -40,7 +39,7 @@ class ProspectSeeder extends Seeder
                 }
 
                 Prospect::create([
-                    'year' => $year[$i],
+                    'year' => $years[$i],
                     'transaction_type_id' => rand(1, $t_type),
                     'prospect_type_id' => $d_prospect,
                     'strategic_initiative_id' => $d_strategic,

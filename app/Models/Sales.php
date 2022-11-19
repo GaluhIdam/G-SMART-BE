@@ -67,28 +67,155 @@ class Sales extends Model
         'month_sales',
     ];
 
-    public function scopeSalesYearAgo($query)
+    public function scopeLevel($query, $level)
     {
-        $data = $query->whereHas('prospect', function ($query) {
-            $query->where('year', Carbon::now()->format('Y'));
-        })->get();
-        
-        return $data->sum('value');
+        $query->whereRelation('salesLevel', 'level_id', $level);
     }
 
-    public function scopeTotalSalesByCustomer($query, $customer, $user)
+    public function scopeOpen($query)
     {
-        $data = $query->whereHas('customer', function ($query) use ($customer) {
-                    $query->where('customer_id', $customer);
-                })->when($user->hasRole('AMS'), function ($query) use ($user) {
-                    $query->whereHas('prospect', function ($query) use ($user) {
-                        $query->whereHas('amsCustomer', function ($query) use ($user) {
-                            $query->whereRelation('ams', 'user_id', '=', $user->id);
+        $query->whereRelation('salesLevel', 'status', 1);
+    }
+
+    public function scopeClosed($query)
+    {
+        $query->whereRelation('salesLevel', 'status', 2);
+    }
+
+    public function scopeCloseIn($query)
+    {
+        $query->whereRelation('salesLevel', 'status', 3);
+    }
+
+    public function scopeCancel($query)
+    {
+        $query->whereRelation('salesLevel', 'status', 4);
+    }
+
+    public function scopeRkap($query)
+    {
+        $query->where('is_rkap', 1);
+    }
+
+    public function scopeThisYear($query)
+    {
+        $query->whereYear('start_date', Carbon::now()->format('Y'))
+            ->whereYear('end_date', Carbon::now()->format('Y'));
+    }
+
+    public function scopeUser($query, $user)
+    {
+        $query->when($user->hasRole('AMS'), function ($query) use ($user) {
+            $query->where('ams_id', $user->ams->id);
+        });
+    }
+
+    public function scopeCustomer($query, $customer)
+    {
+        $query->where('customer_id', $customer);
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        $query->when($search, function ($query) use ($search) {
+            if (str_contains(strtolower($search), 'rkap')) {
+                $query->where('is_rkap', 1);
+            } else if (str_contains(strtolower($search), 'additional')) {
+                $query->where('is_rkap', 0);
+            } else if (!strcasecmp($search, 'open')) {
+                $query->whereRelation('salesLevel', 'status', 1);
+            } else if (!strcasecmp($search, 'cancel')) {
+                $query->whereRelation('salesLevel', 'status', 4);
+            } else if (str_contains(strtolower($search), 'close')) {
+                if (!strcasecmp($search, 'closed sales')) {
+                    $query->whereRelation('salesLevel', 'status', 3);
+                } else if (!strcasecmp($search, 'close in')) {
+                    $query->whereRelation('salesLevel', 'status', 2);
+                } else {
+                    $query->whereRelation('salesLevel', 'status', 2)
+                        ->orWhereRelation('salesLevel', 'status', 3);
+                }
+            } else if (str_contains(strtolower($search), 'level')) {
+                $query->whereRelation('salesLevel', 'level_id', substr($search, -1));
+            } else {
+                $query->whereRelation('customer', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('product', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('acType', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('engine', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('apu', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('component', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('maintenance', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('hangar', 'name', 'LIKE', "%$search%")
+                    ->orWhereRelation('salesLevel', 'level_id', 'LIKE', "%$search%")
+                    ->orWhere('ac_reg', 'LIKE', "%$search%")
+                    ->orWhere('value', 'LIKE', "%$search%")
+                    ->orWhere('value', 'LIKE', "%$search%")
+                    ->orWhere('tat', 'LIKE', "%$search%")
+                    ->orWhere('start_date', 'LIKE', "%$search%")
+                    ->orWhere('end_date', 'LIKE', "%$search%")
+                    ->orWhereHas('prospect', function ($query) use ($search) {
+                        $query->whereHas('transactionType', function ($query) use ($search) {
+                            $query->where('name', 'LIKE', "%$search%");
                         });
                     });
-                })->get();
+            }
+        });
+    }
 
-        return $data->sum('value');
+    public function scopeFilter($query, array $filters)
+    {
+        $start_date = $filters['start_date'];
+        $end_date = $filters['end_date'];
+        $type = $filters['type'];
+
+        $query->when(($start_date && $end_date), function ($query) use ($start_date, $end_date) {
+            $query->whereDate('start_date', '>=', Carbon::parse($start_date)->format('Y-m-d'))
+                ->whereDate('end_date', '<=', Carbon::parse($end_date)->format('Y-m-d'));
+        });
+        
+        $query->when($type, function ($query) use ($type) {
+            $query->whereRelation('prospect', 'transaction_type_id', $type);
+        });
+    }
+
+    public function scopeSort($query, $order, $by)
+    {
+        $query->when(($order && $by), function ($query) use ($order, $by) {
+            if ($order == 'customer') {
+                $query->withAggregate('customer', 'name')
+                    ->orderBy('customer_name', $by);
+            } else if ($order == 'product') {
+                $query->withAggregate('product', 'name')
+                    ->orderBy('product_name', $by);
+            } else if ($order == 'registration') {
+                $query->withAggregate('acType', 'name')
+                    ->withAggregate('engine', 'name')
+                    ->withAggregate('apu', 'name')
+                    ->withAggregate('component', 'name')
+                    ->orderBy('ac_type_name', $by)
+                    ->orderBy('engine_name', $by)
+                    ->orderBy('apu_name', $by)
+                    ->orderBy('component_name', $by);
+            } else if ($order == 'acReg') {
+                $query->orderBy('ac_reg', $by);
+            } else if ($order == 'other') {
+                $query->orderBy('is_rkap', $by);
+            } else if ($order == 'type') {
+                $query->withAggregate('prospect', 'transaction_type_id')
+                    ->orderBy('prospect_transaction_type_id', $by);
+            } else if ($order == 'level') {
+                $query->withAggregate('salesLevel', 'level_id')
+                    ->orderBy('sales_level_level_id', $by);
+            } else if ($order == 'status') {
+                $query->withAggregate('salesLevel', 'status')
+                    ->orderBy('sales_level_status', $by);
+            } else if ($order == 'progress') {
+                $query->withCount('requirementDone')
+                    ->orderBy('requirement_done_count', $by);
+            } else if ($order == 'id') {
+                $query->orderBy('id', $by);
+            }
+        });
     }
 
     public function setRequirement($requirement_id)
@@ -132,6 +259,7 @@ class Sales extends Model
         return self::RKAP_ARRAY[$this->is_rkap ?? 0];
     }
 
+    // TODO: confirmation needed!!
     public function getRegistrationAttribute()
     {
         $ac_type = $this->acType ? trim($this->acType->name) : '-';
@@ -309,122 +437,6 @@ class Sales extends Model
         $requirement_done = $this->requirementDone->whereIn('requirement_id', $requirements);
         
         return ($requirement_done->count() == $requirements->count());
-    }
-
-    public function scopeThisYear($query)
-    {
-        $query->whereYear('start_date', Carbon::now()->format('Y'));
-    }
-
-    public function scopeSearch($query, $search)
-    {
-        $query->when($search, function ($query) use ($search) {
-            if (str_contains(strtolower($search), 'rkap')) {
-                $query->where('is_rkap', 1);
-            } else if (str_contains(strtolower($search), 'additional')) {
-                $query->where('is_rkap', 0);
-            } else if (!strcasecmp($search, 'open')) {
-                $query->whereRelation('salesLevel', 'status', 1);
-            } else if (!strcasecmp($search, 'cancel')) {
-                $query->whereRelation('salesLevel', 'status', 4);
-            } else if (str_contains(strtolower($search), 'close')) {
-                if (!strcasecmp($search, 'closed sales')) {
-                    $query->whereRelation('salesLevel', 'status', 3);
-                } else if (!strcasecmp($search, 'close in')) {
-                    $query->whereRelation('salesLevel', 'status', 2);
-                } else {
-                    $query->whereRelation('salesLevel', 'status', 2)
-                        ->orWhereRelation('salesLevel', 'status', 3);
-                }
-            } else if (str_contains(strtolower($search), 'level')) {
-                $query->whereRelation('salesLevel', 'level_id', substr($search, -1));
-            } else {
-                $query->whereRelation('customer', 'name', 'LIKE', "%$search%")
-                    ->orWhereRelation('product', 'name', 'LIKE', "%$search%")
-                    ->orWhereRelation('acType', 'name', 'LIKE', "%$search%")
-                    ->orWhereRelation('engine', 'name', 'LIKE', "%$search%")
-                    ->orWhereRelation('apu', 'name', 'LIKE', "%$search%")
-                    ->orWhereRelation('component', 'name', 'LIKE', "%$search%")
-                    ->orWhereRelation('maintenance', 'name', 'LIKE', "%$search%")
-                    ->orWhereRelation('hangar', 'name', 'LIKE', "%$search%")
-                    ->orWhereRelation('salesLevel', 'level_id', 'LIKE', "%$search%")
-                    ->orWhere('ac_reg', 'LIKE', "%$search%")
-                    ->orWhere('value', 'LIKE', "%$search%")
-                    ->orWhere('value', 'LIKE', "%$search%")
-                    ->orWhere('tat', 'LIKE', "%$search%")
-                    ->orWhere('start_date', 'LIKE', "%$search%")
-                    ->orWhere('end_date', 'LIKE', "%$search%")
-                    ->orWhereHas('prospect', function ($query) use ($search) {
-                        $query->whereHas('transactionType', function ($query) use ($search) {
-                            $query->where('name', 'LIKE', "%$search%");
-                        });
-                    });
-            }
-        });
-    }
-
-    public function scopeFilter($query, array $filters)
-    {
-        $start_date = $filters[0];
-        $end_date = $filters[1];
-        $type = $filters[2];
-
-        $query->when(($start_date && $end_date), function ($query) use ($start_date, $end_date) {
-            $query->whereDate('start_date', '>=', Carbon::parse($start_date)->format('Y-m-d'))
-                ->whereDate('end_date', '<=', Carbon::parse($end_date)->format('Y-m-d'));
-        });
-        
-        $query->when($type, function ($query) use ($type) {
-            $query->whereRelation('prospect', 'transaction_type_id', $type);
-        });
-    }
-
-    public function scopeSort($query, $order, $by)
-    {
-        $query->when(($order && $by), function ($query) use ($order, $by) {
-            if ($order == 'customer') {
-                $query->withAggregate('customer', 'name')
-                    ->orderBy('customer_name', $by);
-            } else if ($order == 'product') {
-                $query->withAggregate('product', 'name')
-                    ->orderBy('product_name', $by);
-            } else if ($order == 'registration') {
-                $query->withAggregate('acType', 'name')
-                    ->withAggregate('engine', 'name')
-                    ->withAggregate('apu', 'name')
-                    ->withAggregate('component', 'name')
-                    ->orderBy('ac_type_name', $by)
-                    ->orderBy('engine_name', $by)
-                    ->orderBy('apu_name', $by)
-                    ->orderBy('component_name', $by);
-            } else if ($order == 'acReg') {
-                $query->orderBy('ac_reg', $by);
-            } else if ($order == 'other') {
-                $query->orderBy('is_rkap', $by);
-            } else if ($order == 'type') {
-                $query->withAggregate('prospect', 'transaction_type_id')
-                    ->orderBy('prospect_transaction_type_id', $by);
-            // TODO atribut accessor gak akan kebaca di query database!
-            } else if ($order == 'level') {
-                $query->withAggregate('salesLevel', 'level_id')
-                    ->orderBy('sales_level_level_id', $by);
-            } else if ($order == 'status') {
-                $query->withAggregate('salesLevel', 'status')
-                    ->orderBy('sales_level_status', $by);
-            } else if ($order == 'progress') {
-                $query->withCount('requirementDone')
-                    ->orderBy('requirement_done_count', $by);
-            } else if ($order == 'id') {
-                $query->orderBy('id', $by);
-            }
-        });
-    }
-
-    public function scopeUser($query, $user)
-    {
-        $query->when($user->hasRole('AMS'), function ($query) use ($user) {
-            $query->where('ams_id', $user->ams->id);
-        });
     }
 
     public function requirementDone()
