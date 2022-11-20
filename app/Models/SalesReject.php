@@ -10,7 +10,7 @@ class SalesReject extends Model
     use HasFactory;
     protected $fillable = [
         'sales_id',
-        'category',
+        'category_id',
         'reason',
         'competitor',
     ];
