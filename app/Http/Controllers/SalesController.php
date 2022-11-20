@@ -831,7 +831,13 @@ class SalesController extends Controller
         $tat = $request->tat;
         $end_date = Carbon::parse($request->start_date)->addDays($tat);
 
-        $reschedule = $reschedule ?? new SalesReschedule;
+        // $sales->start_date = $start_date;
+        // $sales->tat = $tat;
+        // $sales->end_date = $end_date;
+        // $sales->hangar_id = $request->hangar_id;
+        // $sales->push();
+
+        $reschedule = new SalesReschedule;
         $reschedule->sales_id = $sales->id;
         $reschedule->start_date = $start_date;
         $reschedule->end_date = $end_date;
