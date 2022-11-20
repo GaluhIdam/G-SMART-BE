@@ -16,7 +16,7 @@ class ProductSeeder extends Seeder
     public function run()
     {
         /*
-            DATASHEET PRODUCT DARI APLIKASI SEEDER
+            DATASHEET PRODUCT DARI APLIKASI USER
             - Learning
             - IGTE
             - Others

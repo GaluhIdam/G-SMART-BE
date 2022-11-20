@@ -10,7 +10,7 @@ class SalesReject extends Model
     use HasFactory;
     protected $fillable = [
         'sales_id',
-        'category',
+        'category_id',
         'reason',
         'competitor',
     ];
@@ -18,5 +18,10 @@ class SalesReject extends Model
     public function sales()
     {
         return $this->belongsTo(Sales::class, 'sales_id');
+    }
+
+    public function cancelReason()
+    {
+        return $this->belongsTo(CancelCategory::class, 'category_id');
     }
 }

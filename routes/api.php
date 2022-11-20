@@ -36,6 +36,7 @@ use App\Http\Controllers\ContactPersonController;
 use App\Http\Controllers\LineController;
 use App\Http\Controllers\HangarController;
 use App\Http\Controllers\AMSCustomerController;
+use App\Http\Controllers\CancelCategoryController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -220,6 +221,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // AMS Customer (pivot)
     Route::get('ams-customer/{id}', AMSCustomerController::class)->middleware(['permission:read_ams']);
+
+    // Cancel Category - Sales Reject/Cancel Reason
+    Route::get('cancel-category', CancelCategoryController::class)->middleware(['permission:reject_sales']);
 
     //File
     Route::get('file', [FileController::class, 'index'])->middleware(['permission:read_files']);
