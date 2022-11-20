@@ -67,9 +67,48 @@ class Customer extends Model
         });
     }
 
-    public function scopeSortProspect($query, $user)
+    public function scopeSortProspect($query, $order, $by)
     {
-        // code here..
+        $p_sorts = [
+            'year', 
+            'transaction', 
+            'type', 
+            'strategicInitiative', 
+            'projectManager', 
+            'marketShare', 
+            'salesPlan'
+        ];
+
+        $query->when(($order && $by), function ($query) use ($p_sorts, $order, $by) {
+            if (in_array($order, $p_sorts)) {
+                $query->whereHas('amsCustomers', function ($query) use ($by) {
+                    $query->whereHas('prospects', function ($query) use ($by) {
+                        $query->withAggregate('transactionType', 'name')
+                            ->withAggregate('prospectType', 'name')
+                            ->withAggregate('strategicInitiative', 'name')
+                            ->withAggregate('pm', 'name')
+                            ->withSum('sales', 'value')
+                            ->orderBy('transaction_type_name', $by)
+                            ->orderBy('prospect_type_name', $by)
+                            ->orderBy('strategic_initiative_name', $by)
+                            ->orderBy('pm_name', $by)
+                            ->orderBy('sales_sum_value', $by);
+                    });
+                });
+            } else if ($order == 'ams') {
+                $query->whereHas('amsCustomers', function ($query) use ($by) {
+                    $query->whereHas('ams', function ($query) use ($by) {
+                        $query->orderBy('initial', $by);
+                    });
+                });
+            } else if ($order == 'customer.name') {
+                $query->orderBy('name', $by);
+            } else if ($order == 'customer.code') {
+                $query->orderBy('code', $by);
+            } else {
+                $query->orderBy($order, $by);
+            }
+        });
     }
 
     public function getStatusAttribute()
