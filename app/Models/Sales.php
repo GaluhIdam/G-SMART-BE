@@ -446,7 +446,7 @@ class Sales extends Model
 
     public function salesReschedule()
     {
-        return $this->hasMany(SalesReschedule::class);
+        return $this->hasOne(SalesReschedule::class);
     }
 
     public function salesRequirements()
