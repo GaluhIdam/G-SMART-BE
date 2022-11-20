@@ -82,7 +82,7 @@ class FileController extends Controller
     {
         $file = File::find($id);
 
-        if (!$file || !file->path) {
+        if (!$file || !$file->path) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data not found',

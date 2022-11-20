@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 use App\Helpers\PaginationHelper as PG;
 use App\Http\Requests\ProspectRequest;
+use Illuminate\Support\Arr;
 
 class ProspectController extends Controller
 {
@@ -53,6 +54,7 @@ class ProspectController extends Controller
             $p_types = [];
             $p_strategics = [];
             $p_pm_s = [];
+            $ams_s = [];
             $market_share = 0;
             $sales_plan = 0;
 
@@ -66,14 +68,15 @@ class ProspectController extends Controller
                     $market_share += $prospect->market_share;
                     $sales_plan += $prospect->sales_plan;
                 }
+                $ams_s[] = $ams_customer->ams->initial;
             }
 
-            $years = array_filter(array_unique($p_years));
-            $transactions = array_filter(array_unique($p_transactions));
-            $types = array_filter(array_unique($p_types));
-            $strategic_inits = array_filter(array_unique($p_strategics));
-            $pm = array_filter(array_unique($p_pm_s));
-            $ams = array_filter(array_unique($customer->amsCustomers->pluck('ams.initial')->toArray()));
+            $years = Arr::sort(array_filter(array_unique($p_years)));
+            $transactions = Arr::sort(array_filter(array_unique($p_transactions)));
+            $types = Arr::sort(array_filter(array_unique($p_types)));
+            $strategic_inits = Arr::sort(array_filter(array_unique($p_strategics)));
+            $pm = Arr::sort(array_filter(array_unique($p_pm_s)));
+            $ams = Arr::sort(array_filter(array_unique($ams_s)));
 
             $data->push((object)[
                 'year' => implode(', ', $years),
@@ -88,7 +91,18 @@ class ProspectController extends Controller
             ]);
         }
 
+        // TODO: the response is fast but some columns can't be sorted properly
         $customer_prospect->setCollection($data);
+
+        // TODO: all columns can be sorted properly but the response is slow
+        // $data = $data->sortBy([[$order, $by]])->values();
+        // $customer_prospect = PG::paginate($data, $paginate)
+        //                         ->appends([
+        //                             'search' => $search,
+        //                             'filter' => $filter,
+        //                             'order' => $order,
+        //                             'by' => $by,
+        //                         ]);
 
         return response()->json([
             'status' => 'Success!',
