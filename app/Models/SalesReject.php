@@ -22,6 +22,6 @@ class SalesReject extends Model
 
     public function cancelReason()
     {
-        return $this->belongsTo(CancelCategory::class, 'category');
+        return $this->belongsTo(CancelCategory::class, 'category_id');
     }
 }
