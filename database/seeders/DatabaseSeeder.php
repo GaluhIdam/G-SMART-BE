@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
             LineSeeder::class,
             SalesSeeder::class,
             SalesHistorySeeder::class,
+            CancelCategorySeeder::class,
             SalesRejectSeeder::class,
             SalesRescheduleSeeder::class,
             SalesUpdateSeeder::class,
