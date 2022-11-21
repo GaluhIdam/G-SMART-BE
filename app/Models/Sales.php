@@ -207,6 +207,11 @@ class Sales extends Model
             $query->whereRelation('salesLevel', 'level_id', $level);
         });
 
+        $query->when($progress, function ($query) use ($progress) {
+            $query->withCount('requirementDone')
+                ->having('requirement_done_count', '=', $progress);
+        });
+
         $query->when($status, function ($query) use ($status) {
             $query->whereRelation('salesLevel', 'status', $status);
         });
