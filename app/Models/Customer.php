@@ -28,6 +28,13 @@ class Customer extends Model
         self::STATUS_INACTIVE => 'Inactive',
     ];
 
+    public function scopeOnlyProspect($query)
+    {
+        $query->whereHas('amsCustomers', function ($query) {
+            $query->whereHas('prospects');
+        });
+    }
+
     public function scopeSearchProspect($query, $search)
     {
         $query->when($search, function ($query) use ($search) {

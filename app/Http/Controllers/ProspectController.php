@@ -39,6 +39,7 @@ class ProspectController extends Controller
                                             $query->where('year', $filter);
                                         });
                                     }])
+                                    ->onlyProspect()
                                     ->filterProspect($filter)
                                     ->searchProspect($search)
                                     ->userProspect($user)
