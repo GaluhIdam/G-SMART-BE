@@ -27,31 +27,25 @@ class SalesController extends Controller
 {
     public function index(Request $request)
     {
-        $filters = [
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'type' => $request->type,
-        ];
-
         $user = auth()->user();
 
-        $target = Sales::filter($filters)->user($user)->thisYear()->rkap()->sum('value');
-        $open = Sales::filter($filters)->user($user)->thisYear()->rkap()->open()->sum('value');
-        $closed = Sales::filter($filters)->user($user)->thisYear()->rkap()->closed()->sum('value');
-        $cancel = Sales::filter($filters)->user($user)->thisYear()->rkap()->cancel()->sum('value');
+        $target = Sales::user($user)->thisYear()->rkap()->sum('value');
+        $open = Sales::user($user)->thisYear()->rkap()->open()->sum('value');
+        $closed = Sales::user($user)->thisYear()->rkap()->closed()->sum('value');
+        $cancel = Sales::user($user)->thisYear()->rkap()->cancel()->sum('value');
         $open_closed = $open + $closed;
 
         for ($i = 1; $i <= 4; $i++){
             ${"level$i"} = [
-                'total' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->sum('value'),
-                'open' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->open()->sum('value'),
-                'closed' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->closed()->sum('value'),
-                'closeIn' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->closeIn()->sum('value'),
-                'cancel' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->cancel()->sum('value'),
-                'countOpen' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->open()->count(),
-                'countClosed' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->closed()->count(),
-                'countCloseIn' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->closeIn()->count(),
-                'countCancel' => Sales::filter($filters)->user($user)->thisYear()->rkap()->level($i)->cancel()->count(),
+                'total' => Sales::user($user)->thisYear()->rkap()->level($i)->sum('value'),
+                'open' => Sales::user($user)->thisYear()->rkap()->level($i)->open()->sum('value'),
+                'closed' => Sales::user($user)->thisYear()->rkap()->level($i)->closed()->sum('value'),
+                'closeIn' => Sales::user($user)->thisYear()->rkap()->level($i)->closeIn()->sum('value'),
+                'cancel' => Sales::user($user)->thisYear()->rkap()->level($i)->cancel()->sum('value'),
+                'countOpen' => Sales::user($user)->thisYear()->rkap()->level($i)->open()->count(),
+                'countClosed' => Sales::user($user)->thisYear()->rkap()->level($i)->closed()->count(),
+                'countCloseIn' => Sales::user($user)->thisYear()->rkap()->level($i)->closeIn()->count(),
+                'countCancel' => Sales::user($user)->thisYear()->rkap()->level($i)->cancel()->count(),
             ];
         }
 
@@ -78,6 +72,14 @@ class SalesController extends Controller
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'type' => $request->type,
+            'customer' => $request->customer,
+            'product' => $request->product,
+            'registration' => $request->registration,
+            'acReg' => $request->acReg,
+            'other' => $request->other,
+            'level' => $request->level,
+            'progress' => $request->progress,
+            'status' => $request->status,
         ];
 
         $search = $request->search;
@@ -861,7 +863,7 @@ class SalesController extends Controller
 
             $reject = new SalesReject;
             $reject->sales_id = $sales->id;
-            $reject->category = $request->category_id;
+            $reject->category_id = $request->category_id;
             $reject->reason = $request->reason;
             $reject->save();
 

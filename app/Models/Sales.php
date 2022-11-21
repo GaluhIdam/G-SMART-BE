@@ -167,6 +167,14 @@ class Sales extends Model
         $start_date = $filters['start_date'];
         $end_date = $filters['end_date'];
         $type = $filters['type'];
+        $customer = $filters['customer'];
+        $product = $filters['product'];
+        $registration = $filters['registration'];
+        $acReg = $filters['acReg'];
+        $other = $filters['other'];
+        $level = $filters['level'];
+        $progress = $filters['progress'];
+        $status = $filters['status'];
 
         $query->when(($start_date && $end_date), function ($query) use ($start_date, $end_date) {
             $query->whereDate('start_date', '>=', Carbon::parse($start_date)->format('Y-m-d'))
@@ -175,6 +183,37 @@ class Sales extends Model
         
         $query->when($type, function ($query) use ($type) {
             $query->whereRelation('prospect', 'transaction_type_id', $type);
+        });
+
+        $query->when($customer, function ($query) use ($customer) {
+            $query->whereRelation('customer', 'id', $customer);
+        });
+
+        $query->when($product, function ($query) use ($product) {
+            $query->whereRelation('product', 'id', $product);
+        });
+
+        // TODO: registration??
+
+        $query->when($acReg, function ($query) use ($acReg) {
+            $query->where('acReg', $acReg);
+        });
+
+        $query->when($other, function ($query) use ($other) {
+            $query->where('is_rkap', $other);
+        });
+
+        $query->when($level, function ($query) use ($level) {
+            $query->whereRelation('salesLevel', 'level_id', $level);
+        });
+
+        $query->when($progress, function ($query) use ($progress) {
+            $query->withCount('requirementDone')
+                ->having('requirement_done_count', '=', $progress);
+        });
+
+        $query->when($status, function ($query) use ($status) {
+            $query->whereRelation('salesLevel', 'status', $status);
         });
     }
 
