@@ -711,63 +711,43 @@ class SalesController extends Controller
 
     public function inputSONumber($id, Request $request)
     {
-        $so_number = XpreamPlanningGates::where('gsmart_id', $id)->first();
-        if($so_number) {
-            if($so_number->so) {
-                DB::beginTransaction();
-        
-                $sales = Sales::findOrFail($id);
-                $sales->so_number = $so_number;
-                $sales->push();
-        
-                $sales->setRequirement(10);
-        
-                DB::commit();
-        
+        $request->validate(['so_number' => 'required|string']);
+        try {
+            DB::beginTransaction();
+
+            $sales = Sales::findOrFail($id);
+
+            $requirements = $sales->salesRequirements->where('requirement_id', 9)->first();
+            if($requirements->status != 1) {
                 return response()->json([
-                    'success' => true,
-                    'message' => 'SO Number inputted successfully',
-                    'data' => $sales,
-                    'so_number' => $so_number,
-                ], 200);
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'SO Number is empty',
-                    ], 200);            
-                }
-            } else {
+                    'success' => false,
+                    'message' => 'Please check WO/PO File!',
+                ], 422);
+            }
+            $sales->so_number = $request->so_number;
+            $sales_level = $sales->salesLevel;
+
+            $sales_level->status = 3;
+
+            $sales->push();
+
+            $sales->setRequirement(10);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'SO Number inputted successfully',
+                'data' => $sales,
+            ], 200);
+        } catch (QueryException $e) {
+            DB::rollback();
+
             return response()->json([
                 'success' => false,
-                'message' => 'Gsmart ID Not Found',
-            ], 200);            
+                'message' => $e->getMessage(),
+            ], 500);
         }
-        
-        // $request->validate(['so_number' => 'required|string']);
-        // try {
-        //     DB::beginTransaction();
-
-        //     $sales = Sales::findOrFail($id);
-        //     $sales->so_number = $request->so_number;
-        //     $sales->push();
-
-        //     $sales->setRequirement(10);
-
-        //     DB::commit();
-
-        //     return response()->json([
-        //         'success' => true,
-        //         'message' => 'SO Number inputted successfully',
-        //         'data' => $sales,
-        //     ], 200);
-        // } catch (QueryException $e) {
-        //     DB::rollback();
-
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => $e->getMessage(),
-        //     ], 500);
-        // }
     }
 
     public function switchAMS($id, Request $request)
