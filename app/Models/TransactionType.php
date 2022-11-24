@@ -19,4 +19,9 @@ class TransactionType extends Model
     {
         return $this->hasMany(Prospect::class);
     }
+
+    public function sales()
+    {
+        return $this->hasMany(Sales::class);
+    }
 }

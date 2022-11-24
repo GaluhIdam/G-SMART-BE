@@ -27,42 +27,25 @@ class SalesController extends Controller
 {
     public function index(Request $request)
     {
-        $filters = [
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'type' => $request->type,
-            'customer' => $request->customer,
-            'product' => $request->product,
-            'ac_type' => $request->ac_type_id,
-            'component' => $request->component_id,
-            'engine' => $request->engine_id,
-            'apu' => $request->apu_id,
-            'ac_reg' => $request->acReg,
-            'other' => $request->other,
-            'level' => $request->level,
-            'progress' => $request->progress,
-            'status' => $request->status,
-        ];
-
         $user = auth()->user();
 
-        $target = Sales::user($user)->filter($filters)->thisYear()->rkap()->sum('value');
-        $open = Sales::user($user)->filter($filters)->thisYear()->open()->sum('value');
-        $closed = Sales::user($user)->filter($filters)->thisYear()->closed()->sum('value');
-        $closein = Sales::user($user)->filter($filters)->thisYear()->closeIn()->sum('value');
-        $cancel = Sales::user($user)->filter($filters)->thisYear()->cancel()->sum('value');
+        $target = Sales::user($user)->thisYear()->rkap()->sum('value');
+        $open = Sales::user($user)->thisYear()->open()->sum('value');
+        $closed = Sales::user($user)->thisYear()->closed()->sum('value');
+        $closein = Sales::user($user)->thisYear()->closeIn()->sum('value');
+        $cancel = Sales::user($user)->thisYear()->cancel()->sum('value');
 
         for ($i = 1; $i <= 4; $i++){
             ${"level$i"} = [
-                'total' => Sales::user($user)->filter($filters)->thisYear()->level($i)->sum('value'),
-                'open' => Sales::user($user)->filter($filters)->thisYear()->level($i)->open()->sum('value'),
-                'closed' => Sales::user($user)->filter($filters)->thisYear()->level($i)->closed()->sum('value'),
-                'closeIn' => Sales::user($user)->filter($filters)->thisYear()->level($i)->closeIn()->sum('value'),
-                'cancel' => Sales::user($user)->filter($filters)->thisYear()->level($i)->cancel()->sum('value'),
-                'countOpen' => Sales::user($user)->filter($filters)->thisYear()->level($i)->open()->count(),
-                'countClosed' => Sales::user($user)->filter($filters)->thisYear()->level($i)->closed()->count(),
-                'countCloseIn' => Sales::user($user)->filter($filters)->thisYear()->level($i)->closeIn()->count(),
-                'countCancel' => Sales::user($user)->filter($filters)->thisYear()->level($i)->cancel()->count(),
+                'total' => Sales::user($user)->thisYear()->level($i)->sum('value'),
+                'open' => Sales::user($user)->thisYear()->level($i)->open()->sum('value'),
+                'closed' => Sales::user($user)->thisYear()->level($i)->closed()->sum('value'),
+                'closeIn' => Sales::user($user)->thisYear()->level($i)->closeIn()->sum('value'),
+                'cancel' => Sales::user($user)->thisYear()->level($i)->cancel()->sum('value'),
+                'countOpen' => Sales::user($user)->thisYear()->level($i)->open()->count(),
+                'countClosed' => Sales::user($user)->thisYear()->level($i)->closed()->count(),
+                'countCloseIn' => Sales::user($user)->thisYear()->level($i)->closeIn()->count(),
+                'countCancel' => Sales::user($user)->thisYear()->level($i)->cancel()->count(),
             ];
         }
 
@@ -144,17 +127,16 @@ class SalesController extends Controller
         ], 200);
     }
 
-    // TODO: confirmation needed!!
     public function createTmb(Request $request)
     {
         $request->validate([
-            'customer_id' => 'sometimes|required|integer|exists:customers,id',
-            'prospect_id' => 'required|integer|exists:prospects,id',
-            'product_id' => 'sometimes|required|integer|exists:products,id',
+            'transaction_type_id' => 'sometimes|required|integer|between:1,2',
+            'customer_id' => 'required|integer|exists:customers,id',
+            'prospect_id' => 'sometimes|required|integer|exists:prospects,id',
             'maintenance_id' => 'required|integer|exists:maintenances,id',
-            'hangar_id' => 'required|integer|exists:hangars,id',
+            'product_id' => 'sometimes|required|integer|exists:products,id',
             'ac_type_id' => 'sometimes|required|integer|exists:ac_type_id,id',
-            'ac_reg' => 'required|string',
+            'ac_reg' => 'nullable|required|string',
             'value' => 'required|numeric',
             'tat' => 'required|integer',
             'start_date' => 'required|date',
@@ -164,23 +146,23 @@ class SalesController extends Controller
             DB::beginTransaction();
 
             $prospect = Prospect::find($request->prospect_id);
-            $customer = $request->customer_id ? 
-                        Customer::find($request->customer_id) : 
-                        $prospect->amsCustomer->customer;
 
             $start_date = Carbon::parse($request->start_date);
             $tat = $request->tat;
             $end_date = Carbon::parse($request->start_date)->addDays($tat);
 
             $sales = new Sales;
-            $sales->customer_id = $customer->id;
-            $sales->prospect_id = $prospect->id;
-            $sales->ac_reg = $request->ac_reg;
+            $sales->customer_id = $request->customer_id ?? $prospect->amsCustomer->customer->id;
+            $sales->prospect_id = $request->prospect_id ?? null;
+            $sales->transaction_type_id = $request->transaction_type_id ?? null;
+            $sales->ac_reg = $request->ac_reg ?? null;
             $sales->value = $request->value;
             $sales->maintenance_id = $request->maintenance_id;
-            $sales->hangar_id = $request->hangar_id;
-            $sales->product_id = $request->product_id ?? null;
-            $sales->ac_type_id = $request->ac_type_id ?? null;
+            $sales->product_id = $request->product_id ?? $prospect->tmb->product_id;
+            $sales->ac_type_id = $request->ac_type_id ?? ($prospect->tmb->ac_type_id ?? null);
+            $sales->component_id = $prospect->tmb->component_id ?? null;
+            $sales->engine_id = $prospect->tmb->engine_id ?? null;
+            $sales->apu_id = $prospect->tmb->apu_id ?? null;
             $sales->is_rkap = $request->is_rkap;
             $sales->tat = $tat;
             $sales->start_date = $start_date->format('Y-m-d');
@@ -304,7 +286,7 @@ class SalesController extends Controller
 
         $total_sales = $sales->value;
         $market_share = $sales->prospect->market_share;
-        $deviasi = $market_share - $total_sales;
+        $deviation = $market_share - $total_sales;
 
         if ($sales->salesReschedule) {
             $sales_reschedule = [
@@ -332,7 +314,7 @@ class SalesController extends Controller
             'salesDetail' => [
                 'id' => $sales->id,
                 'customer' => $sales->customer->only(['id', 'name']),
-                'acReg' => $sales->ac_reg ?? null,
+                'acReg' => $sales->ac_reg ?? '-',
                 'registration' => $sales->registration,
                 'level' => $sales->level,
                 'status' => $sales->status,
@@ -344,13 +326,13 @@ class SalesController extends Controller
                 'year' => $sales->prospect->year,
                 'startDate' => Carbon::parse($sales->start_date)->format('d-m-Y'),
                 'endDate' => Carbon::parse($sales->end_date)->format('d-m-Y'),
-                'location' => $sales->hangar ?? null,
-                'product' => $sales->product ?? null,
-                'maintenance' => $sales->maintenance ?? null,
+                'product' => $sales->product,
+                'location' => $sales->hangar ?? '-',
+                'maintenance' => $sales->maintenance ?? '-',
                 'upgrade' => $sales->upgrade_level,
                 'marketShare' => $market_share,
                 'totalSales' => $total_sales,
-                'deviasi' => $deviasi,
+                'deviasi' => $deviation,
             ], 
             'salesReschedule' => $sales_reschedule ?? null,
             'salesReject' => $sales_reject ?? null,

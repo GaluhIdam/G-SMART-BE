@@ -20,7 +20,7 @@ return new class extends Migration
             $table->index('customer_id');
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade')->onUpdate('cascade');
             
-            $table->unsignedBigInteger('prospect_id');
+            $table->unsignedBigInteger('prospect_id')->nullable();
             $table->index('prospect_id');
             $table->foreign('prospect_id')->references('id')->on('prospects')->onDelete('cascade')->onUpdate('cascade');
 
