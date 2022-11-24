@@ -23,6 +23,11 @@ class tmb extends Model
         'maintenance_id',
     ];
 
+    public function prospect()
+    {
+        return $this->belongsTo(Prospect::class, 'prospect_id');
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');
@@ -51,10 +56,5 @@ class tmb extends Model
     public function maintenance()
     {
         return $this->belongsTo(Maintenance::class, 'maintenance_id');
-    }
-    
-    public function prospectTmb()
-    {
-        return $this->hasOne(ProspectTMB::class);
     }
 }

@@ -12,8 +12,18 @@ class pbth extends Model
     protected $table = 'pbth';
     protected $guarded = ['id'];
 
-    public function prospectPbth()
+    public function prospect()
     {
-        return $this->hasMany(ProspectPBTH::class);
+        return $this->belongsTo(Prospect::class, 'prospect_id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function acType()
+    {
+        return $this->belongsTo(AircraftType::class, 'ac_type_id');
     }
 }

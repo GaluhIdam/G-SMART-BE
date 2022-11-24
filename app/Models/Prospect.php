@@ -6,13 +6,13 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Sales;
 use App\Models\AMSCustomer;
-use App\Models\ProspectTMB;
 use App\Models\ProspectPBTH;
 use App\Models\ProspectType;
 use App\Models\TransactionType;
 use App\Models\StrategicInitiatives;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 
 class Prospect extends Model
 {
@@ -27,8 +27,7 @@ class Prospect extends Model
     ];
 
     protected $hidden = [
-        'prospectTmb',
-        'prospectPbth',
+        'sales',
         'amsCustomer',
     ];
 
@@ -44,6 +43,52 @@ class Prospect extends Model
         'sales_plan',
     ];
 
+    public function scopeSort($query, $order, $by)
+    {
+        $query->when(($order && $by), function ($query) use ($order, $by) {
+            if ($order == 'year') {
+                $query->orderBy('year', $by);
+            } else if ($order == 'transaction_type.name') {
+                $query->withAggregate('transactionType', 'name')
+                    ->orderBy('transaction_type_name', $by);
+            } else if ($order == 'prospect_type.name') {
+                $query->withAggregate('prospectType', 'name')
+                    ->orderBy('prospect_type_name', $by);
+            } else if ($order == 'strategic_initiative.name') {
+                $query->withAggregate('strategicInitiative', 'name')
+                    ->orderBy('strategic_initiative_name', $by);
+            } else if ($order == 'pm.name') {
+                $query->withAggregate('pm', 'name')
+                    ->orderBy('pm_name', $by);
+            } else if ($order == 'customer.name') {
+                $query->whereHas('amsCustomer', function ($query) use ($by) {
+                    $query->withAggregate('customer', 'name')
+                        ->orderBy('customer_name', $by);
+                });
+            } else if ($order == 'customer.code') {
+                $query->whereHas('amsCustomer', function ($query) use ($by) {
+                    $query->withAggregate('customer', 'code')
+                        ->orderBy('customer_code', $by);
+                });
+            } else if ($order == 'ams.initial') {
+                $query->whereHas('amsCustomer', function ($query) use ($by) {
+                    $query->withAggregate('ams', 'initial')
+                        ->orderBy('ams_initial', $by);
+                });
+            } else if ($order == 'marketshare') {
+                $query->withAggregate('tmb', 'market_share')
+                    ->withAggregate('pbth', 'market_share')
+                    ->orderBy('tmb_market_share', $by)
+                    ->orderBy('pbth_market_share', $by);
+            } else if ($order == 'sales.value') {
+                $query->withAggregate('sales', 'value')
+                    ->orderBy('sales_value', $by);
+            } else {
+                $query->orderBy('id', 'desc');
+            }
+        });
+    }
+
     public function scopeSearch($query, $search)
     {
         $query->when($search, function ($query) use ($search) {
@@ -53,6 +98,9 @@ class Prospect extends Model
             ->orWhereRelation('strategicInitiative', 'name', 'LIKE', "%$search%")
             ->orWhereRelation('pm', 'name', 'LIKE', "%$search%")
             ->orWhereRelation('prospectType', 'name', 'LIKE', "%$search%")
+            ->orWhereRelation('tmb', 'market_share', 'LIKE', "%$search%")
+            ->orWhereRelation('pbth', 'market_share', 'LIKE', "%$search%")
+            ->orWhereRelation('sales', 'value', 'LIKE', "%$search%")
             ->orWhereHas('amsCustomer', function ($query) use ($search) {
                 $query->whereRelation('customer', 'name', 'LIKE', "%$search%")
                     ->orWhereRelation('customer', 'code', 'LIKE', "%$search%")
@@ -99,50 +147,44 @@ class Prospect extends Model
 
     public function getStrategicInitAttribute()
     {
-        $strategic_init = $this->strategicInitiative;
-        return $strategic_init ? $strategic_init->name : null;
+        return $this->strategicInitiative->name ?? null;
     }
 
     public function getProjectManagerAttribute()
     {
-        $project_manager = $this->pm;
-        return $project_manager ? $project_manager->name : null;
+        return $this->pm->name ?? null;
     }
     
     public function getMarketShareAttribute()
     {
-        if (in_array($this->transaction_type_id, [1,2])) {
-            return $this->prospectTmb->sum('tmb.market_share');
-        } else if ($this->transaction_type_id == 3) {
-            return $this->prospectPbth->sum('market_share');
+        if ($this->tmb) {
+            return $this->tmb->market_share;
+        } else if ($this->pbth) {
+            return $this->pbth->market_share;
         }
     }
 
     public function getSalesPlanAttribute()
     {
-        $sales = Sales::where('prospect_id', $this->id);
-        return $sales->sum('value');
+        return $this->sales->value;
     }
 
-     // TODO: confirmation needed!!
     public function getRegistrationAttribute()
     {
-        if (in_array($this->transaction_type_id, [1,2])) {
-            $prospect_tmb = $this->prospectTmb;
+        if ($this->tmb) {
+            $tmb = $this->tmb;
 
-            $ac_types = $prospect_tmb->pluck('tmb.acType.name');
-            $engines = $prospect_tmb->pluck('tmb.engine.name');
-            $apus = $prospect_tmb->pluck('tmb.apu.name');
-            $components = $prospect_tmb->pluck('tmb.component.name');
-            
-            $ac_type = $ac_types ? trim($ac_types[0]) : '-';
-            $engine = $engines ? trim($engines[0]) : '-';
-            $apu = $apus ? trim($apus[0]) : '-';
-            $component = $components ? trim($components[0]) : '-';
+            $ac_type = $tmb->acType->name ?? null;
+            $engine = $tmb->engine->name ?? null;
+            $apu = $tmb->apu->name ?? null;
+            $component = $tmb->component->name ?? null;
 
-            $registration = "{$ac_type}/{$engine}/{$apu}/{$component}";
-        } else if ($this->transaction_type_id == 3) {
-            $registration = $this->prospectPbth ? $this->prospectPbth->first()->acType->name : '-';
+            $regs = [$ac_type, $engine, $apu, $component];
+            $regs = implode('/', array_filter($regs));
+
+            $registration = !empty($regs) ? $regs : '-';
+        } else if ($this->pbth) {
+            $registration = $this->pbth->acType->name ?? '-';
         }
 
         return $registration;
@@ -190,7 +232,7 @@ class Prospect extends Model
 
     public function sales()
     {
-        return $this->hasMany(Sales::class);
+        return $this->hasOne(Sales::class);
     }
     
     public function amsCustomer()
@@ -198,13 +240,13 @@ class Prospect extends Model
         return $this->belongsTo(AMSCustomer::class, 'ams_customer_id');
     }
 
-    public function prospectTmb()
+    public function tmb()
     {
-        return $this->hasMany(ProspectTMB::class);
+        return $this->hasOne(TMB::class);
     }
 
-    public function prospectPbth()
+    public function pbth()
     {
-        return $this->hasMany(ProspectPBTH::class);
+        return $this->hasOne(PBTH::class);
     }
 }

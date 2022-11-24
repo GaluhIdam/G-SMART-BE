@@ -169,8 +169,11 @@ class Sales extends Model
         $type = $filters['type'];
         $customer = $filters['customer'];
         $product = $filters['product'];
-        $registration = $filters['registration'];
-        $acReg = $filters['acReg'];
+        $ac_type = $filters['ac_type'];
+        $component = $filters['component'];
+        $engine = $filters['engine'];
+        $apu = $filters['apu'];
+        $ac_reg = $filters['ac_reg'];
         $other = $filters['other'];
         $level = $filters['level'];
         $progress = $filters['progress'];
@@ -180,23 +183,37 @@ class Sales extends Model
             $query->whereDate('start_date', '>=', Carbon::parse($start_date)->format('Y-m-d'))
                 ->whereDate('end_date', '<=', Carbon::parse($end_date)->format('Y-m-d'));
         });
-        
+
         $query->when($type, function ($query) use ($type) {
             $query->whereRelation('prospect', 'transaction_type_id', $type);
         });
 
         $query->when($customer, function ($query) use ($customer) {
-            $query->whereRelation('customer', 'id', $customer);
+            $query->where('customer_id', $customer);
         });
 
         $query->when($product, function ($query) use ($product) {
-            $query->whereRelation('product', 'id', $product);
+            $query->where('product_id', $product);
         });
 
-        // TODO: registration??
+        $query->when($ac_type, function ($query) use ($ac_type) {
+            $query->where('ac_type_id', $ac_type);
+        });
 
-        $query->when($acReg, function ($query) use ($acReg) {
-            $query->where('acReg', $acReg);
+        $query->when($component, function ($query) use ($component) {
+            $query->where('component_id', $component);
+        });
+
+        $query->when($engine, function ($query) use ($engine) {
+            $query->where('engine_id', $engine);
+        });
+
+        $query->when($apu, function ($query) use ($apu) {
+            $query->where('apu_id', $apu);
+        });
+
+        $query->when($ac_reg, function ($query) use ($ac_reg) {
+            $query->where('ac_reg', $ac_reg);
         });
 
         $query->when($other, function ($query) use ($other) {
@@ -298,18 +315,20 @@ class Sales extends Model
         return self::RKAP_ARRAY[$this->is_rkap ?? 0];
     }
 
-    // TODO: confirmation needed!!
     public function getRegistrationAttribute()
     {
-        $ac_type = $this->acType ? trim($this->acType->name) : '-';
-        $engine = $this->engine ? trim($this->engine->name) : '-';
-        $apu = $this->apu ? trim($this->apu->name) : '-';
-        $component = $this->component ? trim($this->component->name) : '-';
+        $ac_type = $this->acType->name ?? null;
+        $engine = $this->engine->name ?? null;
+        $apu = $this->apu->name ?? null;
+        $component = $this->component->name ?? null;
 
-        if (in_array($this->prospect->transaction_type_id, [1,2])) {    
-            $registration = "{$ac_type}/{$engine}/{$apu}/{$component}";
+        $regs = [$ac_type, $engine, $apu, $component];
+        $regs = implode('/', array_filter($regs));
+
+        if (in_array($this->prospect->transaction_type_id, [1,2])) {
+            $registration = !empty($regs) ? $regs : '-';
         } else {
-            $registration = $ac_type;
+            $registration = $ac_type ?? '-';
         }
 
         return $registration;

@@ -15,105 +15,44 @@ class TMBSeeder extends Seeder
      */
     public function run()
     {
-        TMB::create([
-            'product_id' => 1,
-            'ac_type_id' => 4,
-            'component_id' => 3,
-            'engine_id' => 5,
-            'apu_id' => 2,
-            'market_share' => 5000,
-            'remarks' => 'Lorem ipsum',
-            'maintenance_id' => 1,
-        ]);
-        TMB::create([
-            'product_id' => 2,
-            'ac_type_id' => 8,
-            'component_id' => 5,
-            'engine_id' => 2,
-            'apu_id' => 5,
-            'market_share' => 2500,
-            'remarks' => 'Lorem ipsum',
-            'maintenance_id' => 1,
-        ]);
-        TMB::create([
-            'product_id' => 3,
-            'ac_type_id' => 3,
-            'component_id' => 5,
-            'engine_id' => 4,
-            'apu_id' => 1,
-            'market_share' => 10000,
-            'remarks' => 'Lorem ipsum',
-            'maintenance_id' => 2,
-        ]);
-        TMB::create([
-            'product_id' => 4,
-            'ac_type_id' => 1,
-            'component_id' => 1,
-            'engine_id' => 3,
-            'apu_id' => 4,
-            'market_share' => 2000,
-            'remarks' => 'Lorem ipsum',
-            'maintenance_id' => 5,
-        ]);
-        TMB::create([
-            'product_id' => 5,
-            'ac_type_id' => 2,
-            'component_id' => 2,
-            'engine_id' => 1,
-            'apu_id' => 3,
-            'market_share' => 3200,
-            'remarks' => 'Lorem ipsum',
-            'maintenance_id' => 5,
-        ]);
-        TMB::create([
-            'product_id' => 4,
-            'ac_type_id' => 7,
-            'component_id' => 1,
-            'engine_id' => 2,
-            'apu_id' => 1,
-            'market_share' => 6500,
-            'remarks' => 'Lorem ipsum',
-            'maintenance_id' => 4,
-        ]);
-        TMB::create([
-            'product_id' => 3,
-            'ac_type_id' => 3,
-            'component_id' => 5,
-            'engine_id' => 1,
-            'apu_id' => 2,
-            'market_share' => 1700,
-            'remarks' => 'Lorem ipsum',
-            'maintenance_id' => 2,
-        ]);
-        TMB::create([
-            'product_id' => 2,
-            'ac_type_id' => 6,
-            'component_id' => 4,
-            'engine_id' => 4,
-            'apu_id' => 3,
-            'market_share' => 3000,
-            'remarks' => 'Lorem ipsum',
-            'maintenance_id' => 3,
-        ]);
-        TMB::create([
-            'product_id' => 5,
-            'ac_type_id' => 8,
-            'component_id' => 2,
-            'engine_id' => 5,
-            'apu_id' => 4,
-            'market_share' => 5800,
-            'remarks' => 'Lorem ipsum',
-            'maintenance_id' => 4,
-        ]);
-        TMB::create([
-            'product_id' => 1,
-            'ac_type_id' => 1,
-            'component_id' => 3,
-            'engine_id' => 3,
-            'apu_id' => 5,
-            'market_share' => 2200,
-            'remarks' => 'Lorem ipsum',
-            'maintenance_id' => 3,
-        ]);
+        $products = \App\Models\Product::all()->count();
+        $ac_types = \App\Models\AircraftType::all()->count();
+        $components = \App\Models\Component::all()->count();
+        $engines = \App\Models\Engine::all()->count();
+        $apus = \App\Models\Apu::all()->count();
+        $maintenances = \App\Models\Maintenance::all()->count();
+        $prospects = \App\Models\Prospect::select('id')->whereIn('transaction_type_id', [1,2])->get();
+
+        foreach ($prospects as $prospect) {
+            $product = \App\Models\Product::find(rand(1, $products));
+            if ($product->name == 'Engine & APU') {
+                $ac_type = null;
+                $component = null;
+                $engine = rand(1, $engines);
+                $apu = rand(1, $apus);
+            } else if ($product->name = 'Component') {
+                $ac_type = null;
+                $component = rand(1, $components);
+                $engine = null;
+                $apu = null;
+            } else {
+                $ac_type = rand(1, $ac_types);
+                $component = null;
+                $engine = null;
+                $apu = null;
+            }
+
+            $tmb = TMB::create([
+                'prospect_id' => $prospect->id,
+                'product_id' => $product->id,
+                'ac_type_id' => $ac_type,
+                'component_id' => $component,
+                'engine_id' => $engine,
+                'apu_id' => $apu,
+                'maintenance_id' => rand(1, $maintenances),
+                'market_share' => rand(10000, 100000),
+                'remarks' => 'This is remarks',
+            ]);
+        }
     }
 }

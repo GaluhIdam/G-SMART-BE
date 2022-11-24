@@ -16,6 +16,10 @@ return new class extends Migration
         Schema::create('tmb', function (Blueprint $table) {
             $table->id()->unsigned();
 
+            $table->unsignedBigInteger('prospect_id')->nullable();
+            $table->index('prospect_id');
+            $table->foreign('prospect_id')->references('id')->on('prospects')->onDelete('cascade')->onUpdate('cascade');
+
             $table->unsignedBigInteger('product_id')->nullable();
             $table->index('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade')->onUpdate('cascade');
