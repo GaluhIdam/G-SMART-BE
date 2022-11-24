@@ -97,7 +97,7 @@ class CustomerController extends Controller
 
         return response()->json([
             'message' => 'Customer has been created successfully!',
-            'data' => $request->all(),
+            'data' => $customer,
         ], 201);
     }
 
