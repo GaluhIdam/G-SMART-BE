@@ -315,18 +315,20 @@ class Sales extends Model
         return self::RKAP_ARRAY[$this->is_rkap ?? 0];
     }
 
-    // TODO: confirmation needed!!
     public function getRegistrationAttribute()
     {
-        $ac_type = $this->acType ? trim($this->acType->name) : '-';
-        $engine = $this->engine ? trim($this->engine->name) : '-';
-        $apu = $this->apu ? trim($this->apu->name) : '-';
-        $component = $this->component ? trim($this->component->name) : '-';
+        $ac_type = $this->acType->name ?? null;
+        $engine = $this->engine->name ?? null;
+        $apu = $this->apu->name ?? null;
+        $component = $this->component->name ?? null;
 
-        if (in_array($this->prospect->transaction_type_id, [1,2])) {    
-            $registration = "{$ac_type}/{$engine}/{$apu}/{$component}";
+        $regs = [$ac_type, $engine, $apu, $component];
+        $regs = implode('/', array_filter($regs));
+
+        if (in_array($this->prospect->transaction_type_id, [1,2])) {
+            $registration = !empty($regs) ? $regs : '-';
         } else {
-            $registration = $ac_type;
+            $registration = $ac_type ?? '-';
         }
 
         return $registration;

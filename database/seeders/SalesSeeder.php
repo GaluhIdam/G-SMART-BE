@@ -26,49 +26,55 @@ class SalesSeeder extends Seeder
      */
     public function run()
     {
-        $prospect = Prospect::all();
-        $maintenance = Maintenance::all()->count();
-        $hangar = Hangar::all()->count();
-        $product = Product::all()->count();
-        $ac_type = AircraftType::all()->count();
-        $component = Component::all()->count();
-        $engine = Engine::all()->count();
-        $apu = Apu::all()->count();
-        $ams = AMS::all()->count();
+        $prospects = Prospect::all();
+        $maintenances = Maintenance::all()->count();
 
-        $years = ['2019', '2020', '2021', '2022', '2023'];
-
-        foreach ($prospect as $item) {
-            $years = collect($years)->shuffle()->toArray();
-            $total = rand(1,5);
-            
-            for ($i = 0; $i < $total; $i++) {
-                $date = $years[$i].'-'.rand(1,12).'-'.rand(1,30);
-                $start_date = Carbon::parse($date)->format('Y-m-d');
-                $tat = rand(10, 50);
-                $end_date = Carbon::parse($date)->addDays($tat)->format('Y-m-d');
-
-                Sales::create([
-                    'customer_id' => $item->amsCustomer->customer_id,
-                    'prospect_id' => $item->id,
-                    'ac_reg' => 'PK-'.Str::upper(Str::random(3)), // nullable
-                    'value' => rand(1000, 10000),
-                    'maintenance_id' => rand(1, $maintenance), // nullable
-                    'tat' => $tat,
-                    'start_date' => $start_date,
-                    'end_date' => $end_date, // nullable
-                    'so_number' => null, // nullable
-                    'hangar_id' => rand(1, $hangar), // nullable
-                    'product_id' => rand(1, $product), // nullable
-                    'ac_type_id' => rand(1, $ac_type), // nullable
-                    'component_id' => rand(1, $component), // nullable
-                    'engine_id' => rand(1, $engine), // nullable
-                    'apu_id' => rand(1, $apu), // nullable
-                    'is_rkap' => rand(0, 1), // nullable
-                    'ams_id' => rand(1, $ams), // nullable
-                    'line_id' => null, // nullable
-                ]);
+        foreach ($prospects as $prospect) {
+            if ($prospect->pbth) {
+                $month = Carbon::parse("1 {$prospect->pbth->month}")->month;
+                $date = $prospect->years.'-'.$month.'-1';
+                $tat = 30;
+                $value = $prospect->pbth->market_share;
+                $product = $prospect->pbth->product_id;
+                $ac_type = $prospect->pbth->ac_type_id;
+                $component = null;
+                $engine = null;
+                $apu = null;
+                $maintenance = rand(1, $maintenances);
+            } else {
+                $date = $prospect->years.'-'.rand(1, 12).'-'.rand(1,30);
+                $tat = rand(15, 45);
+                $value = $prospect->tmb->market_share;
+                $product = $prospect->tmb->product_id;
+                $ac_type = $prospect->tmb->ac_type_id ?? null;
+                $component = $prospect->tmb->component_id ?? null;
+                $engine = $prospect->tmb->engine_id ?? null;
+                $apu = $prospect->tmb->apu_id ?? null;
+                $maintenance = $prospect->tmb->maintenance_id;
             }
+            $start_date = Carbon::parse($date)->format('Y-m-d');
+            $end_date = Carbon::parse($date)->addDays($tat)->format('Y-m-d');
+
+            Sales::create([
+                'customer_id' => $prospect->amsCustomer->customer_id,
+                'prospect_id' => $prospect->id,
+                'ac_reg' => 'PK-'.Str::upper(Str::random(3)), // nullable
+                'value' => $value,
+                'maintenance_id' => $maintenance, // nullable
+                'tat' => $tat,
+                'start_date' => $start_date,
+                'end_date' => $end_date, // nullable
+                'so_number' => null, // nullable
+                'hangar_id' => null, // nullable
+                'product_id' => $product, // nullable
+                'ac_type_id' => $ac_type, // nullable
+                'component_id' => $component, // nullable
+                'engine_id' => $engine, // nullable
+                'apu_id' => $apu, // nullable
+                'is_rkap' => 1, // nullable
+                'ams_id' => $prospect->amsCustomer->ams_id, // nullable
+                'line_id' => null, // nullable
+            ]);
         }
     }
 }

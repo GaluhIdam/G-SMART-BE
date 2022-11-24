@@ -32,84 +32,19 @@ class ProspectController extends Controller
 
         $user = auth()->user();
 
-        $total_market = Prospect::user($user)->marketShareThisYear();
-        $total_sales = Sales::user($user)->thisYear()->rkap()->sum('value');
-        $customer_prospect = Customer::with(['amsCustomers.prospects' => function ($query) use ($filter) {
-                                        $query->when($filter, function ($query) use ($filter) {
-                                            $query->where('year', $filter);
-                                        });
-                                    }])
-                                    ->onlyProspect()
-                                    ->filterProspect($filter)
-                                    ->searchProspect($search)
-                                    ->userProspect($user)
-                                    ->sortProspect($order, $by)
+        $total_market   = Prospect::user($user)->marketShareThisYear();
+        $total_sales    = Sales::user($user)->thisYear()->rkap()->sum('value');
+        $data           = Prospect::search($search)
+                                    ->filter($filter)
+									->sort($order, $by)
                                     ->paginate($paginate)
                                     ->withQueryString();
-
-        $data = new Collection();
-
-        foreach ($customer_prospect as $customer) {
-            $p_years = [];
-            $p_transactions = [];
-            $p_types = [];
-            $p_strategics = [];
-            $p_pm_s = [];
-            $ams_s = [];
-            $market_share = 0;
-            $sales_plan = 0;
-
-            foreach ($customer->amsCustomers as $ams_customer) {
-                foreach ($ams_customer->prospects as $prospect) {
-                    $p_years[] = $prospect->year;
-                    $p_transactions[] = $prospect->transaction;
-                    $p_types[] = $prospect->type;
-                    $p_strategics[] = $prospect->strategic_init;
-                    $p_pm_s[] = $prospect->project_manager;
-                    $market_share += $prospect->market_share;
-                    $sales_plan += $prospect->sales_plan;
-                }
-                $ams_s[] = $ams_customer->ams->initial;
-            }
-
-            $years = Arr::sort(array_filter(array_unique($p_years)));
-            $transactions = Arr::sort(array_filter(array_unique($p_transactions)));
-            $types = Arr::sort(array_filter(array_unique($p_types)));
-            $strategic_inits = Arr::sort(array_filter(array_unique($p_strategics)));
-            $pm = Arr::sort(array_filter(array_unique($p_pm_s)));
-            $ams = Arr::sort(array_filter(array_unique($ams_s)));
-
-            $data->push((object)[
-                'year' => implode(', ', $years),
-                'transaction' => implode(', ', $transactions),
-                'type' => implode(', ', $types),
-                'strategicInitiative' => implode(', ', $strategic_inits),
-                'projectManager' => implode(', ', $pm),
-                'customer' => $customer->only('id', 'name', 'code'),
-                'ams' => implode(', ', $ams),
-                'marketShare' => $market_share,
-                'salesPlan' => $sales_plan,
-            ]);
-        }
-
-        // TODO: the response is fast but some columns can't be sorted properly
-        $customer_prospect->setCollection($data);
-
-        // TODO: all columns can be sorted properly but the response is slow
-        // $data = $data->sortBy([[$order, $by]])->values();
-        // $customer_prospect = PG::paginate($data, $paginate)
-        //                         ->appends([
-        //                             'search' => $search,
-        //                             'filter' => $filter,
-        //                             'order' => $order,
-        //                             'by' => $by,
-        //                         ]);
 
         return response()->json([
             'status' => 'Success!',
             'message' => 'Successfully Get Prospect',
             'data' => [
-                'prospect' => $customer_prospect,
+                'prospect' => $data,
                 'totalMarketShare' => $total_market,
                 'totalSalesPlan' => $total_sales,
                 'deviation' => $total_market - $total_sales,
