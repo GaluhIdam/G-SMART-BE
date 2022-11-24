@@ -27,25 +27,42 @@ class SalesController extends Controller
 {
     public function index(Request $request)
     {
+        $filters = [
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'type' => $request->type,
+            'customer' => $request->customer,
+            'product' => $request->product,
+            'ac_type' => $request->ac_type_id,
+            'component' => $request->component_id,
+            'engine' => $request->engine_id,
+            'apu' => $request->apu_id,
+            'ac_reg' => $request->acReg,
+            'other' => $request->other,
+            'level' => $request->level,
+            'progress' => $request->progress,
+            'status' => $request->status,
+        ];
+
         $user = auth()->user();
 
-        $target = Sales::user($user)->thisYear()->rkap()->sum('value');
-        $open = Sales::user($user)->thisYear()->rkap()->open()->sum('value');
-        $closed = Sales::user($user)->thisYear()->rkap()->closed()->sum('value');
-        $cancel = Sales::user($user)->thisYear()->rkap()->cancel()->sum('value');
-        $open_closed = $open + $closed;
+        $target = Sales::user($user)->filter($filters)->thisYear()->rkap()->sum('value');
+        $open = Sales::user($user)->filter($filters)->thisYear()->open()->sum('value');
+        $closed = Sales::user($user)->filter($filters)->thisYear()->closed()->sum('value');
+        $closein = Sales::user($user)->filter($filters)->thisYear()->closeIn()->sum('value');
+        $cancel = Sales::user($user)->filter($filters)->thisYear()->cancel()->sum('value');
 
         for ($i = 1; $i <= 4; $i++){
             ${"level$i"} = [
-                'total' => Sales::user($user)->thisYear()->rkap()->level($i)->sum('value'),
-                'open' => Sales::user($user)->thisYear()->rkap()->level($i)->open()->sum('value'),
-                'closed' => Sales::user($user)->thisYear()->rkap()->level($i)->closed()->sum('value'),
-                'closeIn' => Sales::user($user)->thisYear()->rkap()->level($i)->closeIn()->sum('value'),
-                'cancel' => Sales::user($user)->thisYear()->rkap()->level($i)->cancel()->sum('value'),
-                'countOpen' => Sales::user($user)->thisYear()->rkap()->level($i)->open()->count(),
-                'countClosed' => Sales::user($user)->thisYear()->rkap()->level($i)->closed()->count(),
-                'countCloseIn' => Sales::user($user)->thisYear()->rkap()->level($i)->closeIn()->count(),
-                'countCancel' => Sales::user($user)->thisYear()->rkap()->level($i)->cancel()->count(),
+                'total' => Sales::user($user)->filter($filters)->thisYear()->level($i)->sum('value'),
+                'open' => Sales::user($user)->filter($filters)->thisYear()->level($i)->open()->sum('value'),
+                'closed' => Sales::user($user)->filter($filters)->thisYear()->level($i)->closed()->sum('value'),
+                'closeIn' => Sales::user($user)->filter($filters)->thisYear()->level($i)->closeIn()->sum('value'),
+                'cancel' => Sales::user($user)->filter($filters)->thisYear()->level($i)->cancel()->sum('value'),
+                'countOpen' => Sales::user($user)->filter($filters)->thisYear()->level($i)->open()->count(),
+                'countClosed' => Sales::user($user)->filter($filters)->thisYear()->level($i)->closed()->count(),
+                'countCloseIn' => Sales::user($user)->filter($filters)->thisYear()->level($i)->closeIn()->count(),
+                'countCancel' => Sales::user($user)->filter($filters)->thisYear()->level($i)->cancel()->count(),
             ];
         }
 
@@ -56,8 +73,8 @@ class SalesController extends Controller
                 'totalTarget' => $target,
                 'totalOpen' => $open,
                 'totalClosed' => $closed,
+                'totalCloseIn' => $closein,
                 'totalCancel' => $cancel,
-                'totalOpenClosed' => $open_closed,
                 'level4' => $level4,
                 'level3' => $level3,
                 'level2' => $level2,
@@ -74,7 +91,10 @@ class SalesController extends Controller
             'type' => $request->type,
             'customer' => $request->customer,
             'product' => $request->product,
-            'registration' => $request->registration,
+            'ac_type' => $request->ac_type_id,
+            'component' => $request->component_id,
+            'engine' => $request->engine_id,
+            'apu' => $request->apu_id,
             'acReg' => $request->acReg,
             'other' => $request->other,
             'level' => $request->level,
@@ -887,6 +907,17 @@ class SalesController extends Controller
             'success' => true,
             'message' => 'Sales closed successfully',
             'data' => $sales,
+        ], 200);
+    }
+
+    public function acReg()
+    {
+        $ac_regs = Sales::select('ac_reg')->distinct()->pluck('ac_reg');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data successfully',
+            'data' => $ac_regs,
         ], 200);
     }
 }

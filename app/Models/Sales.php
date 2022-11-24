@@ -169,8 +169,11 @@ class Sales extends Model
         $type = $filters['type'];
         $customer = $filters['customer'];
         $product = $filters['product'];
-        $registration = $filters['registration'];
-        $acReg = $filters['acReg'];
+        $ac_type = $filters['ac_type'],
+        $component = $filters['component'],
+        $engine = $filters['engine'],
+        $apu = $filters['apu'],
+        $ac_reg = $filters['ac_reg'];
         $other = $filters['other'];
         $level = $filters['level'];
         $progress = $filters['progress'];
@@ -180,23 +183,37 @@ class Sales extends Model
             $query->whereDate('start_date', '>=', Carbon::parse($start_date)->format('Y-m-d'))
                 ->whereDate('end_date', '<=', Carbon::parse($end_date)->format('Y-m-d'));
         });
-        
+
         $query->when($type, function ($query) use ($type) {
             $query->whereRelation('prospect', 'transaction_type_id', $type);
         });
 
         $query->when($customer, function ($query) use ($customer) {
-            $query->whereRelation('customer', 'id', $customer);
+            $query->where('customer_id', $customer);
         });
 
         $query->when($product, function ($query) use ($product) {
-            $query->whereRelation('product', 'id', $product);
+            $query->where('product_id', $product);
         });
 
-        // TODO: registration??
+        $query->when($ac_type, function ($query) use ($ac_type) {
+            $query->where('ac_type_id', $ac_type);
+        });
 
-        $query->when($acReg, function ($query) use ($acReg) {
-            $query->where('acReg', $acReg);
+        $query->when($component, function ($query) use ($component) {
+            $query->where('component_id', $component);
+        });
+
+        $query->when($engine, function ($query) use ($engine) {
+            $query->where('engine_id', $engine);
+        });
+
+        $query->when($apu, function ($query) use ($apu) {
+            $query->where('apu_id', $apu);
+        });
+
+        $query->when($ac_reg, function ($query) use ($ac_reg) {
+            $query->where('ac_reg', $ac_reg);
         });
 
         $query->when($other, function ($query) use ($other) {
