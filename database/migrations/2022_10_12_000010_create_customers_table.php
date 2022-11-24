@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id()->unsigned();
             $table->string('name')->nullable();
             $table->string('code')->nullable();
+            $table->string('group_type')->nullable();
 
             $table->unsignedBigInteger('country_id')->nullable();
             $table->index('country_id');
