@@ -95,7 +95,7 @@ class SalesController extends Controller
             'component' => $request->component_id,
             'engine' => $request->engine_id,
             'apu' => $request->apu_id,
-            'acReg' => $request->acReg,
+            'ac_reg' => $request->acReg,
             'other' => $request->other,
             'level' => $request->level,
             'progress' => $request->progress,

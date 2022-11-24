@@ -169,10 +169,10 @@ class Sales extends Model
         $type = $filters['type'];
         $customer = $filters['customer'];
         $product = $filters['product'];
-        $ac_type = $filters['ac_type'],
-        $component = $filters['component'],
-        $engine = $filters['engine'],
-        $apu = $filters['apu'],
+        $ac_type = $filters['ac_type'];
+        $component = $filters['component'];
+        $engine = $filters['engine'];
+        $apu = $filters['apu'];
         $ac_reg = $filters['ac_reg'];
         $other = $filters['other'];
         $level = $filters['level'];
