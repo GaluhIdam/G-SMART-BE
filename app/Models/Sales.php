@@ -325,18 +325,25 @@ class Sales extends Model
         $regs = [$ac_type, $engine, $apu, $component];
         $regs = implode('/', array_filter($regs));
 
-        if (in_array($this->prospect->transaction_type_id, [1,2])) {
+        if ($this->transaction_type_id) {
             $registration = !empty($regs) ? $regs : '-';
         } else {
-            $registration = $ac_type ?? '-';
+            if (in_array($this->prospect->transaction_type_id, [1,2])) {
+                $registration = !empty($regs) ? $regs : '-';
+            } else {
+                $registration = $ac_type ?? '-';
+            }
         }
-
         return $registration;
     }
 
     public function getTypeAttribute()
     {
-        return $this->prospect->transactionType->name;
+        if ($this->is_rkap) {
+            return $this->prospect->transactionType->name;
+        } else {
+            return $this->transactionType->name;
+        }
     }
 
     public function getLevelAttribute()
@@ -585,5 +592,10 @@ class Sales extends Model
     public function line()
     {
         return $this->belongsTo(Line::class, 'line_id');
+    }
+
+    public function transactionType()
+    {
+        return $this->belongsTo(TransactionType::class, 'transaction_type_id');
     }
 }
