@@ -38,9 +38,10 @@ class CustomerController extends Controller
         
         foreach ($raw as $item) {
             $customer->push((object)[
-                'id' => $item->id,
+                'id'  => $item->id,
                 'name' => $item->name,
                 'code' => $item->code,
+                'group' => $item->group,
                 'status' => $item->status,
                 'country' => $item->country->name,
                 'region' => $item->country->region->name,
@@ -67,8 +68,12 @@ class CustomerController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:255',
+            'group_type' => 'required|integer|max:255',
+            'region_id' => 'required',
             'country_id' => 'required|integer|exists:countries,id',
             'is_active' => 'required|boolean',
+            'area_ams.*.ams.id' => 'required|integer|exists:ams,id',
+            'area_ams.*.area.id' => 'required|integer|exists:areas,id'
         ]);
 
         DB::beginTransaction();
@@ -76,6 +81,7 @@ class CustomerController extends Controller
         $customer = new Customer;
         $customer->code = $request->code;
         $customer->name = $request->name;
+        $customer->group_type = $request->group_type;
         $customer->country_id = $request->country_id;
         $customer->is_active = $request->is_active;
         $customer->save();
@@ -120,6 +126,7 @@ class CustomerController extends Controller
             $request->validate([
                 'name' => 'required|string|max:255',
                 'code' => 'required|string|max:255',
+                'group_type' => 'required|integer|max:255',
                 'country_id' => 'required|integer|exists:countries,id',
                 'is_active' => 'required|boolean',
             ]);
@@ -128,6 +135,7 @@ class CustomerController extends Controller
             
             $customer->code = $request->code;
             $customer->name = $request->name;
+            $customer->group_type = $request->group_type;
             $customer->country_id = $request->country_id;
             $customer->is_active = $request->is_active;
             $customer->push();

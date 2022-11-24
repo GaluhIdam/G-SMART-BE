@@ -13,19 +13,29 @@ class Customer extends Model
     protected $fillable = [
         'name',
         'code',
+        'group_type',
         'country_id',
     ];
 
     protected $appends = [
         'status',
+        'group'
     ];
 
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
+    
+    const GROUPTYPE_GA = 0;
+    const GROUPTYPE_NGA = 1;
 
     const STATUS_ARRAY = [
         self::STATUS_ACTIVE => 'Active',
         self::STATUS_INACTIVE => 'Inactive',
+    ];
+
+    const GROUP_ARRAY = [
+        self::GROUPTYPE_GA => 'GA',
+        self::GROUPTYPE_NGA => 'NGA',
     ];
 
     public function scopeOnlyProspect($query)
@@ -123,6 +133,11 @@ class Customer extends Model
         return self::STATUS_ARRAY[$this->is_active];
     }
 
+    public function getGroupAttribute()
+    {
+        return self::GROUP_ARRAY[$this->group_type];
+    }
+
     public function scopeSearch($query, $search)
     {
         $query->when($search, function ($query) use ($search) {
@@ -130,6 +145,10 @@ class Customer extends Model
                 $query->where('is_active', 1);
             } else if (strtolower($search) == 'inactive') {
                 $query->where('is_active', 0);
+            }else if (($search) == 'GA') {
+                $query->where('group_type', 0);
+            }else if (($search) == 'NGA') {
+                $query->where('group_type', 1);
             } else {
                 $query->where('code', 'LIKE', "%{$search}%")
                     ->orWhere('name', 'LIKE', "%{$search}%")
