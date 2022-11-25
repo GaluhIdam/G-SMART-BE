@@ -147,6 +147,7 @@ class Sales extends Model
                     ->orWhereRelation('maintenance', 'name', 'LIKE', "%$search%")
                     ->orWhereRelation('hangar', 'name', 'LIKE', "%$search%")
                     ->orWhereRelation('salesLevel', 'level_id', 'LIKE', "%$search%")
+                    ->orWhereRelation('transactionType', 'name', 'LIKE', "%$search%")
                     ->orWhere('ac_reg', 'LIKE', "%$search%")
                     ->orWhere('value', 'LIKE', "%$search%")
                     ->orWhere('value', 'LIKE', "%$search%")
@@ -257,8 +258,8 @@ class Sales extends Model
             } else if ($order == 'other') {
                 $query->orderBy('is_rkap', $by);
             } else if ($order == 'type') {
-                $query->withAggregate('prospect', 'transaction_type_id')
-                    ->orderBy('prospect_transaction_type_id', $by);
+                $query->withAggregate('transactionType', 'name')
+                    ->orderBy('transaction_type_name', $by);
             } else if ($order == 'level') {
                 $query->withAggregate('salesLevel', 'level_id')
                     ->orderBy('sales_level_level_id', $by);
@@ -325,25 +326,17 @@ class Sales extends Model
         $regs = [$ac_type, $engine, $apu, $component];
         $regs = implode('/', array_filter($regs));
 
-        if ($this->transaction_type_id) {
+        if (in_array($this->transaction_type_id, [1,2])) {
             $registration = !empty($regs) ? $regs : '-';
         } else {
-            if (in_array($this->prospect->transaction_type_id, [1,2])) {
-                $registration = !empty($regs) ? $regs : '-';
-            } else {
-                $registration = $ac_type ?? '-';
-            }
+            $registration = $ac_type ?? '-';
         }
         return $registration;
     }
 
     public function getTypeAttribute()
     {
-        if ($this->is_rkap) {
-            return $this->prospect->transactionType->name;
-        } else {
-            return $this->transactionType->name;
-        }
+        return $this->transactionType->name;
     }
 
     public function getLevelAttribute()
