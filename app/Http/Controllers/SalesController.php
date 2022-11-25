@@ -140,31 +140,37 @@ class SalesController extends Controller
             'value' => 'required|numeric',
             'tat' => 'required|integer',
             'start_date' => 'required|date',
+            'is_rkap' => 'reequired|boolean',
         ]);
 
         try {
             DB::beginTransaction();
 
-            $prospect = Prospect::find($request->prospect_id);
+            $sales = new Sales;
 
             $start_date = Carbon::parse($request->start_date);
-            $tat = $request->tat;
-            $end_date = Carbon::parse($request->start_date)->addDays($tat);
+            $end_date = Carbon::parse($request->start_date)->addDays($request->tat);
 
-            $sales = new Sales;
-            $sales->customer_id = $request->customer_id ?? $prospect->amsCustomer->customer->id;
-            $sales->prospect_id = $request->prospect_id ?? null;
-            $sales->transaction_type_id = $request->transaction_type_id ?? null;
+            if ($request->is_rkap) {
+                $sales->customer_id = $request->customer_id;
+                $sales->transaction_type_id = $request->transaction_type_id;
+                $sales->product_id = $request->product_id;
+                $sales->ac_type_id = $request->ac_type_id;
+            } else {
+                $prospect = Prospect::find($request->prospect_id);
+                $sales->customer_id = $prospect->amsCustomer->customer->id;
+                $sales->transaction_type_id = $propsect->transaction_type_id;
+                $sales->product_id = $prospect->tmb->product_id;
+                $sales->ac_type_id = $prospect->tmb->ac_type_id ?? null;
+                $sales->component_id = $prospect->tmb->component_id ?? null;
+                $sales->engine_id = $prospect->tmb->engine_id ?? null;
+                $sales->apu_id = $prospect->tmb->apu_id ?? null;
+            }
             $sales->ac_reg = $request->ac_reg ?? null;
             $sales->value = $request->value;
             $sales->maintenance_id = $request->maintenance_id;
-            $sales->product_id = $request->product_id ?? $prospect->tmb->product_id;
-            $sales->ac_type_id = $request->ac_type_id ?? ($prospect->tmb->ac_type_id ?? null);
-            $sales->component_id = $prospect->tmb->component_id ?? null;
-            $sales->engine_id = $prospect->tmb->engine_id ?? null;
-            $sales->apu_id = $prospect->tmb->apu_id ?? null;
             $sales->is_rkap = $request->is_rkap;
-            $sales->tat = $tat;
+            $sales->tat = $request->tat;
             $sales->start_date = $start_date->format('Y-m-d');
             $sales->end_date = $end_date->format('Y-m-d');
             $sales->save();
