@@ -58,6 +58,7 @@ class SalesSeeder extends Seeder
             Sales::create([
                 'customer_id' => $prospect->amsCustomer->customer_id,
                 'prospect_id' => $prospect->id,
+                'transaction_type_id' => $prospect->transaction_type_id,
                 'ac_reg' => 'PK-'.Str::upper(Str::random(3)), // nullable
                 'value' => $value,
                 'maintenance_id' => $maintenance, // nullable
