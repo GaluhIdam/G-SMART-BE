@@ -65,6 +65,8 @@ class Sales extends Model
         'level1',
         'upgrade_level',
         'month_sales',
+        'market_share',
+        'year',
     ];
 
     public function scopeLevel($query, $level)
@@ -299,6 +301,20 @@ class Sales extends Model
         }
 
         return $requirement;
+    }
+
+    public function getYearAttribute()
+    {
+        return Carbon::parse($this->start_date)->format('Y');
+    }
+
+    public function getMarketShareAttribute()
+    {
+        if ($this->is_rkap) {
+            return $this->prospect->market_share;
+        } else {
+            return null;
+        }
     }
 
     public function getMonthSalesAttribute()
