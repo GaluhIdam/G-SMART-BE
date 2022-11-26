@@ -43,8 +43,8 @@ class CustomerController extends Controller
                 'code' => $item->code,
                 'group' => $item->group,
                 'status' => $item->status,
-                'country' => $item->country->name,
-                'region' => $item->country->region->name,
+                'country' => $item->country->name ?? null,
+                'region' => $item->country->region->name ?? null,
             ]);
         }
 

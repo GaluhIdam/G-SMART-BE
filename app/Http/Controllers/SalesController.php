@@ -297,27 +297,6 @@ class SalesController extends Controller
         $market_share = $sales->market_share;
         $deviation = $market_share - $total_sales;
 
-        if ($sales->salesReschedule) {
-            $sales_reschedule = [
-                'id' => $sales->salesReschedule->id,
-                'hangar' => $sales->hangar->name,
-                'registration' => $sales->registration,
-                'cboDate' => Carbon::parse($sales->salesReschedule->start_date)->format('d-m-Y'),
-                'endDate' => Carbon::parse($sales->salesReschedule->end_date)->format('d-m-Y'),
-                'tat' => $sales->salesReschedule->tat,
-                'currentDate' => Carbon::now()->format('d-m-Y'),
-                'salesMonth' => Carbon::parse($sales->start_date)->format('F'),
-            ];
-        }
-
-        if ($sales->salesReject) {
-            $sales_reject = [
-                'id' => $sales->salesReject->id,
-                'category' => $sales->salesReject->category,
-                'reason' => $sales->salesReject->reason,
-            ];
-        }
-
         $data = collect([
             'user' => auth()->user(),
             'salesDetail' => [
@@ -336,15 +315,13 @@ class SalesController extends Controller
                 'startDate' => Carbon::parse($sales->start_date)->format('d-m-Y'),
                 'endDate' => Carbon::parse($sales->end_date)->format('d-m-Y'),
                 'product' => $sales->product,
-                'location' => $sales->hangar ?? '-',
-                'maintenance' => $sales->maintenance ?? '-',
+                'location' => $sales->hangar_name,
+                'maintenance' => $sales->maintenance_name,
                 'upgrade' => $sales->upgrade_level,
                 'marketShare' => $market_share,
                 'totalSales' => $total_sales,
                 'deviasi' => $deviation,
-            ], 
-            'salesReschedule' => $sales_reschedule ?? null,
-            'salesReject' => $sales_reject ?? null,
+            ],
             'level4' => $sales->level4,
             'level3' => $sales->level3,
             'level2' => $sales->level2,
@@ -380,8 +357,8 @@ class SalesController extends Controller
             $sales_by_prospect->push((object)[
                 'id' => $sales->id,
                 'registration' => $sales->ac_reg,
-                'maintenance' => $sales->maintenance ?? null,
-                'location' => $sales->hangar ?? null,
+                'maintenance' => $sales->maintenance_name,
+                'location' => $sales->hangar_name,
                 'sales_plan' => $sales->value,
                 'tat' => $sales->tat,
                 'start_date' => Carbon::parse($sales->start_date)->format('Y-m-d'),
@@ -488,7 +465,7 @@ class SalesController extends Controller
 
         $data = [
             'type' => 1,
-            'subject' => 'GSMART - New Request to Upgrade Sales Level',
+            'subject' => 'New Request to Upgrade Sales Level',
             'body' => [
                 'message' => 'You have new request to upgrade salesplan level.',
                 'user_name' => $tpr_name,
@@ -528,7 +505,7 @@ class SalesController extends Controller
         }
     }
 
-    public function confirmUpgrade($id)
+    public function approveUpgrade($id)
     {
         $sales = Sales::findOrFail($id);
 
@@ -556,7 +533,7 @@ class SalesController extends Controller
         ], 200);
     }
 
-    public function cogsRequest(Request $request)
+    public function requestCOGS(Request $request)
     {
         $request->validate([
             'sales_id' => 'required|integer|exists:sales,id',
@@ -587,7 +564,7 @@ class SalesController extends Controller
 
         $data = [
             'type' => 1,
-            'subject' => 'GSMART - New Request to Upload COGS',
+            'subject' => 'New Request to Upload COGS',
             'body' => [
                 'message' => 'You have new request to upload COGS.',
                 'user_name' => $cbo_name,
@@ -627,25 +604,27 @@ class SalesController extends Controller
         }
     }
 
-    public function slotRequest(Request $request)
+    public function requestHangar(Request $request)
     {
         $request->validate([
             'sales_id' => 'required|integer|exists:sales,id',
+            'hangar_id' => 'required|integer|exists:hangars,id',
             'line_id' => 'required|integer|exists:lines,id',
             'user_id' => 'required|integer|exists:users,id',
             'target_url' => 'required|string',
         ]);
 
         $sales = Sales::find($request->sales_id);
+        $sales->hangar_id = $request->hangar_id;
         $sales->line_id = $request->line_id;
         $sales->push();
 
         $user = User::find($request->user_id);
 
-        if ($sales->level != 2) {
+        if ($sales->level != 4) {
             return response()->json([
                 'success' => false,
-                'message' => 'Oops, this action only available at level 2',
+                'message' => 'Oops, this action only available at level 4',
             ], 422);
         }
 
@@ -662,14 +641,14 @@ class SalesController extends Controller
 
         $data = [
             'type' => 2,
-            'subject' => 'GSMART - New Hangar Slot Request',
+            'subject' => 'New Slot Hangar Request',
             'body' => [
-                'message' => 'You have new request for hangar slot.',
+                'message' => 'You have new request for slot Hangar.',
                 'user_name' => $cbo_name,
                 'ams_name' => $sales->ams->user->name,
-                'hangar' => $sales->hangar->name,
-                'line' => $sales->line->name,
-                'ac_reg' => $sales->ac_reg,
+                'hangar' => $sales->hangar_name,
+                'line' => $sales->line_name,
+                'ac_reg' => $sales->ac_reg ?? '-',
                 'tat' => $sales->tat,
                 'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
                 'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
@@ -700,22 +679,58 @@ class SalesController extends Controller
         }
     }
 
-    public function slotConfirm($id)
+    public function approveHangar($id, Request $request)
     {
-        $sales = Sales::findOrFail($id);
+        $request->validate([
+            'is_approved' => 'required|boolean',
+            'target_url' => 'required|string',
+        ]);
 
-        if (!$sales->line) {
+        $sales = Sales::findOrFail($id); 
+
+        if (!$sales->line && !$sales->hangar) {
             return response()->json([
                 'success' => false,
-                'message' => 'Oops, this sales does not have a line hangar yet',
+                'message' => 'Oops, this sales does not have a Line Hangar yet',
             ], 422);
         }
 
-        $sales->setRequirement(8);
+        if ($request->is_approved) {
+            $status = 'approved';
+            $sales->setRequirement(4);
+        } else {
+            $cbo = auth()->user();
+            $ams = $sales->ams->user;
+            $link = env('FRONTEND_URL').$request->target_url;
+
+            $data = [
+                'type' => 0,
+                'subject' => 'Your Hangar Slot Request Rejected',
+                'body' => [
+                    'message' => 'Your Hangar slot request was rejected by CBO.',
+                    'user_name' => $ams->name,
+                    'cbo_name' => $cbo->name,
+                    'hangar' => $sales->hangar_name,
+                    'line' => $sales->line_name,
+                    'ac_reg' => $sales->ac_reg ?? '-',
+                    'tat' => $sales->tat,
+                    'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
+                    'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
+                    'link' => $link,
+                ]
+            ];
+
+            $status = 'rejected';
+            $sales->hangar_id = null;
+            $sales->line_id = null;
+            $sales->push();
+
+            Mail::to($ams->email)->send(new Notification($data));
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Line hangar approved successfully',
+            'message' => "Line Hangar {$status} successfully",
             'data' => $sales,
         ], 200);
     }

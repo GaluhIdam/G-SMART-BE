@@ -45,15 +45,22 @@
 <body>
     <div class="container">
         <div class="header">
-            <h3>New Hanggar Slot Request</h3>
+            <h3>{{ $data['subject'] }}</h3>
         </div>
         <div class="body">
             <p>Hi {{ $data['body']['user_name'] }}, <br>{{ $data['body']['message'] }}</p>
             <table style="margin: 20px 0;">
-                <tr>
-                    <td>AMS Name</td>
-                    <td>: {{ $data['body']['ams_name'] }}</td>
-                </tr>
+                @if ($data['type'] == 0) 
+                    <tr>
+                        <td>CBO Name</td>
+                        <td>: {{ $data['body']['cbo_name'] }}</td>
+                    </tr>
+                @else
+                    <tr>
+                        <td>AMS Name</td>
+                        <td>: {{ $data['body']['ams_name'] }}</td>
+                    </tr>
+                @endif
                 @if ($data['type'] == 2)
                     <tr>
                         <td>Hangar</td>

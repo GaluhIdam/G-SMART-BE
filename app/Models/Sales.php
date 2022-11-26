@@ -67,6 +67,9 @@ class Sales extends Model
         'month_sales',
         'market_share',
         'year',
+        'line_name',
+        'hangar_name',
+        'maintenance_name',
     ];
 
     public function scopeLevel($query, $level)
@@ -303,6 +306,29 @@ class Sales extends Model
         return $requirement;
     }
 
+    public function getLineNameAttribute()
+    {
+        if ($this->line) {
+            return "Line {$this->line->name}";
+        } else {
+            return '-';
+        }
+    }
+
+    public function getHangarNameAttribute()
+    {
+        if ($this->hangar) {
+            return "Hangar {$this->hangar->name}";
+        } else {
+            return '-';
+        }
+    }
+
+    public function getMaintenanceNameAttribute()
+    {
+        return $this->maintenance->name ?? '-';
+    }
+
     public function getYearAttribute()
     {
         return Carbon::parse($this->start_date)->format('Y');
@@ -383,8 +409,8 @@ class Sales extends Model
                 $data = ($this->hangar && $this->line);
                 if ($data) {
                     $data = [
-                        'hangar' => $this->hangar->name,
-                        'line' => $this->line,
+                        'hangar' => $this->hangar_name,
+                        'line' => $this->line_name,
                         'tat' => $this->tat,
                         'registration' => $this->registration,
                         'startDate' => Carbon::parse($this->start_date)->format('d-m-Y'),
