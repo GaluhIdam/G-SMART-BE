@@ -67,6 +67,9 @@ class Sales extends Model
         'month_sales',
         'market_share',
         'year',
+        'line_name',
+        'hangar_name',
+        'maintenance_name',
     ];
 
     public function scopeLevel($query, $level)
@@ -301,6 +304,29 @@ class Sales extends Model
         }
 
         return $requirement;
+    }
+
+    public function getLineNameAttribute()
+    {
+        if ($this->line) {
+            return "Line {$this->line->name}";
+        } else {
+            return '-';
+        }
+    }
+
+    public function getHangarNameAttribute()
+    {
+        if ($this->hangar) {
+            return "Hangar {$this->hangar->name}";
+        } else {
+            return '-';
+        }
+    }
+
+    public function getMaintenanceNameAttribute()
+    {
+        return $this->maintenance->name ?? '-';
     }
 
     public function getYearAttribute()

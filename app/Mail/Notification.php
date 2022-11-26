@@ -30,7 +30,7 @@ class Notification extends Mailable
      */
     public function build()
     {
-        return $this->subject($this->data['subject'])
+        return $this->subject('GSMART - '.$this->data['subject'])
                     ->view('email.notification');
     }
 }
