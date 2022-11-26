@@ -146,6 +146,7 @@ class SalesController extends Controller
         try {
             DB::beginTransaction();
 
+            $user = auth()->user();
             $sales = new Sales;
 
             $start_date = Carbon::parse($request->start_date);
@@ -156,6 +157,7 @@ class SalesController extends Controller
                 $sales->transaction_type_id = $request->transaction_type_id;
                 $sales->product_id = $request->product_id;
                 $sales->ac_type_id = $request->ac_type_id;
+                $sales->ams_id = $user->hasRole('AMS') ? $user->ams->id : null;
             } else {
                 $prospect = Prospect::find($request->prospect_id);
                 $sales->customer_id = $prospect->amsCustomer->customer->id;
@@ -165,6 +167,7 @@ class SalesController extends Controller
                 $sales->component_id = $prospect->tmb->component_id ?? null;
                 $sales->engine_id = $prospect->tmb->engine_id ?? null;
                 $sales->apu_id = $prospect->tmb->apu_id ?? null;
+                $sales->ams_id = $prospect->amsCustomer->ams_id;
             }
             $sales->ac_reg = $request->ac_reg ?? null;
             $sales->value = $request->value;
@@ -185,7 +188,7 @@ class SalesController extends Controller
                 $requirement = new SalesRequirement;
                 $requirement->sales_id = $sales->id;
                 $requirement->requirement_id = $i;
-                $requirement->status = ($i == 1 || $i == 4) ? 1 : 0;
+                $requirement->status = ($i == 1 || $i == 5) ? 1 : 0;
                 $requirement->save();
             }
 
@@ -720,24 +723,25 @@ class SalesController extends Controller
     public function inputSONumber($id, Request $request)
     {
         $request->validate(['so_number' => 'required|string']);
+
         try {
             DB::beginTransaction();
 
             $sales = Sales::findOrFail($id);
-
-            $requirements = $sales->salesRequirements->where('requirement_id', 9)->first();
-            if($requirements->status != 1) {
+            $wo_po = $sales->salesRequirements->where('requirement_id', 9)->first();
+            if($wo_po->status != 1) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Please check WO/PO File!',
+                    'message' => 'Please complete your WO/PO Number requirement!',
                 ], 422);
             }
+
             $sales->so_number = $request->so_number;
-            $sales_level = $sales->salesLevel;
-
-            $sales_level->status = 3;
-
             $sales->push();
+
+            $sales_level = $sales->salesLevel;
+            $sales_level->status = 3;
+            $sales_level->save();
 
             $sales->setRequirement(10);
 

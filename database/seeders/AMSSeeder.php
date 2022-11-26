@@ -27,5 +27,16 @@ class AMSSeeder extends Seeder
             'user_id' => 7,
             'initial' => 'UJTI',
         ]);
+
+        // $csv_file = fopen(base_path("database/data/ams.csv"), "r");
+
+        // $first_line = true;
+        // while (($data = fgetcsv($csv_file, 2000, ",")) !== FALSE) {
+        //     if (!$first_line) {
+        //         AMS::create(['initial' => $data['0']]);
+        //     }
+        //     $first_line = false;
+        // }
+        // fclose($csv_file);
     }
 }

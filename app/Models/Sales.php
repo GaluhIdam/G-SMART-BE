@@ -310,11 +310,7 @@ class Sales extends Model
 
     public function getMarketShareAttribute()
     {
-        if ($this->is_rkap) {
-            return $this->prospect->market_share;
-        } else {
-            return null;
-        }
+        return $this->prospect->market_share ?? null;
     }
 
     public function getMonthSalesAttribute()
@@ -372,7 +368,7 @@ class Sales extends Model
 
     public function getLevel4Attribute()
     {
-        $requirements = $this->salesRequirements->whereIn('requirement_id', [1, 2, 3]);
+        $requirements = $this->salesRequirements->whereIn('requirement_id', [1, 2, 3, 4]);
         $level4 = new Collection();
         
         foreach ($requirements as $item) {
@@ -380,6 +376,21 @@ class Sales extends Model
                 $data = $this->contact_persons->sortByDesc('updated_at')->take(10)->values();
                 if ($data->isNotEmpty()) {
                     $last_update = Carbon::parse($this->customer->latestCP->updated_at)->format('Y-m-d H:i');
+                } else {
+                    $last_update = null;
+                }
+            } else if ($item->requirement_id == 4) {
+                $data = ($this->hangar && $this->line);
+                if ($data) {
+                    $data = [
+                        'hangar' => $this->hangar->name,
+                        'line' => $this->line,
+                        'tat' => $this->tat,
+                        'registration' => $this->registration,
+                        'startDate' => Carbon::parse($this->start_date)->format('d-m-Y'),
+                        'endDate' => Carbon::parse($this->end_date)->format('d-m-Y'),
+                    ];
+                    $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
                 } else {
                     $last_update = null;
                 }
@@ -406,7 +417,7 @@ class Sales extends Model
 
     public function getLevel3Attribute()
     {
-        $requirements = $this->salesRequirements->whereIn('requirement_id', [4, 5, 6]);
+        $requirements = $this->salesRequirements->whereIn('requirement_id', [5, 6, 7]);
         $level3 = new Collection();
         
         foreach ($requirements as $item) {;
@@ -431,42 +442,23 @@ class Sales extends Model
 
     public function getLevel2Attribute()
     {
-        $requirements = $this->salesRequirements->whereIn('requirement_id', [7, 8]);
+        $requirement = $this->salesRequirements->where('requirement_id', 8)->first();
         $level2 = new Collection();
         
-        foreach ($requirements as $item) {;
-            if ($item->requirement_id == 8) {
-                $data = $this->line;
-                if ($data) {
-                    $data = [
-                        'hangar' => $this->hangar->name,
-                        'line' => $this->line,
-                        'tat' => $this->tat,
-                        'registration' => $this->registration,
-                        'startDate' => Carbon::parse($this->start_date)->format('d-m-Y'),
-                        'endDate' => Carbon::parse($this->end_date)->format('d-m-Y'),
-                    ];
-                    $last_update = Carbon::parse($this->updated_at)->format('Y-m-d H:i');
-                } else {
-                    $last_update = null;
-                }
-            } else {
-                $data = $item->files;
-                if ($data->isNotEmpty()) {
-                    $last_update = Carbon::parse($item->latestFile->updated_at)->format('Y-m-d H:i');
-                } else {
-                    $last_update = null;
-                }
-            }
-
-            $level2->push((object)[
-                'sequence' => $item->requirement_id,
-                'name' => $item->requirement->requirement,
-                'status' => $item->status,
-                'lastUpdate' => $last_update,
-                'data' => $data,
-            ]);
+        $data = $requirement->files;
+        if ($data->isNotEmpty()) {
+            $last_update = Carbon::parse($requirement->latestFile->updated_at)->format('Y-m-d H:i');
+        } else {
+            $last_update = null;
         }
+
+        $level2->push((object)[
+            'sequence' => $requirement->requirement_id,
+            'name' => $requirement->requirement->requirement,
+            'status' => $requirement->status,
+            'lastUpdate' => $last_update,
+            'data' => $data,
+        ]);
 
         return collect($level2)->sortBy('sequence')->values();
     }
