@@ -28,6 +28,10 @@ class RequirementSeeder extends Seeder
             'requirement' => 'Upload Attachment Workscope',
         ]);
         Requirement::create([
+            'level_id' => 4,
+            'requirement' => 'Hangar & Line Slot Request',
+        ]);
+        Requirement::create([
             'level_id' => 3,
             'requirement' => 'Attachment of Financial Assesment Form (optional)',
         ]);
@@ -42,10 +46,6 @@ class RequirementSeeder extends Seeder
         Requirement::create([
             'level_id' => 2,
             'requirement' => 'Attachment of Customer Approval (SOW Signed / Proposal Approved)',
-        ]);
-        Requirement::create([
-            'level_id' => 2,
-            'requirement' => 'Hangar slot request',
         ]);
         Requirement::create([
             'level_id' => 1,

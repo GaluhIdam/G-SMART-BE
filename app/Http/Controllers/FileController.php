@@ -44,6 +44,12 @@ class FileController extends Controller
             
             $requirement = $sales->setRequirement($requirement_id);
 
+            if ($requirement_id == 9 ) {
+                $sales_level = $sales->salesLevel;
+                $sales_level->status = 2;
+                $sales_level->save();
+            }
+
             foreach ($files as $file) {
                 $file_name = Carbon::now()->format('dmyHis').'_'.$file->getClientOriginalName();
                 $file_path = Storage::disk('public')->putFileAs('attachment', $file, $file_name);
@@ -109,7 +115,7 @@ class FileController extends Controller
             ], 404);
         }
 
-        $requirements = $sales->salesRequirements->whereNotIn('requirement_id', [1, 8, 10]);
+        $requirements = $sales->salesRequirements->whereNotIn('requirement_id', [1, 4, 10]);
         $requirement_ids = [];
         
         foreach ($requirements as $item) {

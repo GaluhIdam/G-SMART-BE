@@ -23,7 +23,7 @@ class SalesRequirementSeeder extends Seeder
                 if ($sales->type == 'PBTH') {
                     $status = ($requirement->id != 9) ? 1 : 0;
                 } else {
-                    $status = in_array($requirement->id, [1,4]) ? 1 : 0;
+                    $status = in_array($requirement->id, [1,5]) ? 1 : 0;
                 }
 
                 SalesRequirement::create([

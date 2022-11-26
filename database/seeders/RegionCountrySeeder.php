@@ -23,6 +23,7 @@ class RegionCountrySeeder extends Seeder
             Region::create(['name' => 'North America']),
             Region::create(['name' => 'Oceania']),
             Region::create(['name' => 'South America']),
+            Region::create(['name' => 'Domestic']),
         ];
 
         $csv_file = fopen(base_path("database/data/countries.csv"), "r");
