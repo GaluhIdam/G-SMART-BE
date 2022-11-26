@@ -297,27 +297,6 @@ class SalesController extends Controller
         $market_share = $sales->market_share;
         $deviation = $market_share - $total_sales;
 
-        if ($sales->salesReschedule) {
-            $sales_reschedule = [
-                'id' => $sales->salesReschedule->id,
-                'hangar' => $sales->hangar->name,
-                'registration' => $sales->registration,
-                'cboDate' => Carbon::parse($sales->salesReschedule->start_date)->format('d-m-Y'),
-                'endDate' => Carbon::parse($sales->salesReschedule->end_date)->format('d-m-Y'),
-                'tat' => $sales->salesReschedule->tat,
-                'currentDate' => Carbon::now()->format('d-m-Y'),
-                'salesMonth' => Carbon::parse($sales->start_date)->format('F'),
-            ];
-        }
-
-        if ($sales->salesReject) {
-            $sales_reject = [
-                'id' => $sales->salesReject->id,
-                'category' => $sales->salesReject->category,
-                'reason' => $sales->salesReject->reason,
-            ];
-        }
-
         $data = collect([
             'user' => auth()->user(),
             'salesDetail' => [
@@ -342,9 +321,7 @@ class SalesController extends Controller
                 'marketShare' => $market_share,
                 'totalSales' => $total_sales,
                 'deviasi' => $deviation,
-            ], 
-            'salesReschedule' => $sales_reschedule ?? null,
-            'salesReject' => $sales_reject ?? null,
+            ],
             'level4' => $sales->level4,
             'level3' => $sales->level3,
             'level2' => $sales->level2,
