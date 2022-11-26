@@ -409,8 +409,8 @@ class Sales extends Model
                 $data = ($this->hangar && $this->line);
                 if ($data) {
                     $data = [
-                        'hangar' => $this->hangar->name,
-                        'line' => $this->line,
+                        'hangar' => $this->hangar_name,
+                        'line' => $this->line_name,
                         'tat' => $this->tat,
                         'registration' => $this->registration,
                         'startDate' => Carbon::parse($this->start_date)->format('d-m-Y'),
