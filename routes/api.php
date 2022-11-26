@@ -204,8 +204,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('sales-request-upgrade', [SalesController::Class, 'requestUpgrade'])->middleware(['permission:sales_request_upgrade']);
     Route::put('sales-upgrade-level/{id}', [SalesController::class, 'approveUpgrade'])->middleware(['permission:sales_confirm_upgrade']);
     Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales']);
-    Route::post('sales-request-cogs', [SalesController::class, 'requestCOGS'])->middleware(['permission:sales_request_cogs']);
-    Route::put('sales-reject/{id}', [SalesController::class, 'rejectSales'])->middleware(['permission:reject_sales']);
+    Route::post('sales-request-cogs', [SalesController::class, 'requestCOGS'])->middleware(['permission:request_cogs']);
     Route::put('sales-close/{id}', [SalesController::class, 'closeSales'])->middleware(['permission:close_sales']);
     Route::get('sales-show-tmb/{id}', [SalesController::class, 'showTmbSales'])->middleware(['permission:pickup_prospects']);
     Route::delete('sales-delete-tmb/{id}', [SalesController::class, 'deleteTmbSales'])->middleware(['permission:delete_sales']);
@@ -218,6 +217,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Sales - Reschedule request
     Route::post('sales-request-reschedule', [SalesController::class, 'requestReschedule'])->middleware(['permission:request_reschedule']);
     Route::put('sales-approve-reschedule/{id}', [SalesController::class, 'approveReschedule'])->middleware(['permission:approve_reschedule']);
+
+    // Sales - Cancel request
+    Route::post('sales-request-cancel', [SalesController::class, 'requestCancel'])->middleware(['permission:request_cancel']);
+    Route::put('sales-approve-cancel/{id}', [SalesController::class, 'approveCancel'])->middleware(['permission:approve_cancel']);
 
     // Line
     Route::get('line', LineController::class)->middleware('permission:read_lines');
