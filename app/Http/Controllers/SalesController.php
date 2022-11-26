@@ -918,6 +918,7 @@ class SalesController extends Controller
 
                     if ($prospect) {
                         $new_prospect = $prospect->replicate();
+                        $new_prospect->year = $reschedule_year;
                         $new_prospect->save();
 
                         if ($prospect->tmb) {
