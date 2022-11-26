@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\PbthSalesRequest;
+use Illuminate\Support\Str;
 
 class SalesController extends Controller
 {
@@ -293,6 +294,28 @@ class SalesController extends Controller
             ], 404);
         }
 
+        if ($sales->salesReschedule) {
+            $sales_reschedule = [
+                'id' => $sales->salesReschedule->id,
+                'hangar' => $sales->hangar ?? null,
+                'line' => $sales->line ?? null,
+                'registration' => $sales->ac_reg ?? '-',
+                'startDate' => Carbon::parse($sales->salesReschedule->start_date)->format('d-m-Y'),
+                'endDate' => Carbon::parse($sales->salesReschedule->end_date)->format('d-m-Y'),
+                'tat' => $sales->salesReschedule->tat,
+                'currentDate' => $sales->start_date,
+                'salesMonth' => Carbon::parse($sales->start_date)->format('F'),
+            ];
+        }
+
+        if ($sales->salesReject) {
+            $sales_reject = [
+                'id' => $sales->salesReject->id,
+                'category' => $sales->salesReject->category,
+                'reason' => $sales->salesReject->reason,
+            ];
+        }
+
         $total_sales = $sales->value;
         $market_share = $sales->market_share;
         $deviation = $market_share - $total_sales;
@@ -322,6 +345,8 @@ class SalesController extends Controller
                 'totalSales' => $total_sales,
                 'deviasi' => $deviation,
             ],
+            'salesReschedule' => $sales_reschedule ?? null,
+            'salesReject' => $sales_reject ?? null,
             'level4' => $sales->level4,
             'level3' => $sales->level3,
             'level2' => $sales->level2,
@@ -434,6 +459,53 @@ class SalesController extends Controller
         }
     }
 
+    public function switchAMS($id, Request $request)
+    {
+        $request->validate(['ams_id' => 'required|integer|exists:ams,id']);
+
+        $sales = Sales::findOrFail($id);
+        $sales->ams_id = $request->ams_id;
+        $sales->push();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Salesplan AMS changed successfully',
+            'data' => $sales,
+        ], 200);
+    }
+
+    public function update($id, Request $request)
+    {
+        $request->validate([
+            'maintenance_id' => 'required|integer|exists:maintenances,id',
+            'hangar_id' => 'required|integer|exists:hangars,id',
+            'ac_reg' => 'required|string',
+            'value' => 'required|numeric',
+            'tat' => 'required|integer',
+            'start_date' => 'required|date',
+        ]);
+
+        $start_date = Carbon::parse($request->start_date);
+        $tat = $request->tat;
+        $end_date = Carbon::parse($request->start_date)->addDays($tat);
+        
+        $sales = Sales::findOrFail($id);
+        $sales->maintenance_id = $request->maintenance_id;
+        $sales->hangar_id = $request->hangar_id;
+        $sales->ac_reg = $request->ac_reg;
+        $sales->value = $request->value;
+        $sales->tat = $tat;
+        $sales->start_date = $start_date;
+        $sales->end_date = $end_date;
+        $sales->push();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sales updated successfully',
+            'data' => $sales,
+        ], 200);
+    }
+
     public function requestUpgrade(Request $request)
     {
         $request->validate([
@@ -470,9 +542,9 @@ class SalesController extends Controller
                 'message' => 'You have new request to upgrade salesplan level.',
                 'user_name' => $tpr_name,
                 'link' => $link,
-                'ams_name' => $sales->ams->user->name,
+                'ams_name' => $sales->ams->user->name ?? '-',
                 'customer' => $sales->customer->name,
-                'ac_reg' => $sales->ac_reg,
+                'ac_reg' => $sales->ac_reg ?? '-',
                 'type' => $sales->type,
                 'level' => $sales->level,
                 'progress' => $sales->progress,
@@ -547,7 +619,7 @@ class SalesController extends Controller
         if ($sales->level != 3) {
             return response()->json([
                 'success' => false,
-                'message' => 'Oops, this action only available at level 3',
+                'message' => 'Oops, this action only available in level 3',
             ], 422);
         }
 
@@ -569,9 +641,9 @@ class SalesController extends Controller
                 'message' => 'You have new request to upload COGS.',
                 'user_name' => $cbo_name,
                 'link' => $link,
-                'ams_name' => $sales->ams->user->name,
+                'ams_name' => $sales->ams->user->name ?? '-',
                 'customer' => $sales->customer->name,
-                'ac_reg' => $sales->ac_reg,
+                'ac_reg' => $sales->ac_reg ?? '-',
                 'type' => $sales->type,
                 'level' => $sales->level,
                 'progress' => $sales->progress,
@@ -645,7 +717,7 @@ class SalesController extends Controller
             'body' => [
                 'message' => 'You have new request for slot Hangar.',
                 'user_name' => $cbo_name,
-                'ams_name' => $sales->ams->user->name,
+                'ams_name' => $sales->ams->user->name ?? '-',
                 'hangar' => $sales->hangar_name,
                 'line' => $sales->line_name,
                 'ac_reg' => $sales->ac_reg ?? '-',
@@ -673,7 +745,7 @@ class SalesController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Oops, something\'s wrong with the email request process',
+                'message' => 'Oops, something\'s wrong with the email request process. Please check your connection',
                 'error' => $e->getMessage(),
             ], 422);
         }
@@ -704,7 +776,7 @@ class SalesController extends Controller
             $link = env('FRONTEND_URL').$request->target_url;
 
             $data = [
-                'type' => 0,
+                'type' => 20,
                 'subject' => 'Your Hangar Slot Request Rejected',
                 'body' => [
                     'message' => 'Your Hangar slot request was rejected by CBO.',
@@ -733,6 +805,262 @@ class SalesController extends Controller
             'message' => "Line Hangar {$status} successfully",
             'data' => $sales,
         ], 200);
+    }
+
+    public function requestReschedule(Request $request)
+    {
+        $request->validate([
+            'sales_id' => 'required|integer|exists:sales,id',
+            'start_date' => 'required|date|after:current_date',
+            'current_date' => 'required|date',
+            'tat' => 'required|integer',
+            'hangar_id' => 'required|integer|exists:hangars,id',
+            'line_id' => 'required|integer|exists:lines,id',
+            'user_id' => 'required|integer|exists:users,id',
+            'target_url' => 'required|string',
+        ]);
+
+        $start_date = Carbon::parse($request->start_date);
+        $tat = $request->tat;
+        $end_date = Carbon::parse($request->start_date)->addDays($tat);
+
+        $user = User::find($request->user_id);
+        $sales = Sales::find($request->sales_id);
+
+        $reschedule = $sales->salesReschedule ?? new SalesReschedule;
+        $reschedule->sales_id = $sales->id;
+        $reschedule->hangar_id = $request->hangar_id;
+        $reschedule->line_id = $request->line_id;
+        $reschedule->start_date = $start_date;
+        $reschedule->end_date = $end_date;
+        $reschedule->tat = $tat;
+        $reschedule->current_date = $sales->start_date;
+        $reschedule->save();
+
+        $cbo_mail = $user->email;
+        $cbo_name = $user->name;
+        $link = env('FRONTEND_URL').$request->target_url;
+
+        $data = [
+            'type' => 3,
+            'subject' => 'New Reschedule Sales Request',
+            'body' => [
+                'message' => 'You have new request for Reschedule Sales.',
+                'user_name' => $cbo_name,
+                'ams_name' => $sales->ams->user->name ?? '-',
+                'customer' => $sales->customer->name,
+                'hangar' => $sales->hangar_name,
+                'line' => $sales->line_name,
+                'ac_reg' => $sales->ac_reg ?? '-',
+                'tat' => $sales->tat,
+                'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
+                'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
+                'link' => $link,
+                'new_hangar' => "Hangar {$reschedule->hangar->name}",
+                'new_line' => "Line {$reschedule->line->name}",
+                'new_tat' => $reschedule->tat,
+                'new_s_date' => Carbon::parse($reschedule->start_date)->format('d F Y'),
+                'new_e_date' => Carbon::parse($reschedule->end_date)->format('d F Y'),
+            ]
+        ];
+
+        try {
+            $mail_sent = Mail::to($cbo_mail)->send(new Notification($data));
+
+            if (!$mail_sent) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oops, the email request can not be sent',
+                ], 422);
+            } else {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Reschedule sales requested successfully',
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, something\'s wrong with the email request process. Please check your connection',
+                'error' => $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    public function approveReschedule($id, Request $request)
+    {
+        $request->validate([
+            'is_approved' => 'required|boolean',
+            'target_url' => 'required|string',
+        ]);
+
+        $sales = Sales::findOrFail($id);
+        $reschedule = $sales->salesReschedule;
+
+        if (!$reschedule) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, this sales does not have active reschedule',
+            ], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $status = $request->is_approved ? 'approved' : 'rejected';
+
+            if ($request->is_approved) {
+                $sales_year = Carbon::parse($sales->start_date)->format('Y');
+                $reschedule_year = Carbon::parse($reschedule->start_date)->format('Y');
+                
+                if ($sales_year != $reschedule_year) {
+                    $prospect = $sales->prospect ?? null;
+
+                    if ($prospect) {
+                        $new_prospect = $prospect->replicate();
+                        $new_prospect->save();
+
+                        if ($prospect->tmb) {
+                            $new_tmb = $prospect->tmb->replicate();
+                            $new_tmb->prospect_id = $new_prospect->id;
+                            $new_tmb->save();
+                        }
+                        
+                        if ($prospect->pbth) {
+                            $new_pbth = $prospect->pbth->replicate();
+                            $new_pbth->prospect_id = $new_prospect->id;
+                            $new_pbth->save();
+                        }
+                    }
+
+                    $new_sales = $sales->replicate();
+                    $new_sales->prospect_id = $new_prospect->id ?? null;
+                    $new_sales->hangar_id = $reschedule->hangar_id;
+                    $new_sales->line_id = $reschedule->line_id;
+                    $new_sales->tat = $reschedule->tat;
+                    $new_sales->start_date = $reschedule->start_date;
+                    $new_sales->end_date = $reschedule->end_date;
+                    $new_sales->save();
+
+                    $new_sales_level = $sales->salesLevel->replicate();
+                    $new_sales_level->sales_id = $new_sales->id;
+                    $new_sales_level->save();
+
+                    $sales_requirements = $sales->salesRequirements;
+                    foreach ($sales_requirements as $requirement) {
+                        $new_requirement = $requirement->replicate();
+                        $new_requirement->sales_id = $new_sales->id;
+                        $new_requirement->save();
+                        
+                        foreach ($requirement->files as $file) {
+                            $new_file = $file->replicate();
+                            $new_file->requirement_id = $new_requirement->id;
+                            $new_file->save();
+                        }
+                    }
+
+                    $sales_level = $sales->salesLevel;
+                    $sales_level->status = 4;
+                    $sales_level->push();
+
+                    $cancel = new SalesReject;
+                    $cancel->sales_id = $sales->id;
+                    $cancel->category_id = 4;
+                    $cancel->reason = "Cancelled by System - Sales Plan has been rescheduled to the next year";
+                    $cancel->save();
+
+                    $data = $new_sales;
+                } else {
+                    $sales->hangar_id = $reschedule->hangar_id;
+                    $sales->line_id = $reschedule->line_id;
+                    $sales->tat = $reschedule->tat;
+                    $sales->start_date = $reschedule->start_date;
+                    $sales->end_date = $reschedule->end_date;
+                    $sales->push();
+
+                    $data = $sales;
+                }
+            }
+
+            $reschedule->delete();
+
+            $cbo = auth()->user();
+            $ams = $sales->ams->user;
+            $link = env('FRONTEND_URL').$request->target_url;
+
+            $data = [
+                'type' => 30,
+                'subject' => 'Your Reschedule Sales Request '.Str::title($status),
+                'body' => [
+                    'message' => "Your request for rescheduling sales has been {$status}",
+                    'user_name' => $ams->name,
+                    'customer' => $sales->customer->name,
+                    'hangar' => $sales->hangar_name,
+                    'line' => $sales->line_name,
+                    'ac_reg' => $sales->ac_reg ?? '-',
+                    'tat' => $sales->tat,
+                    'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
+                    'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
+                    'link' => $link,
+                ]
+            ];
+
+            DB::commit();
+
+            Mail::to($ams->email)->send(new Notification($data));
+
+            return response()->json([
+                'success' => true,
+                'message' => "Reschedule sales {$status} successfully",
+                'data' => $sales,
+            ], 200);
+        } catch (QueryException $e) {
+            DB::rollback();
+
+            return response()->json([
+                'success' => true,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function rejectSales($id, Request $request)
+    {
+        $request->validate([
+            'category_id' => 'required|integer|exists:cancel_categories,id',
+            'reason' => 'required|string|min:50',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $sales = Sales::findOrFail($id);
+
+            $reject = new SalesReject;
+            $reject->sales_id = $sales->id;
+            $reject->category_id = $request->category_id;
+            $reject->reason = $request->reason;
+            $reject->save();
+
+            $sales_level = $sales->salesLevel;
+            $sales_level->status = 4;
+            $sales_level->push();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sales rejected successfully',
+                'data' => $sales,
+            ], 200);
+        } catch (QueryException $e) {
+            DB::rollback();
+
+            return response()->json([
+                'success' => true,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function inputSONumber($id, Request $request)
@@ -773,124 +1101,6 @@ class SalesController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function switchAMS($id, Request $request)
-    {
-        $request->validate(['ams_id' => 'required|integer|exists:ams,id']);
-
-        $sales = Sales::findOrFail($id);
-        $sales->ams_id = $request->ams_id;
-        $sales->push();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Salesplan AMS changed successfully',
-            'data' => $sales,
-        ], 200);
-    }
-
-    public function update($id, Request $request)
-    {
-        $request->validate([
-            'maintenance_id' => 'required|integer|exists:maintenances,id',
-            'hangar_id' => 'required|integer|exists:hangars,id',
-            'ac_reg' => 'required|string',
-            'value' => 'required|numeric',
-            'tat' => 'required|integer',
-            'start_date' => 'required|date',
-        ]);
-
-        $start_date = Carbon::parse($request->start_date);
-        $tat = $request->tat;
-        $end_date = Carbon::parse($request->start_date)->addDays($tat);
-        
-        $sales = Sales::findOrFail($id);
-        $sales->maintenance_id = $request->maintenance_id;
-        $sales->hangar_id = $request->hangar_id;
-        $sales->ac_reg = $request->ac_reg;
-        $sales->value = $request->value;
-        $sales->tat = $tat;
-        $sales->start_date = $start_date;
-        $sales->end_date = $end_date;
-        $sales->push();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Sales updated successfully',
-            'data' => $sales,
-        ], 200);
-    }
-
-    public function rescheduleSales($id, Request $request)
-    {
-        $request->validate([
-            'hangar_id' => 'required|integer|exists:hangars,id',
-            'current_date' => 'required|date',
-            'start_date' => 'required|date',
-            'tat' => 'required|integer',
-        ]);
-
-        $sales = Sales::findOrFail($id);
-        $reschedule = $sales->salesReschedule;
-
-        $start_date = Carbon::parse($request->start_date);
-        $tat = $request->tat;
-        $end_date = Carbon::parse($request->start_date)->addDays($tat);
-
-        $reschedule = $reschedule ?? new SalesReschedule;
-        $reschedule->sales_id = $sales->id;
-        $reschedule->start_date = $start_date;
-        $reschedule->end_date = $end_date;
-        $reschedule->tat = $tat;
-        $reschedule->hangar_id = $request->hangar_id;
-        $reschedule->current_date = $request->current_date;
-        $reschedule->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Sales rescheduled successfully',
-            'data' => $reschedule,
-        ], 200);
-    }
-
-    public function rejectSales($id, Request $request)
-    {
-        $request->validate([
-            'category_id' => 'required|integer|exists:cancel_categories,id',
-            'reason' => 'required|string|min:50',
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            $sales = Sales::findOrFail($id);
-
-            $reject = new SalesReject;
-            $reject->sales_id = $sales->id;
-            $reject->category_id = $request->category_id;
-            $reject->reason = $request->reason;
-            $reject->save();
-
-            $sales_level = $sales->salesLevel;
-            $sales_level->status = 4;
-            $sales_level->push();
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Sales rejected successfully',
-                'data' => $sales,
-            ], 200);
-        } catch (QueryException $e) {
-            DB::rollback();
-
-            return response()->json([
-                'success' => true,
-                'message' => $e->getMessage()
             ], 500);
         }
     }

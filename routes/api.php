@@ -205,7 +205,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('sales-upgrade-level/{id}', [SalesController::class, 'approveUpgrade'])->middleware(['permission:sales_confirm_upgrade']);
     Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales']);
     Route::post('sales-request-cogs', [SalesController::class, 'requestCOGS'])->middleware(['permission:sales_request_cogs']);
-    Route::put('sales-reschedule/{id}', [SalesController::class, 'rescheduleSales'])->middleware(['permission:reschedule_sales']);
     Route::put('sales-reject/{id}', [SalesController::class, 'rejectSales'])->middleware(['permission:reject_sales']);
     Route::put('sales-close/{id}', [SalesController::class, 'closeSales'])->middleware(['permission:close_sales']);
     Route::get('sales-show-tmb/{id}', [SalesController::class, 'showTmbSales'])->middleware(['permission:pickup_prospects']);
@@ -215,6 +214,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Sales - Hangar request
     Route::post('sales-request-hangar', [SalesController::class, 'requestHangar'])->middleware(['permission:request_hangar']);
     Route::put('sales-approve-hangar/{id}', [SalesController::class, 'approveHangar'])->middleware(['permission:approve_hangar']);
+
+    // Sales - Reschedule request
+    Route::post('sales-request-reschedule', [SalesController::class, 'requestReschedule'])->middleware(['permission:request_reschedule']);
+    Route::put('sales-approve-reschedule/{id}', [SalesController::class, 'approveReschedule'])->middleware(['permission:approve_reschedule']);
 
     // Line
     Route::get('line', LineController::class)->middleware('permission:read_lines');
