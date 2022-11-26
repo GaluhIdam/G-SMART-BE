@@ -486,12 +486,13 @@ class RolePermissionSeeder extends Seeder
         $sales_request_upgrade = Permission::create(['name' => 'sales_request_upgrade']);
         $sales_confirm_upgrade = Permission::create(['name' => 'sales_confirm_upgrade']);
         $update_sales = Permission::create(['name' => 'update_sales']);
-        $reschedule_sales = Permission::create(['name' => 'reschedule_sales']);
+        $request_reschedule = Permission::create(['name' => 'request_reschedule']);
         $reject_sales = Permission::create(['name' => 'reject_sales']);
         $close_sales = Permission::create(['name' => 'close_sales']);
         $delete_sales = Permission::create(['name' => 'delete_sales']);
         $sales_request_cogs = Permission::create(['name' => 'sales_request_cogs']);
         $approve_hangar = Permission::create(['name' => 'approve_hangar']);
+        $approve_reschedule = Permission::create(['name' => 'approve_reschedule']);
 
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $read_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $show_sales->id]);
@@ -502,12 +503,13 @@ class RolePermissionSeeder extends Seeder
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $sales_request_upgrade->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $sales_confirm_upgrade->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $update_sales->id]);
-        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $reschedule_sales->id]);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $request_reschedule->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $reject_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $close_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $delete_sales->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $sales_request_cogs->id]);
         ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $approve_hangar->id]);
+        ModulePermissions::create(['module_id' => $manage_sales->id, 'permission_id' => $approve_reschedule->id]);
         
         // Line Hangar Permission
         $manage_lines = Module::create([
@@ -700,6 +702,7 @@ class RolePermissionSeeder extends Seeder
             $file_histories,
             $read_contacts,
             $approve_hangar,
+            $approve_reschedule,
         ]);
 
         // AMS
@@ -745,7 +748,6 @@ class RolePermissionSeeder extends Seeder
             $sales_request_upgrade,
             $switch_ams,
             $reject_sales,
-            $reschedule_sales,
             $read_lines,
             $read_hangars,
             $read_files,
@@ -757,6 +759,7 @@ class RolePermissionSeeder extends Seeder
             $create_contacts,
             $delete_contacts,
             $request_hangar,
+            $request_reschedule,
         ]);
 
         $init = Role::create([

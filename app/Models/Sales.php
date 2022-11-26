@@ -406,7 +406,7 @@ class Sales extends Model
                     $last_update = null;
                 }
             } else if ($item->requirement_id == 4) {
-                $data = ($this->hangar && $this->line);
+                $data = $this->hangar;
                 if ($data) {
                     $data = [
                         'hangar' => $this->hangar_name,

@@ -25,4 +25,9 @@ class SalesReschedule extends Model
     {
         return $this->belongsTo(Hangar::class, 'hangar_id');
     }
+
+    public function line()
+    {
+        return $this->belongsTo(Line::class, 'line_id');
+    }
 }
