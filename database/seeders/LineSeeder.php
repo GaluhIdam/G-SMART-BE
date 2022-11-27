@@ -15,26 +15,24 @@ class LineSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 10; $i++) {
+        $hangars = \App\Models\Hangar::all();
+
+        foreach ($hangars as $hangar) {
             Line::create([
-                'hangar_id' => 1,
-                'code' => "H1L{$i}",
-                'name' => "Hangar 1 Line {$i}",
+                'hangar_id' => $hangar->id,
+                'name' => "I",
             ]);
             Line::create([
-                'hangar_id' => 2,
-                'code' => "H2L{$i}",
-                'name' => "Hangar 2 Line {$i}",
+                'hangar_id' => $hangar->id,
+                'name' => "II",
             ]);
             Line::create([
-                'hangar_id' => 3,
-                'code' => "H3L{$i}",
-                'name' => "Hangar 3 Line {$i}",
+                'hangar_id' => $hangar->id,
+                'name' => "III",
             ]);
             Line::create([
-                'hangar_id' => 4,
-                'code' => "H4L{$i}",
-                'name' => "Hangar 4 Line {$i}",
+                'hangar_id' => $hangar->id,
+                'name' => "IV",
             ]);
         }
     }

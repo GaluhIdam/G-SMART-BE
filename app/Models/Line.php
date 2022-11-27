@@ -28,4 +28,9 @@ class Line extends Model
     {
         return $this->hasMany(Sales::class);
     }
+
+    public function salesReschedules()
+    {
+        return $this->hasMany(SalesReschedule::class);
+    }
 }

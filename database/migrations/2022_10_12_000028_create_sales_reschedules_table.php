@@ -20,9 +20,13 @@ return new class extends Migration
             $table->index('sales_id');
             $table->foreign('sales_id')->references('id')->on('sales')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->unsignedBigInteger('hangar_id');
+            $table->unsignedBigInteger('hangar_id')->nullable();
             $table->index('hangar_id');
             $table->foreign('hangar_id')->references('id')->on('hangars')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('line_id')->nullable();
+            $table->index('line_id');
+            $table->foreign('line_id')->references('id')->on('lines')->onDelete('cascade')->onUpdate('cascade');
 
             $table->date('start_date');
             $table->date('end_date');

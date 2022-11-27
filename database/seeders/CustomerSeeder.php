@@ -26,9 +26,9 @@ class CustomerSeeder extends Seeder
             if (!$first_line) {
                 Customer::create([
                     'name'       => $data['0'],
-                    'code'       => Str::upper(Str::random(6)),
+                    // 'code'       => Str::upper(Str::random(6)),
                     'group_type' => $data['1'],
-                    'country_id' => rand(1, $countries),
+                    // 'country_id' => rand(1, $countries),
                 ]);
             }
             $first_line = false;

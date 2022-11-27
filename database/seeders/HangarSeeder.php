@@ -15,21 +15,9 @@ class HangarSeeder extends Seeder
      */
     public function run()
     {
-        Hangar::create([
-            'code' => 'H1',
-            'name' => 'Hangar 1',
-        ]);
-        Hangar::create([
-            'code' => 'H2',
-            'name' => 'Hangar 2',
-        ]);
-        Hangar::create([
-            'code' => 'H3',
-            'name' => 'Hangar 3',
-        ]);
-        Hangar::create([
-            'code' => 'H4',
-            'name' => 'Hangar 4',
-        ]);
+        Hangar::create(['name' => 'I']);
+        Hangar::create(['name' => 'II']);
+        Hangar::create(['name' => 'III']);
+        Hangar::create(['name' => 'IV']);
     }
 }

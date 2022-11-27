@@ -20,7 +20,7 @@ return new class extends Migration
             $table->index('hangar_id');
             $table->foreign('hangar_id')->references('id')->on('hangars');
 
-            $table->string('code');
+            $table->string('code')->nullable();
             $table->string('name');
 
             $table->timestamps();

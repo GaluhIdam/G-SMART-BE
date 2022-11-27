@@ -199,20 +199,27 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('sales-show/{id}', [SalesController::class, 'show'])->middleware(['permission:show_sales']);
     Route::post('sales-create-tmb', [SalesController::class, 'createTmb'])->middleware(['permission:create_sales']);
     Route::post('sales-create-pbth', [SalesController::class, 'createPbth'])->middleware(['permission:create_sales']);
-    Route::post('sales-slot-request', [SalesController::class, 'slotRequest'])->middleware(['permission:slot_request']);
-    Route::put('sales-slot-confirm/{id}', [SalesController::class, 'slotConfirm'])->middleware(['permission:slot_confirm']);
     Route::put('sales-so-number/{id}', [SalesController::class, 'inputSONumber'])->middleware(['permission:input_so_number']);
     Route::put('sales-switch-ams/{id}', [SalesController::class, 'switchAMS'])->middleware(['permission:switch_ams']);
     Route::post('sales-request-upgrade', [SalesController::Class, 'requestUpgrade'])->middleware(['permission:sales_request_upgrade']);
-    Route::put('sales-upgrade-level/{id}', [SalesController::class, 'confirmUpgrade'])->middleware(['permission:sales_confirm_upgrade']);
+    Route::put('sales-upgrade-level/{id}', [SalesController::class, 'approveUpgrade'])->middleware(['permission:sales_confirm_upgrade']);
     Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales']);
-    Route::post('sales-request-cogs', [SalesController::class, 'cogsRequest'])->middleware(['permission:sales_request_cogs']);
-    Route::put('sales-reschedule/{id}', [SalesController::class, 'rescheduleSales'])->middleware(['permission:reschedule_sales']);
-    Route::put('sales-reject/{id}', [SalesController::class, 'rejectSales'])->middleware(['permission:reject_sales']);
-    Route::put('sales-close/{id}', [SalesController::class, 'closeSales'])->middleware(['permission:close_sales']);
+    Route::post('sales-request-cogs', [SalesController::class, 'requestCOGS'])->middleware(['permission:request_cogs']);
     Route::get('sales-show-tmb/{id}', [SalesController::class, 'showTmbSales'])->middleware(['permission:pickup_prospects']);
     Route::delete('sales-delete-tmb/{id}', [SalesController::class, 'deleteTmbSales'])->middleware(['permission:delete_sales']);
     Route::get('sales-acreg', [SalesController::class, 'acReg']);
+
+    // Sales - Hangar request
+    Route::post('sales-request-hangar', [SalesController::class, 'requestHangar'])->middleware(['permission:request_hangar']);
+    Route::put('sales-approve-hangar/{id}', [SalesController::class, 'approveHangar'])->middleware(['permission:approve_hangar']);
+
+    // Sales - Reschedule request
+    Route::post('sales-request-reschedule', [SalesController::class, 'requestReschedule'])->middleware(['permission:request_reschedule']);
+    Route::put('sales-approve-reschedule/{id}', [SalesController::class, 'approveReschedule'])->middleware(['permission:approve_reschedule']);
+
+    // Sales - Cancel request
+    Route::post('sales-request-cancel', [SalesController::class, 'requestCancel'])->middleware(['permission:request_cancel']);
+    Route::put('sales-approve-cancel/{id}', [SalesController::class, 'approveCancel'])->middleware(['permission:approve_cancel']);
 
     // Line
     Route::get('line', LineController::class)->middleware('permission:read_lines');
