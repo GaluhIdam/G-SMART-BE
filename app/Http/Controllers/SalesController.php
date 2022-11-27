@@ -161,7 +161,6 @@ class SalesController extends Controller
                 $sales->ams_id = $user->hasRole('AMS') ? $user->ams->id : null;
             } else {
                 $prospect = Prospect::find($request->prospect_id);
-                // $sales->prospect_id = $request->prospect_id;
                 $sales->prospect_id = $prospect->id;
                 $sales->customer_id = $prospect->amsCustomer->customer->id;
                 $sales->transaction_type_id = $prospect->transaction_type_id;
