@@ -311,7 +311,7 @@ class SalesController extends Controller
         if ($sales->salesReject) {
             $sales_reject = [
                 'id' => $sales->salesReject->id,
-                'category' => $sales->salesReject->category,
+                'category' => $sales->salesReject->category->name,
                 'reason' => $sales->salesReject->reason,
             ];
         }
@@ -1025,43 +1025,123 @@ class SalesController extends Controller
         }
     }
 
-    public function rejectSales($id, Request $request)
+    public function requestCancel(Request $request)
     {
         $request->validate([
+            'sales_id' => 'required|integer|exists:sales,id',
             'category_id' => 'required|integer|exists:cancel_categories,id',
             'reason' => 'required|string|min:50',
+            'user_id' => 'required|integer|exists:users,id',
+            'target_url' => 'required|string',
         ]);
 
+        $sales = Sales::find($request->sales_id);
+        $user = User::find($request->user_id);
+
+        $cancel = $sales->salesReject ?? new SalesReject;
+        $cancel->sales_id = $sales->id;
+        $cancel->category_id = $request->category_id;
+        $cancel->reason = $request->reason;
+        $cancel->save();
+
+        $cbo_mail = $user->email;
+        $cbo_name = $user->name;
+        $link = env('FRONTEND_URL').$request->target_url;
+
+        $data = [
+            'type' => 4,
+            'subject' => 'New Cancel Sales Request',
+            'body' => [
+                'message' => 'You have new request for Cancel Sales.',
+                'user_name' => $cbo_name,
+                'ams_name' => $sales->ams->user->name ?? '-',
+                'customer' => $sales->customer->name,
+                'ac_reg' => $sales->ac_reg ?? '-',
+                'tat' => $sales->tat,
+                'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
+                'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
+                'category' => $cancel->category->name,
+                'reason' => $cancel->reason,
+                'link' => $link,
+            ]
+        ];
+
         try {
-            DB::beginTransaction();
+            $mail_sent = Mail::to($cbo_mail)->send(new Notification($data));
 
-            $sales = Sales::findOrFail($id);
+            if (!$mail_sent) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oops, the email request can not be sent',
+                ], 422);
+            } else {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Cancel sales requested successfully',
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, something\'s wrong with the email request process. Please check your connection',
+                'error' => $e->getMessage(),
+            ], 422);
+        }
+    }
 
-            $reject = new SalesReject;
-            $reject->sales_id = $sales->id;
-            $reject->category_id = $request->category_id;
-            $reject->reason = $request->reason;
-            $reject->save();
+    public function approveCancel($id, Request $request)
+    {
+        $request->validate([
+            'is_approved' => 'required|boolean',
+            'target_url' => 'required|string',
+        ]);
 
+        $sales = Sales::findOrFail($id);
+        $cancel = $sales->salesReject;
+
+        if (!$cancel) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops, this sales does not have active cancel request',
+            ], 422);
+        }
+
+        if ($request->is_approved) {
+            $status = 'approved';
             $sales_level = $sales->salesLevel;
             $sales_level->status = 4;
             $sales_level->push();
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Sales rejected successfully',
-                'data' => $sales,
-            ], 200);
-        } catch (QueryException $e) {
-            DB::rollback();
-
-            return response()->json([
-                'success' => true,
-                'message' => $e->getMessage()
-            ], 500);
+        } else {
+            $status = 'rejected';
+            $cancel->delete();
         }
+
+        $cbo = auth()->user();
+        $ams = $sales->ams->user;
+        $link = env('FRONTEND_URL').$request->target_url;
+
+        $data = [
+            'type' => 40,
+            'subject' => 'Your Cancel Sales Request '.Str::title($status),
+            'body' => [
+                'message' => "Your request for canceling sales has been {$status}",
+                'user_name' => $ams->name,
+                'customer' => $sales->customer->name,
+                'ac_reg' => $sales->ac_reg ?? '-',
+                'tat' => $sales->tat,
+                'start_date' => Carbon::parse($sales->start_date)->format('d F Y'),
+                'end_date' => Carbon::parse($sales->end_date)->format('d F Y'),
+                'link' => $link,
+            ]
+        ];
+
+        Mail::to($ams->email)->send(new Notification($data));
+
+        return response()->json([
+            'success' => true,
+            'message' => "Cancel sales {$status} successfully",
+            'data' => $sales,
+        ], 200);
     }
 
     public function inputSONumber($id, Request $request)
@@ -1104,28 +1184,6 @@ class SalesController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
-    }
-
-    public function closeSales($id)
-    {
-        $sales = Sales::findOrFail($id);
-        $sales_level = $sales->salesLevel;
-
-        if (($sales_level->level_id != 1) && ($sales_level->status != 2)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sales cannot be closed',
-            ], 400);
-        }
-
-        $sales_level->status = 3;
-        $sales_level->push();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Sales closed successfully',
-            'data' => $sales,
-        ], 200);
     }
 
     public function acReg()

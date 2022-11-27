@@ -20,7 +20,7 @@ class SalesReject extends Model
         return $this->belongsTo(Sales::class, 'sales_id');
     }
 
-    public function cancelReason()
+    public function category()
     {
         return $this->belongsTo(CancelCategory::class, 'category_id');
     }
