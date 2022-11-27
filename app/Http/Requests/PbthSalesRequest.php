@@ -25,9 +25,8 @@ class PbthSalesRequest extends FormRequest
     {
         return [
             'prospect_id' => 'required|integer|exists:prospects,id',
-            'pbth' => 'required|array',
-            'pbth.*.month' => 'required|string',
-            'pbth.*.value' => 'required|numeric',
+            'month' => 'required|string',
+            'value' => 'required|numeric',
         ];
     }
 
@@ -36,10 +35,10 @@ class PbthSalesRequest extends FormRequest
         return [
             'prospect_id.required' => 'The Prospect field is required.',
             'prospect_id.exists' => 'The selected Prospect is invalid.',
-            'pbth.*.month.required' => 'The Month field is required.',
-            'pbth.*.month.string' => 'The Month field must be a valid string.',
-            'pbth.*.value.required' => 'The Value field is required.',
-            'pbth.*.value.numeric' => 'The Value field must be a valid number',
+            'month.required' => 'The Month field is required.',
+            'month.string' => 'The Month field must be a valid string.',
+            'value.required' => 'The Value field is required.',
+            'value.numeric' => 'The Value field must be a valid number',
         ];
     }
 }

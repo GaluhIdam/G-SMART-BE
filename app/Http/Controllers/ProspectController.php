@@ -8,8 +8,6 @@ use App\Models\PBTH;
 use App\Models\Sales;
 use App\Models\Customer;
 use App\Models\Prospect;
-use App\Models\ProspectTMB;
-use App\Models\ProspectPBTH;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -94,51 +92,49 @@ class ProspectController extends Controller
         try {
             DB::beginTransaction();
 
-            $prospect = new Prospect;
-            $prospect->prospect_type_id = $prospect_type;
-            $prospect->transaction_type_id = $transaction_type;
-            $prospect->year = $request->year;
-            $prospect->ams_customer_id = $request->ams_customer_id;
-            $prospect->strategic_initiative_id = $request->strategic_initiative_id ?? null;
-            $prospect->pm_id = $request->pm_id ?? null;
-            $prospect->save();
-
             if (in_array($transaction_type, [1,2])) {
                 foreach ($request->tmb as $product) {
                     foreach ($product['product'] as $data) {
+                        $prospect = new Prospect;
+                        $prospect->prospect_type_id = $prospect_type;
+                        $prospect->transaction_type_id = $transaction_type;
+                        $prospect->year = $request->year;
+                        $prospect->ams_customer_id = $request->ams_customer_id;
+                        $prospect->strategic_initiative_id = $request->strategic_initiative_id ?? null;
+                        $prospect->pm_id = $request->pm_id ?? null;
+                        $prospect->save();
                         $tmb = new TMB;
+                        $tmb->prospect_id = $prospect->id;
                         $tmb->product_id = $data['product_id'];
                         $tmb->ac_type_id = $data['aircraft_type']['id'] ?? null;
                         $tmb->component_id = $data['component']['id'] ?? null;
-                        $tmb->engine_id = $data['apu']['id'] ?? null;
-                        $tmb->apu_id = $data['engine']['id'] ?? null;
+                        $tmb->engine_id = $data['engine']['id'] ?? null;
                         $tmb->market_share = $data['market_share'];
                         $tmb->remarks = $data['remark'];
                         $tmb->maintenance_id = $data['maintenance_id']['id'];
                         $tmb->save();
-
-                        $prospect_tmb = new ProspectTMB;
-                        $prospect_tmb->prospect_id = $prospect->id;
-                        $prospect_tmb->tmb_id = $tmb->id;
-                        $prospect_tmb->save();
                     }
                 }
             } else if ($transaction_type == 3) {
                 foreach ($request->pbth as $product) {
                     foreach ($product['target'] as $target) {
+                        $prospect = new Prospect;
+                        $prospect->prospect_type_id = $prospect_type;
+                        $prospect->transaction_type_id = $transaction_type;
+                        $prospect->year = $request->year;
+                        $prospect->ams_customer_id = $request->ams_customer_id;
+                        $prospect->strategic_initiative_id = $request->strategic_initiative_id ?? null;
+                        $prospect->pm_id = $request->pm_id ?? null;
+                        $prospect->save();
                         $pbth = new PBTH;
                         $pbth->month = $target['month'];
                         $pbth->rate = $target['rate'];
                         $pbth->flight_hour = $target['flight_hour'];
+                        $pbth->prospect_id = $prospect->id;
+                        $pbth->product_id = $product['product_id'];
+                        $pbth->ac_type_id = $product['aircraft_type_id'];
+                        $pbth->market_share = $target['rate'] * $target['flight_hour'];
                         $pbth->save();
-
-                        $prospect_pbth = new ProspectPBTH;
-                        $prospect_pbth->prospect_id = $prospect->id;
-                        $prospect_pbth->pbth_id = $pbth->id;
-                        $prospect_pbth->product_id = $product['product_id'];
-                        $prospect_pbth->ac_type_id = $product['aircraft_type_id'];
-                        $prospect_pbth->market_share = $target['rate'] * $target['flight_hour'];
-                        $prospect_pbth->save();
                     }
                 }
             }
@@ -162,58 +158,30 @@ class ProspectController extends Controller
 
     public function show($id)
     {
-        $user = auth()->user();
-        $customer = Customer::find($id);
-
-        // TODO: authorize only registered AMS
-        // if ($user->hasRole('AMS')) {
-        //     $amsCustomers = $customer->amsCustomers;
-        //     foreach ($amsCustomers as $item) {
-        //         if ($item->ams_id == $user->ams->id) {
-        //             $ams = true;
-        //         } else {
-        //             $ams = false;
-        //         }
-        //     }
-        // } else {
-        //     $ams = true;
-        // }
-
-        if (!$customer) {
-            return response()->json([
-                'message' => 'Data not found!',
-            ], 404);
-        }
-
-        $data = Prospect::user($user)
-                        ->with(
+		$user = auth()->user();
+		$market_share = Prospect::marketShareByCustomer($id, $user);
+        $total_sales = Sales::user($user)->customer($id)->sum('value');
+        $data = Prospect::with(
                         'transactionType',
                         'prospectType',
                         'strategicInitiative',
                         'pm',
                         'amsCustomer',
                         'sales',
-                        'prospectTmb',
-                        'prospectPbth',
+                        'tmb',
+                        'pbth',
                         'amsCustomer.customer',
                         'amsCustomer.area',
                         'amsCustomer.ams',
-                        'prospectTmb.tmb',
-                        'prospectPbth.pbth',
-                        'prospectPbth.product',
-                        'prospectPbth.acType',
-                        )->whereHas('amsCustomer', function ($query) use ($customer) {
-                            $query->where('customer_id', $customer->id);
-                        })->get();
-
-        $market_share = Prospect::marketShareByCustomer($id, $user);
-        $total_sales = Sales::user($user)->customer($id)->sum('value');
-
+                        'pbth.product',
+                        'pbth.acType',
+                        )->find($id);
+ 
         return response()->json([
             'message' => 'Success Get Prospect By Customer!',
             'data' => [
                 'prospect' => $data,
-                'marketShare' => $market_share,
+				'marketShare' => $market_share,
                 'salesPlan' => $total_sales,
                 'deviation' => $market_share - $total_sales,
             ]
@@ -222,13 +190,12 @@ class ProspectController extends Controller
 
     public function pbth($id)
     {
-        $prospect = Prospect::findOrFail($id);
-        $market_share = $prospect->market_share;
-        $sales_plan = $prospect->sales_plan;
+        $prospect       = Prospect::findOrFail($id);
+        $market_share   = $prospect->market_share;
+        $sales_plan     = $prospect->sales_plan;
         
-        $data = PBTH::whereHas('prospectPbth', function ($query) use ($id) {
-                    $query->where('prospect_id', $id);
-                })->get();
+        $data   = PBTH::where('prospect_id', $id)
+                        ->get();
         
         return response()->json([
             'data' => [
@@ -244,13 +211,12 @@ class ProspectController extends Controller
 
     public function tmb($id)
     {
-        $prospect = Prospect::findOrFail($id);
-        $market_share = $prospect->market_share;
-        $sales_plan = $prospect->sales_plan;
+        $prospect       = Prospect::findOrFail($id);
+        $market_share   = $prospect->market_share;
+        $sales_plan     = $prospect->sales_plan;
 
-        $data =  TMB::whereHas('prospectTmb', function ($query) use ($id) {
-                    $query->where('prospect_id', $id);
-                })->get();
+        $data       = TMB::where('prospect_id', $id)
+                        ->get();
 
         return response()->json([
             'data' => [

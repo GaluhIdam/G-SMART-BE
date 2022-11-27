@@ -136,11 +136,11 @@ class SalesController extends Controller
             'maintenance_id' => 'required|integer|exists:maintenances,id',
             'product_id' => 'sometimes|required|integer|exists:products,id',
             'ac_type_id' => 'sometimes|required|integer|exists:ac_type_id,id',
-            'ac_reg' => 'nullable|required|string',
+            'ac_reg' => 'sometimes|required|string',
             'value' => 'required|numeric',
             'tat' => 'required|integer',
             'start_date' => 'required|date',
-            'is_rkap' => 'reequired|boolean',
+            'is_rkap' => 'required|boolean',
         ]);
 
         try {
@@ -151,15 +151,17 @@ class SalesController extends Controller
             $start_date = Carbon::parse($request->start_date);
             $end_date = Carbon::parse($request->start_date)->addDays($request->tat);
 
-            if ($request->is_rkap) {
+            if (!$request->is_rkap) {
                 $sales->customer_id = $request->customer_id;
                 $sales->transaction_type_id = $request->transaction_type_id;
                 $sales->product_id = $request->product_id;
                 $sales->ac_type_id = $request->ac_type_id;
             } else {
                 $prospect = Prospect::find($request->prospect_id);
+                // $sales->prospect_id = $request->prospect_id;
+                $sales->prospect_id = $prospect->id;
                 $sales->customer_id = $prospect->amsCustomer->customer->id;
-                $sales->transaction_type_id = $propsect->transaction_type_id;
+                $sales->transaction_type_id = $prospect->transaction_type_id;
                 $sales->product_id = $prospect->tmb->product_id;
                 $sales->ac_type_id = $prospect->tmb->ac_type_id ?? null;
                 $sales->component_id = $prospect->tmb->component_id ?? null;
@@ -215,29 +217,29 @@ class SalesController extends Controller
             $prospect = Prospect::find($request->prospect_id);
             $customer = $prospect->amsCustomer->customer;
             $year = $prospect->year;
-            $pbth = $request->pbth;
+            $month = $request->month;
             
-            $temp_sales = [];
-            foreach ($pbth as $item) {
-                $s_date = Carbon::parse("1 {$item['month']} {$year}");
-                $e_date = Carbon::parse("1 {$item['month']} {$year}")->endOfMonth();
+                $s_date = Carbon::parse("1 {$month} {$year}");
+                $e_date = Carbon::parse("1 {$month} {$year}")->endOfMonth();
                 
                 $start_date = $s_date->format('Y-m-d');
                 $end_date = $e_date->format('Y-m-d');
                 $tat = $s_date->diffInDays($e_date);
-                $value = $item['value'];
+                $value = $request->value;
 
                 $sales = new Sales;
                 $sales->customer_id = $customer->id;
                 $sales->prospect_id = $prospect->id;
+                $sales->product_id = $prospect->pbth->product_id;
+                $sales->ac_type_id = $prospect->pbth->ac_type_id;
+                $sales->ams_id = $prospect->amsCustomer->ams_id;
+                $sales->transaction_type_id = 3;
                 $sales->value = $value;
                 $sales->is_rkap = 1;
                 $sales->tat = $tat;
                 $sales->start_date = $start_date;
                 $sales->end_date = $end_date;
                 $sales->save();
-
-                $temp_sales[] = $sales;
 
                 $level = new SalesLevel;
                 $level->level_id = 1;
@@ -252,14 +254,13 @@ class SalesController extends Controller
                     $requirement->status = ($i == 9) ? 0 : 1;
                     $requirement->save();
                 }
-            }
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Salesplan created successfully',
-                'data' => $temp_sales,
+                'data' => $sales,
             ], 200);
         } catch (QueryException $e) {
             DB::rollback();

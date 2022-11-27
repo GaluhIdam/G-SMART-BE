@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Sales;
 use App\Models\AMSCustomer;
-use App\Models\ProspectPBTH;
 use App\Models\ProspectType;
 use App\Models\TransactionType;
 use App\Models\StrategicInitiatives;
@@ -166,7 +165,11 @@ class Prospect extends Model
 
     public function getSalesPlanAttribute()
     {
-        return $this->sales->value;
+        if($this->sales){
+            return $this->sales->value;
+        } else {
+            return null;
+        }
     }
 
     public function getRegistrationAttribute()
@@ -190,10 +193,10 @@ class Prospect extends Model
         return $registration;
     }
 
-    public function scopeMarketShareByCustomer($query, $customer, $user)
+    public function scopeMarketShareByCustomer($query, $id, $user)
     {
-        $data = $query->whereHas('amsCustomer', function ($query) use ($customer) {
-                    $query->where('customer_id', $customer);
+        $data = $query->whereHas('amsCustomer', function ($query) use ($id) {
+                    $query->where('customer_id', $id);
                 })->when($user->hasRole('AMS'), function ($query) use ($user) {
                     $query->whereHas('amsCustomer', function ($query) use ($user) {
                         $query->whereRelation('ams', 'user_id', '=', $user->id);
