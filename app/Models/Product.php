@@ -25,8 +25,8 @@ class Product extends Model
         return $this->hasMany(Sales::class);
     }
 
-    public function prospectPbth()
+    public function pbth()
     {
-        return $this->hasMany(ProspectPBTH::class);
+        return $this->hasMany(PBTH::class);
     }
 }

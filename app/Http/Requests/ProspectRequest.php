@@ -50,7 +50,6 @@ class ProspectRequest extends FormRequest
                     'tmb.*.product.*.product_id' => 'required|integer|exists:products,id',
                     'tmb.*.product.*.aircraft_type' => 'sometimes|required',
                     'tmb.*.product.*.component' => 'sometimes|required',
-                    'tmb.*.product.*.apu' => 'sometimes|required',
                     'tmb.*.product.*.engine' => 'sometimes|required',
                     'tmb.*.product.*.market_share'  => 'required|numeric',
                     'tmb.*.product.*.remark' => 'required|string',
