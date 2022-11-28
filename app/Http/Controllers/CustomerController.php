@@ -125,9 +125,9 @@ class CustomerController extends Controller
         if ($customer = Customer::with('amsCustomers')->find($id)) {
             $request->validate([
                 'name' => 'required|string|max:255',
-                'code' => 'required|string|max:255',
+                'code' => 'sometimes|required|string|max:255',
                 'group_type' => 'required|integer|max:255',
-                'country_id' => 'required|integer|exists:countries,id',
+                'country_id' => 'sometimes|required|integer|exists:countries,id',
                 'is_active' => 'required|boolean',
             ]);
 
