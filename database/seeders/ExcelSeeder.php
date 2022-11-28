@@ -172,7 +172,7 @@ class ExcelSeeder extends Seeder
                         $tmb->remarks = $remarks ?? null;
                         $tmb->save();
                     } else if ($prospect->transaction_type_id == 3) {
-                        $start_date = $data['24'];
+                        $start_date = strtotime($data['24']);
                         $month = Carbon::parse($start_date)->format('F');
 
                         $pbth = new PBTH;

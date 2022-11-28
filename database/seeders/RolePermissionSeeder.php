@@ -764,6 +764,7 @@ class RolePermissionSeeder extends Seeder
             $request_reschedule,
             $request_cancel,
             $request_cogs,
+            $create_maintenance,
         ]);
 
         $init = Role::create([
