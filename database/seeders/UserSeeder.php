@@ -65,39 +65,39 @@ class UserSeeder extends Seeder
         $cbo->assignRole('CBO');
 
         // AMS
-        $ams = User::create([
-            'name'              => 'AMS User 1',
-            'username'          => 'ams_user1',
-            'nopeg'             => '017523',
-            'unit'              => 'TPW',
-            'role_id'           => 5,
-            'email'             => 'ams1.gsmart@gmf-aeroasia.co.id',
-            'password'          => Hash::make('password'),
-            'email_verified_at' => Carbon::now(),
-        ]);
-        $ams->assignRole('AMS');
-        $ams = User::create([
-            'name'              => 'AMS User 2',
-            'username'          => 'ams_user2',
-            'nopeg'             => '235853',
-            'unit'              => 'TPX',
-            'role_id'           => 5,
-            'email'             => 'ams2.gsmart@gmf-aeroasia.co.id',
-            'password'          => Hash::make('password'),
-            'email_verified_at' => Carbon::now(),
-        ]);
-        $ams->assignRole('AMS');
-        $ams = User::create([
-            'name'              => 'AMS User 3',
-            'username'          => 'ams_user3',
-            'nopeg'             => '235352',
-            'unit'              => 'TPY',
-            'role_id'           => 5,
-            'email'             => 'ams3.gsmart@gmf-aeroasia.co.id',
-            'password'          => Hash::make('password'),
-            'email_verified_at' => Carbon::now(),
-        ]);
-        $ams->assignRole('AMS');
+        // $ams1 = User::create([
+        //     'name'              => 'AMS User 1',
+        //     'username'          => 'ams_user1',
+        //     'nopeg'             => '017523',
+        //     'unit'              => 'TPW',
+        //     'role_id'           => 5,
+        //     'email'             => 'ams1.gsmart@gmf-aeroasia.co.id',
+        //     'password'          => Hash::make('password'),
+        //     'email_verified_at' => Carbon::now(),
+        // ]);
+        // $ams1->assignRole('AMS');
+        // $ams2 = User::create([
+        //     'name'              => 'AMS User 2',
+        //     'username'          => 'ams_user2',
+        //     'nopeg'             => '235853',
+        //     'unit'              => 'TPX',
+        //     'role_id'           => 5,
+        //     'email'             => 'ams2.gsmart@gmf-aeroasia.co.id',
+        //     'password'          => Hash::make('password'),
+        //     'email_verified_at' => Carbon::now(),
+        // ]);
+        // $ams2->assignRole('AMS');
+        // $ams3 = User::create([
+        //     'name'              => 'AMS User 3',
+        //     'username'          => 'ams_user3',
+        //     'nopeg'             => '235352',
+        //     'unit'              => 'TPY',
+        //     'role_id'           => 5,
+        //     'email'             => 'ams3.gsmart@gmf-aeroasia.co.id',
+        //     'password'          => Hash::make('password'),
+        //     'email_verified_at' => Carbon::now(),
+        // ]);
+        // $ams3->assignRole('AMS');
 
         // TD
         // $td = User::create([
