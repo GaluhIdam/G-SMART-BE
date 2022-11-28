@@ -16,34 +16,34 @@ class AMSTargetSeeder extends Seeder
      */
     public function run()
     {
-        $ams = AMS::all();
+        // $ams = AMS::all();
 
-        foreach ($ams as $item) {
-            AMSTarget::create([
-                'ams_id' => $item->id,
-                'year' => '2019',
-                'target' => rand(1000, 10000)
-            ]);
-            AMSTarget::create([
-                'ams_id' => $item->id,
-                'year' => '2020',
-                'target' => rand(1000, 10000)
-            ]);
-            AMSTarget::create([
-                'ams_id' => $item->id,
-                'year' => '2021',
-                'target' => rand(1000, 10000)
-            ]);
-            AMSTarget::create([
-                'ams_id' => $item->id,
-                'year' => '2022',
-                'target' => rand(1000, 10000)
-            ]);
-            AMSTarget::create([
-                'ams_id' => $item->id,
-                'year' => '2023',
-                'target' => rand(1000, 10000)
-            ]);
-        }
+        // foreach ($ams as $item) {
+        //     AMSTarget::create([
+        //         'ams_id' => $item->id,
+        //         'year' => '2019',
+        //         'target' => rand(1000, 10000)
+        //     ]);
+        //     AMSTarget::create([
+        //         'ams_id' => $item->id,
+        //         'year' => '2020',
+        //         'target' => rand(1000, 10000)
+        //     ]);
+        //     AMSTarget::create([
+        //         'ams_id' => $item->id,
+        //         'year' => '2021',
+        //         'target' => rand(1000, 10000)
+        //     ]);
+        //     AMSTarget::create([
+        //         'ams_id' => $item->id,
+        //         'year' => '2022',
+        //         'target' => rand(1000, 10000)
+        //     ]);
+        //     AMSTarget::create([
+        //         'ams_id' => $item->id,
+        //         'year' => '2023',
+        //         'target' => rand(1000, 10000)
+        //     ]);
+        // }
     }
 }
