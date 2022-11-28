@@ -19,5 +19,6 @@ class HangarSeeder extends Seeder
         Hangar::create(['name' => 'II']);
         Hangar::create(['name' => 'III']);
         Hangar::create(['name' => 'IV']);
+        Hangar::create(['name' => 'Parking']);
     }
 }
