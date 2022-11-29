@@ -231,7 +231,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('ams-customer/{id}', AMSCustomerController::class)->middleware(['permission:read_ams']);
 
     // Cancel Category - Sales Reject/Cancel Reason
-    Route::get('cancel-category', CancelCategoryController::class)->middleware(['permission:reject_sales']);
+    Route::get('cancel-category', CancelCategoryController::class)->middleware(['permission:request_cancel']);
 
     //File
     Route::get('file', [FileController::class, 'index'])->middleware(['permission:read_files']);

@@ -104,10 +104,10 @@ class SalesController extends Controller
             $data->push((object)[
                 'id' => $sales->id,
                 'customer' => $sales->customer->name,
-                'product' => $sales->product ? $sales->product->name : null,
+                'product' => $sales->product->name ?? null,
                 'month' => $sales->month_sales,
                 'registration' => $sales->registration,
-                'acReg' => $sales->ac_reg ?? null,
+                'acReg' => $sales->ac_reg ?? '-',
                 'other' => $sales->other,
                 'type' => $sales->type,
                 'level' => $sales->level,
