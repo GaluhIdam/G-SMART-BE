@@ -33,6 +33,7 @@ class ProspectController extends Controller
         $total_market   = Prospect::user($user)->marketShareThisYear();
         $total_sales    = Sales::user($user)->thisYear()->rkap()->sum('value');
         $data           = Prospect::search($search)
+                                    ->User($user)
                                     ->filter($filter)
 									->sort($order, $by)
                                     ->paginate($paginate)

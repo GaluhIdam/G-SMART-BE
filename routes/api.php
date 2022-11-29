@@ -286,4 +286,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('sales-update-show/{id}', [SalesUpdateController::class, 'show'])->middleware(['permission:show_sales_update|manage_sales_update']);
     Route::put('sales-update-update/{id}', [SalesUpdateController::class, 'update'])->middleware(['permission:update_sales_update|manage_sales_update']);
     Route::delete('sales-update-delete/{id}', [SalesUpdateController::class, 'destroy'])->middleware(['permission:delete_sales_update|manage_sales_update']);
+
+    // Update Sales Prospect
+    Route::put('sales-update-tmb/{id}', [SalesController::class, 'updateTmb'])->middleware(['permission:read_sales_update|manage_sales_update']);
+    Route::put('sales-update-pbth/{id}', [SalesController::class, 'updatePbth'])->middleware(['permission:read_sales_update|manage_sales_update']);
 });
