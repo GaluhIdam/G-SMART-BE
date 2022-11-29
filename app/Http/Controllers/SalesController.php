@@ -3,26 +3,27 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Mail\Notification;
+use App\Models\PBTH;
 use App\Models\User;
 use App\Models\Sales;
 use App\Models\Customer;
 use App\Models\Prospect;
+use App\Mail\Notification;
 use App\Models\SalesLevel;
-use App\Models\SalesReject;
 use App\Models\Requirement;
+use App\Models\SalesReject;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Models\SalesReschedule;
 use App\Models\SalesRequirement;
-use App\Models\XpreamPlanningGates;
-use App\Helpers\PaginationHelper as PG;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use App\Models\XpreamPlanningGates;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
+use App\Helpers\PaginationHelper as PG;
 use App\Http\Requests\PbthSalesRequest;
-use Illuminate\Support\Str;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Storage;
 
 class SalesController extends Controller
 {
@@ -297,6 +298,7 @@ class SalesController extends Controller
         if ($sales->salesReschedule) {
             $sales_reschedule = [
                 'id' => $sales->salesReschedule->id,
+                'prospect_id' => $sales->prospect_id,
                 'hangar' => $sales->hangar ?? null,
                 'line' => $sales->line ?? null,
                 'registration' => $sales->ac_reg ?? '-',
@@ -324,6 +326,7 @@ class SalesController extends Controller
             'user' => auth()->user(),
             'salesDetail' => [
                 'id' => $sales->id,
+                'prospect_id' => $sales->prospect_id,
                 'customer' => $sales->customer->only(['id', 'name']),
                 'acReg' => $sales->ac_reg ?? '-',
                 'registration' => $sales->registration,
@@ -474,7 +477,25 @@ class SalesController extends Controller
         ], 200);
     }
 
-    public function update($id, Request $request)
+    public function updatePbth($id, Request $request)
+    {
+        $request->validate([
+            'rate' => 'required|integer',
+            'flight_hour' => 'required|integer',
+        ]);
+        
+        $pbth = PBTH::where('prospect_id', $id);
+        $pbth->rate = $request->rate;
+        $pbth->flight_hour = $request->flight_hour;
+        $pbth->update($request->all());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'PBTH updated successfully',
+            'data' => $pbth,
+        ], 200);
+    }
+    public function updateTmb($id, Request $request)
     {
         $request->validate([
             'maintenance_id' => 'required|integer|exists:maintenances,id',
