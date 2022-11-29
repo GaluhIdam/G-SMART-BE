@@ -656,6 +656,7 @@ class RolePermissionSeeder extends Seeder
             $show_files,
             $file_histories,
             $read_contacts,
+            $create_maintenance,
         ]);
 
         // CBO
@@ -706,6 +707,7 @@ class RolePermissionSeeder extends Seeder
             $approve_hangar,
             $approve_reschedule,
             $approve_cancel,
+            $create_maintenance,
         ]);
 
         // AMS
