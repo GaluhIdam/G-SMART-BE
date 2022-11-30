@@ -230,6 +230,64 @@ class LineSeeder extends Seeder
             'hangar_id' => 5,
             'name' => "Hangar 1 Wide Body 3B",
         ]);
+
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Wide Body 1",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Wide Body 2",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Wide Body 3",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Narrow Body 1",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Narrow Body 2",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Narrow Body 3",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Narrow Body 4",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Narrow Body 5",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Narrow Body 6",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Narrow Body 7",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Narrow Body 8",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Narrow Body 9",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Narrow Body 10",
+        ]);
+        Line::create([
+            'hangar_id' => 5,
+            'name' => "Hangar 2 Narrow Body 11",
+        ]);
+
         Line::create([
             'hangar_id' => 5,
             'name' => "Hangar 3 Narrow Body 1A",
