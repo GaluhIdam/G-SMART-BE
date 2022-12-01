@@ -53,10 +53,11 @@ class SalesRescheduleController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'sales_id'   => 'required|numeric',
-            'start_date' => 'required',
-            'end_date'   => 'required',
-            'tat'        => 'required|numeric',
+            'sales_id'     => 'required|numeric',
+            'start_date'   => 'required',
+            'end_date'     => 'required',
+            'tat'          => 'required|numeric',
+            'registration' => 'required',
         ]);
 
         $sales_reschedule = SalesReschedule::create($request->all());
@@ -85,10 +86,11 @@ class SalesRescheduleController extends Controller
     {
         if ($sales_reschedule = SalesReschedule::find($id)) {
             $request->validate([
-                'sales_id'   => 'required|unique:sales_reschedules,sales_id,' . $id . '',
-                'start_date' => 'required',
-                'end_date'   => 'required',
-                'tat'        => 'required|numeric',
+                'sales_id'     => 'required|unique:sales_reschedules,sales_id,' . $id . '',
+                'start_date'   => 'required',
+                'end_date'     => 'required',
+                'tat'          => 'required|numeric',
+                'registration' => 'required',
             ]);
 
             $sales_reschedule->update($request->all());
