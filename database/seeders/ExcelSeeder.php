@@ -76,8 +76,6 @@ class ExcelSeeder extends Seeder
             30 =>   'cancel_reason', -> sales_rejects
         */
 
-        $users = User::where('role_id', 5)->pluck('id');
-
         $csv_file = fopen(base_path("database/data/migrasi_2022_nodec.csv"), "r");
 
         $first_line = true;
@@ -88,7 +86,7 @@ class ExcelSeeder extends Seeder
 
                     $customer = Customer::firstWhere('name', $data['0']);
                     if (!$customer) { 
-                        $group_type = ($data['4'] == 'GA') ? 1 : 0;
+                        $group_type = ($data['4'] == 'GA') ? 0 : 1;
                         $customer = new Customer;
                         $customer->name = $data['0'];
                         $customer->group_type = $group_type;
@@ -98,7 +96,7 @@ class ExcelSeeder extends Seeder
                     $ams = AMS::firstWhere('initial', $data['12']);
                     if (!$ams) {
                         $ams = new AMS;
-                        $ams->user_id = $users[rand(1, count($users))];
+                        $ams->user_id = null;
                         $ams->initial = $data['12'];
                         $ams->save();
                     }
