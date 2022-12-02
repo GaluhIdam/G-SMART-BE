@@ -493,6 +493,7 @@ class SalesController extends Controller
         $request->validate([
             'maintenance_id' => 'required|integer|exists:maintenances,id',
             'hangar_id' => 'required|integer|exists:hangars,id',
+            'line_id' => 'required|integer|exists:lines,id',
             'ac_reg' => 'required|string',
             'value' => 'required|numeric',
             'tat' => 'required|integer',
@@ -506,6 +507,7 @@ class SalesController extends Controller
         $sales = Sales::findOrFail($id);
         $sales->maintenance_id = $request->maintenance_id;
         $sales->hangar_id = $request->hangar_id;
+        $sales->line_id = $request->line_id;
         $sales->ac_reg = $request->ac_reg;
         $sales->value = $request->value;
         $sales->tat = $tat;
