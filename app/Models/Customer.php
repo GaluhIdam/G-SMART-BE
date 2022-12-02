@@ -27,6 +27,7 @@ class Customer extends Model
     
     const GROUPTYPE_GA = 0;
     const GROUPTYPE_NGA = 1;
+    
 
     const STATUS_ARRAY = [
         self::STATUS_ACTIVE => 'Active',
