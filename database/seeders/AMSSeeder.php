@@ -28,28 +28,39 @@ class AMSSeeder extends Seeder
                 try {
                     DB::beginTransaction();
                     $name = $data['0'];
-                    $username = Str::lower($name);
+                    $initial = $data['1'];
+                    $nopeg = $data['2'];
+                    $email = $data['3'];
+                    $unit = $data['4'];
 
                     $user = User::create([
                         'name'              => $name,
-                        'username'          => $username,
-                        'nopeg'             => rand(100000,999999),
-                        'unit'              => 'TP',
+                        'username'          => $nopeg,
+                        'nopeg'             => $nopeg,
+                        'unit'              => $unit,
                         'role_id'           => 5,
-                        'email'             => "user.{$username}@gmf-aeroasia.co.id",
-                        'password'          => Hash::make('password'),
-                        'email_verified_at' => Carbon::now(),
+                        'email'             => $email,
+                        'password'          => null,
+                        'email_verified_at' => null,
                     ]);
                     $user->assignRole('AMS');
 
                     AMS::create([
                         'user_id' => $user->id,
-                        'initial' => $data['1']
+                        'initial' => $initial,
+                    ]);
+
+                    \Artisan::call("ldap:import", [
+                        'provider' => 'users',
+                        'user' => $user->nopeg,
+                        '--no-interaction',
                     ]);
 
                     DB::commit();
                 } catch (\Exception $e) {
                     DB::rollback();
+
+                    dd($e->getMessage());
                 }
             }
             $first_line = false;
