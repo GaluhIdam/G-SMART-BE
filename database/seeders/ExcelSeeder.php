@@ -88,7 +88,7 @@ class ExcelSeeder extends Seeder
 
                     $customer = Customer::firstWhere('name', $data['0']);
                     if (!$customer) { 
-                        $group_type = ($data['4'] == 'GA') ? 1 : 0;
+                        $group_type = ($data['4'] == 'GA') ? 0 : 1;
                         $customer = new Customer;
                         $customer->name = $data['0'];
                         $customer->group_type = $group_type;

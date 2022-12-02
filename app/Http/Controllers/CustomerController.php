@@ -42,6 +42,7 @@ class CustomerController extends Controller
                 'name' => $item->name,
                 'code' => $item->code,
                 'group' => $item->group,
+                'group_type' => $item->group_type,
                 'status' => $item->status,
                 'country' => $item->country->name ?? null,
                 'region' => $item->country->region->name ?? null,
