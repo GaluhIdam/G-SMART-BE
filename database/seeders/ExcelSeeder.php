@@ -42,39 +42,39 @@ class ExcelSeeder extends Seeder
      */
     public function run()
     {
-        $col = [
-            0 =>    'customer_name', // customers, sales
-            1 =>    'product_name', // products, tmb, pbth, sales
-            2 =>    'transaction_type', // transaction_types, prospects
-            3 =>    'prospect_year', // propsects
-            4 =>    'customer_group_type', // customers
-            5 =>    'prospect_type', // prospect_types, prospects
-            6 =>    'strategic_initiative', // strategic_initiatives, prospects
-            7 =>    'sales_type', // sales
-            8 =>    'project_manager', // users, prospects
-            9 =>    'hangar_name', // sales
-            10 =>   'line_name', // sales
-            11 =>   'ams_unit', // users
-            12 =>   'ams_initial', // ams
-            13 =>   'ams_area', // ams_customers
-            14 =>   'customer_country', // customers
-            15 =>   'customer_region', // countries
-            16 =>   'ac/eng/apu/comp', // ac_type_id, engine_id, apu_id, component_id, tmb, pbth, sales
-            17 =>   'aircraft_registration', // sales
-            18 =>   'maintenance_event', // tnb, sales
-            19 =>   'market_share', // tmb, pbth
-            20 =>   'sales_plan_fixed', // sales
-            21 =>   'sales_plan_updated', // sales
-            22 =>   'tmb_remarks', // tmb
-            23 =>   'so_number', // sales
-            24 =>   'start_date', // sales
-            25 =>   'tat', // sales
-            26 =>   'end_date', // sales
-            27 =>   'sales_level', // sales
-            28 =>   'sales_status', // sales
-            29 =>   'cancel_category', // sales_rejects
-            30 =>   'cancel_reason', // sales_rejects
-        ];
+        /*
+            0 =>    'customer_name', -> customers, sales
+            1 =>    'product_name', -> products, tmb, pbth, sales
+            2 =>    'transaction_type', -> transaction_types, prospects
+            3 =>    'prospect_year', -> propsects
+            4 =>    'customer_group_type', -> customers
+            5 =>    'prospect_type', -> prospect_types, prospects
+            6 =>    'strategic_initiative', -> strategic_initiatives, prospects
+            7 =>    'sales_type', -> sales
+            8 =>    'project_manager', -> users, prospects
+            9 =>    'hangar_name', -> sales
+            10 =>   'line_name', -> sales
+            11 =>   'ams_unit', -> users
+            12 =>   'ams_initial', -> ams
+            13 =>   'ams_area', -> ams_customers
+            14 =>   'customer_country', -> customers
+            15 =>   'customer_region', -> countries
+            16 =>   'ac/eng/apu/comp', -> ac_type_id, engine_id, apu_id, component_id, tmb, pbth, sales
+            17 =>   'aircraft_registration', -> sales
+            18 =>   'maintenance_event', -> tnb, sales
+            19 =>   'market_share', -> tmb, pbth
+            20 =>   'sales_plan_fixed', -> sales
+            21 =>   'sales_plan_updated', -> sales
+            22 =>   'tmb_remarks', -> tmb
+            23 =>   'so_number', -> sales
+            24 =>   'start_date', -> sales
+            25 =>   'tat', -> sales
+            26 =>   'end_date', -> sales
+            27 =>   'sales_level', -> sales
+            28 =>   'sales_status', -> sales
+            29 =>   'cancel_category', -> sales_rejects
+            30 =>   'cancel_reason', -> sales_rejects
+        */
 
         $users = User::where('role_id', 5)->pluck('id');
 

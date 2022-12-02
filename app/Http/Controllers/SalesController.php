@@ -212,7 +212,6 @@ class SalesController extends Controller
         }
     }
 
-    // TODO: confirmation needed!!
     public function createPbth(PbthSalesRequest $request)
     {
         try {
@@ -280,13 +279,6 @@ class SalesController extends Controller
     {
         $sales = Sales::find($id);
         $user = auth()->user();
-
-        // TODO: authorize only registered AMS
-        // if ($user->hasRole('AMS')) {
-        //     $ams = ($user->ams->id == $sales->prospect->amsCustomer->ams->user_id);
-        // } else {
-        //     $ams = true;
-        // }
 
         if (!$sales) {
             return response()->json([
@@ -495,6 +487,7 @@ class SalesController extends Controller
             'data' => $pbth,
         ], 200);
     }
+
     public function updateTmb($id, Request $request)
     {
         $request->validate([
