@@ -80,7 +80,7 @@ class AuthController extends Controller
         $role = $empl->JABATAN;
 
         if ($unit == 'TPR') {
-            $user->role_id = 1;
+            $user->role_id = 3;
         } else if (in_array($unit, ['TPW','TPY','TPX']) || ($role == 'Key Account Manager')) {
             $user->role_id = 5;
         } else {
