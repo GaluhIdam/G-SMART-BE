@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Hash;
@@ -16,12 +15,12 @@ class UserSeeder extends Seeder
         $admin = User::create([
             'name'              => 'Super Admin [Testing]',
             'username'          => 'administrator',
-            'nopeg'             => null,
-            'unit'              => null,
+            'nopeg'             => '111',
+            'unit'              => 'TDI',
             'role_id'           => 1,
             'email'             => null,
             'password'          => Hash::make('p@ssw0rd'),
-            'email_verified_at' => Carbon::now(),
+            'email_verified_at' => null,
         ]);
         $admin->assignRole('Administrator');
 
@@ -29,12 +28,12 @@ class UserSeeder extends Seeder
         $tpc = User::create([
             'name'              => 'TPC User [Testing]',
             'username'          => 'tpc_user',
-            'nopeg'             => null,
-            'unit'              => null,
+            'nopeg'             => '222',
+            'unit'              => 'TDI',
             'role_id'           => 2,
             'email'             => null,
             'password'          => Hash::make('p@ssw0rd'),
-            'email_verified_at' => Carbon::now(),
+            'email_verified_at' => null,
         ]);
         $tpc->assignRole('TPC');
 
@@ -42,12 +41,12 @@ class UserSeeder extends Seeder
         $tpr = User::create([
             'name'              => 'TPR User [Testing]',
             'username'          => 'tpr_user',
-            'nopeg'             => null,
-            'unit'              => null,
+            'nopeg'             => '333',
+            'unit'              => 'TDI',
             'role_id'           => 3,
             'email'             => null,
             'password'          => Hash::make('p@ssw0rd'),
-            'email_verified_at' => Carbon::now(),
+            'email_verified_at' => null,
         ]);
         $tpr->assignRole('TPR');
         
@@ -55,12 +54,12 @@ class UserSeeder extends Seeder
         $cbo = User::create([
             'name'              => 'CBO User [Testing]',
             'username'          => 'cbo_user',
-            'nopeg'             => null,
-            'unit'              => null,
+            'nopeg'             => '444',
+            'unit'              => 'TDI',
             'role_id'           => 4,
             'email'             => null,
             'password'          => Hash::make('p@ssw0rd'),
-            'email_verified_at' => Carbon::now(),
+            'email_verified_at' => null,
         ]);
         $cbo->assignRole('CBO');
     }
