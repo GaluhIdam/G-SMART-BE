@@ -184,12 +184,12 @@ class ExcelSeeder extends Seeder
                         $pbth->save();
                     }
 
-                    $ac_reg = $data['17'];
+                    $ac_reg = empty($data['17']) ? null : $data['17'];
                     $sales_updated = $data['21'];
                     $tat =  $data['25'];
                     $start_date = Carbon::parse(strtotime($data['24']))->format('Y-m-d');
                     $end_date = Carbon::parse(strtotime($data['26']))->format('Y-m-d');
-                    $so_number = $data['23'] ?? null;
+                    $so_number = empty($data['23']) ? null : $data['23'];
 
                     $sales_type = $data['7'];
                     $is_rkap = ($sales_type == 'RKAP') ? 1 : 0;
@@ -234,21 +234,49 @@ class ExcelSeeder extends Seeder
                     $sales_level->status = $status;
                     $sales_level->save();
 
-                    if ($transaction_type != 3) {
+                    if ($level == 1) {
+                        if ($status == 3) {
+                            for ($i = 1; $i <= 10; $i++) { 
+                                $requirement = new SalesRequirement;
+                                $requirement->sales_id = $sales->id;
+                                $requirement->requirement_id = $i;
+                                $requirement->status = 1;
+                                $requirement->save();
+                            }
+                        } else {
+                            for ($i = 1; $i <= 10; $i++) { 
+                                $requirement = new SalesRequirement;
+                                $requirement->sales_id = $sales->id;
+                                $requirement->requirement_id = $i;
+                                $requirement->status = in_array($i, [9, 10]) ? 0 : 1;
+                                $requirement->save();
+                            }
+                        }
+                    } else if ($level == 2) {
                         for ($i = 1; $i <= 10; $i++) { 
                             $requirement = new SalesRequirement;
                             $requirement->sales_id = $sales->id;
                             $requirement->requirement_id = $i;
-                            $requirement->status = ($i == 1 || $i == 5) ? 1 : 0;
+                            $requirement->status = in_array($i, [8, 9, 10]) ? 0 : 1;
                             $requirement->save();
                         }
-                    } else {
-                        for ($i = 1; $i <= 10; $i++) { 
-                            $requirement = new SalesRequirement;
-                            $requirement->sales_id = $sales->id;
-                            $requirement->requirement_id = $i;
-                            $requirement->status = ($i == 9) ? 0 : 1;
-                            $requirement->save();
+                    }else {
+                        if ($transaction_type != 3) {
+                            for ($i = 1; $i <= 10; $i++) { 
+                                $requirement = new SalesRequirement;
+                                $requirement->sales_id = $sales->id;
+                                $requirement->requirement_id = $i;
+                                $requirement->status = in_array($i, [1, 5]) ? 1 : 0;
+                                $requirement->save();
+                            }
+                        } else {
+                            for ($i = 1; $i <= 10; $i++) { 
+                                $requirement = new SalesRequirement;
+                                $requirement->sales_id = $sales->id;
+                                $requirement->requirement_id = $i;
+                                $requirement->status = in_array($i, [9, 10]) ? 0 : 1;
+                                $requirement->save();
+                            }
                         }
                     }
 

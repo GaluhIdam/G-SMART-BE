@@ -60,7 +60,7 @@ class AMSSeeder extends Seeder
                 } catch (\Exception $e) {
                     DB::rollback();
 
-                    dd($e->getMessage());
+                    dd($e);
                 }
             }
             $first_line = false;
