@@ -491,9 +491,9 @@ class SalesController extends Controller
     public function updateTmb($id, Request $request)
     {
         $request->validate([
-            'maintenance_id' => 'required|integer|exists:maintenances,id',
-            'hangar_id' => 'required|integer|exists:hangars,id',
-            'line_id' => 'required|integer|exists:lines,id',
+            'maintenance_id' => 'sometimes|required|integer|exists:maintenances,id',
+            'hangar_id' => 'sometimes|required|integer|exists:hangars,id',
+            'line_id' => 'sometimes|required|integer|exists:lines,id',
             'ac_reg' => 'required|string',
             'value' => 'required|numeric',
             'tat' => 'required|integer',
