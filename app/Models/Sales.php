@@ -222,7 +222,7 @@ class Sales extends Model
             $query->where('ac_reg', $ac_reg);
         });
 
-        $query->when($other, function ($query) use ($other) {
+        $query->when(isset($other), function ($query) use ($other) {
             $query->where('is_rkap', $other);
         });
 
