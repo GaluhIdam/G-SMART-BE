@@ -157,6 +157,7 @@ class ProspectController extends Controller
         }
     }
 
+    // TODO: delete soon (unused method)
     public function show($id)
     {
 		$user = auth()->user();
@@ -177,7 +178,7 @@ class ProspectController extends Controller
                         'pbth.product',
                         'pbth.acType',
                         )->find($id);
- 
+
         return response()->json([
             'message' => 'Success Get Prospect By Customer!',
             'data' => [
@@ -192,6 +193,9 @@ class ProspectController extends Controller
     public function pbth($id)
     {
         $prospect       = Prospect::findOrFail($id);
+
+        $this->authorize('pickUpSales', $prospect);
+
         $market_share   = $prospect->market_share;
         $sales_plan     = $prospect->sales_plan;
         
@@ -213,6 +217,9 @@ class ProspectController extends Controller
     public function tmb($id)
     {
         $prospect       = Prospect::findOrFail($id);
+
+        $this->authorize('pickUpSales', $prospect);
+
         $market_share   = $prospect->market_share;
         $sales_plan     = $prospect->sales_plan;
 
