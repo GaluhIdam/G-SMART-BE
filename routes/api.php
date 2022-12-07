@@ -275,4 +275,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('contact-person-create', 'store')->middleware(['permission:create_contacts']);
         Route::delete('contact-person-delete/{id}', 'destroy')->middleware(['permission:delete_contacts']);
     });
+
+    // IGTE
+    Route::get('igte', [IGTEController::class, 'index']);
+
+    // Learning
+    Route::get('learning', [LearningController::class, 'index']);
 });
