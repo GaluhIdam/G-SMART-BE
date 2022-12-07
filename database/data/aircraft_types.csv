@@ -179,7 +179,7 @@ H145
 HELICOPTER
 engine
 Boeing 737 300
-"B747-200, CF6-50 EL"
+B747-200, CF6-50 EL
 Motor 2110 KVA
 Motor 1500KVA
 steam turbine
@@ -229,3 +229,4 @@ Compressor
 ATR 72-500
 Kawasaki M1A-13A
 A321Neo
+Others

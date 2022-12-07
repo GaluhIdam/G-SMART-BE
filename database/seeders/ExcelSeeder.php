@@ -31,6 +31,8 @@ use App\Models\{
     Hangar,
     Line,
     CancelCategory,
+    IGTE,
+    Learning,
 };
 
 class ExcelSeeder extends Seeder
@@ -143,6 +145,8 @@ class ExcelSeeder extends Seeder
                     $prospect->save();
 
                     $ac_type = AircraftType::firstWhere('name', $data['16']);
+                    $igte = IGTE::firstWhere('name', $data['16']);
+                    $learning = Learning::firstWhere('name', $data['16']);
                     $engine = Engine::firstWhere('name', $data['16']);
                     $apu = Apu::firstWhere('name', $data['16']);
                     $component = Component::firstWhere('name', $data['16']);
@@ -162,6 +166,8 @@ class ExcelSeeder extends Seeder
                         $tmb->prospect_id = $prospect->id;
                         $tmb->product_id = $product->id;
                         $tmb->ac_type_id = $ac_type->id ?? null;
+                        $tmb->igte_id = $igte->id ?? null;
+                        $tmb->learning_id = $learning->id ?? null;
                         $tmb->component_id = $component->id ?? null;
                         $tmb->engine_id = $engine->id ?? null;
                         $tmb->apu_id = $apu->id ?? null;
@@ -209,6 +215,8 @@ class ExcelSeeder extends Seeder
                     $sales->line_id = null;
                     $sales->product_id = $product->id;
                     $sales->ac_type_id = $ac_type->id ?? null;
+                    $sales->igte_id = $igte->id ?? null;
+                    $sales->learning_id = $learning->id ?? null;
                     $sales->component_id = $component->id ?? null;
                     $sales->engine_id = $engine->id ?? null;
                     $sales->apu_id = $apu->id ?? null;

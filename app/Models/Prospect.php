@@ -181,9 +181,11 @@ class Prospect extends Model
             $engine = $tmb->engine->name ?? null;
             $apu = $tmb->apu->name ?? null;
             $component = $tmb->component->name ?? null;
+            $igte = $tmb->igte->name ?? null;
+            $learning = $tmb->learning->name ?? null;
 
-            $regs = [$ac_type, $engine, $apu, $component];
-            $regs = implode('/', array_filter($regs));
+            $regs = [$ac_type, $igte, $engine, $apu, $component, $learning];
+            $regs = current(array_filter($regs));
 
             $registration = !empty($regs) ? $regs : '-';
         } else if ($this->pbth) {

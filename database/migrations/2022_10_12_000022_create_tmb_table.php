@@ -44,6 +44,14 @@ return new class extends Migration
             $table->index('maintenance_id');
             $table->foreign('maintenance_id')->references('id')->on('maintenances')->onDelete('cascade')->onUpdate('cascade');
 
+            $table->unsignedBigInteger('igte_id')->nullable();
+            $table->index('igte_id');
+            $table->foreign('igte_id')->references('id')->on('igtes')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('learning_id')->nullable();
+            $table->index('learning_id');
+            $table->foreign('learning_id')->references('id')->on('learnings')->onDelete('cascade')->onUpdate('cascade');
+
             $table->decimal('market_share', 18,2)->nullable();
             $table->text('remarks')->nullable();
             $table->timestamps();

@@ -145,6 +145,12 @@ class SalesController extends Controller
             'is_rkap' => 'required|boolean',
         ]);
 
+        if (isset($request->prospect_id)) {
+            $prospect = Prospect::find($request->prospect_id);
+
+            $this->authorize('pickUpSales', $prospect);
+        }
+
         try {
             DB::beginTransaction();
 
@@ -161,7 +167,7 @@ class SalesController extends Controller
                 $sales->ac_type_id = $request->ac_type_id;
                 $sales->ams_id = $user->hasRole('AMS') ? $user->ams->id : null;
             } else {
-                $prospect = Prospect::find($request->prospect_id);
+                $prospect = $prospect->id ?? Prospect::find($request->prospect_id);
                 $sales->prospect_id = $prospect->id;
                 $sales->customer_id = $prospect->amsCustomer->customer->id;
                 $sales->transaction_type_id = $prospect->transaction_type_id;
@@ -212,12 +218,21 @@ class SalesController extends Controller
         }
     }
 
-    public function createPbth(PbthSalesRequest $request)
+    public function createPbth(Request $request)
     {
+        $request->validate([
+            'prospect_id' => 'required|integer|exists:prospects,id',
+            'month' => 'required|string',
+            'value' => 'required|numeric',
+        ]);
+
+        $prospect = Prospect::find($request->prospect_id);
+
+        $this->authorize('pickUpSales', $prospect);
+
         try {
             DB::beginTransaction();
 
-            $prospect = Prospect::find($request->prospect_id);
             $customer = $prospect->amsCustomer->customer;
             $year = $prospect->year;
             $month = $request->month;
@@ -278,14 +293,8 @@ class SalesController extends Controller
     public function show($id)
     {
         $sales = Sales::find($id);
-        $user = auth()->user();
 
-        if (!$sales) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data not found',
-            ], 404);
-        }
+        $this->authorize('show', $sales);
 
         if ($sales->salesReschedule) {
             $sales_reschedule = [
@@ -410,6 +419,8 @@ class SalesController extends Controller
     public function deleteTmbSales($id)
     {
         if ($tmbSales = Sales::find($id)) {
+            $this->authorize('deleteTmb', $tmbSales);
+
             try {
                 DB::beginTransaction();
 

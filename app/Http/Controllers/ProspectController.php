@@ -110,6 +110,8 @@ class ProspectController extends Controller
                         $tmb->ac_type_id = $data['aircraft_type']['id'] ?? null;
                         $tmb->component_id = $data['component']['id'] ?? null;
                         $tmb->engine_id = $data['engine']['id'] ?? null;
+                        $tmb->igte_id = $data['igte']['id'] ?? null;
+                        $tmb->learning_id = $data['learning']['id'] ?? null;
                         $tmb->market_share = $data['market_share'];
                         $tmb->remarks = $data['remark'];
                         $tmb->maintenance_id = $data['maintenance_id']['id'];
@@ -157,6 +159,7 @@ class ProspectController extends Controller
         }
     }
 
+    // TODO: delete soon (unused method)
     public function show($id)
     {
 		$user = auth()->user();
@@ -177,7 +180,7 @@ class ProspectController extends Controller
                         'pbth.product',
                         'pbth.acType',
                         )->find($id);
- 
+
         return response()->json([
             'message' => 'Success Get Prospect By Customer!',
             'data' => [
@@ -192,6 +195,9 @@ class ProspectController extends Controller
     public function pbth($id)
     {
         $prospect       = Prospect::findOrFail($id);
+
+        $this->authorize('pickUpSales', $prospect);
+
         $market_share   = $prospect->market_share;
         $sales_plan     = $prospect->sales_plan;
         
@@ -213,11 +219,16 @@ class ProspectController extends Controller
     public function tmb($id)
     {
         $prospect       = Prospect::findOrFail($id);
+
+        $this->authorize('pickUpSales', $prospect);
+
         $market_share   = $prospect->market_share;
         $sales_plan     = $prospect->sales_plan;
 
         $data       = TMB::where('prospect_id', $id)
-                        ->get();
+                        ->with([
+                            'product',
+                        ])->get();
 
         return response()->json([
             'data' => [

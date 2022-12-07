@@ -31,6 +31,8 @@ return new class extends Migration
             $table->foreignId('component_id')->nullable()->constrained('component_id');
             $table->foreignId('engine_id')->nullable()->constrained('engine_id');
             $table->foreignId('apu_id')->nullable()->constrained('apu_id');
+            $table->foreignId('igte_id')->nullable()->constrained('igtes');
+            $table->foreignId('learning_id')->nullable()->constrained('learnings');
             $table->foreignId('ams_id')->nullable()->constrained('ams');
             $table->foreignId('line_id')->nullable()->constrained('lines');
 
