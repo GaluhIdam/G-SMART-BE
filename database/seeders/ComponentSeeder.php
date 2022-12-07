@@ -15,19 +15,11 @@ class ComponentSeeder extends Seeder
      */
     public function run()
     {
-        /*
-            DATASHEET COMPONENT DARI APLIKASI USER
-            - Component Retail
-            - Component PBTH
-            - Landing Gear
-            - Wheel & Brake
-            - 737CL
-        */
-
         Component::create(['name' => 'Component Retail',]);
         Component::create(['name' => 'Component PBTH',]);
         Component::create(['name' => 'Landing Gear',]);
         Component::create(['name' => 'Wheel & Brake',]);
         Component::create(['name' => '737CL',]);
+        Component::create(['name' => 'Others',]);
     }
 }

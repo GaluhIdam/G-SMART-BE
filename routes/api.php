@@ -37,6 +37,8 @@ use App\Http\Controllers\LineController;
 use App\Http\Controllers\HangarController;
 use App\Http\Controllers\AMSCustomerController;
 use App\Http\Controllers\CancelCategoryController;
+use App\Http\Controllers\IGTEController;
+use App\Http\Controllers\LearningController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -201,7 +203,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('sales-create-pbth', [SalesController::class, 'createPbth'])->middleware(['permission:create_sales']);
     Route::put('sales-so-number/{id}', [SalesController::class, 'inputSONumber'])->middleware(['permission:input_so_number']);
     Route::put('sales-switch-ams/{id}', [SalesController::class, 'switchAMS'])->middleware(['permission:switch_ams']);
-    Route::post('sales-request-upgrade', [SalesController::Class, 'requestUpgrade'])->middleware(['permission:sales_request_upgrade']);
+    Route::post('sales-request-upgrade', [SalesController::class, 'requestUpgrade'])->middleware(['permission:sales_request_upgrade']);
     Route::put('sales-upgrade-level/{id}', [SalesController::class, 'approveUpgrade'])->middleware(['permission:sales_confirm_upgrade']);
     Route::put('sales-update/{id}', [SalesController::class, 'update'])->middleware(['permission:update_sales']);
     Route::post('sales-request-cogs', [SalesController::class, 'requestCOGS'])->middleware(['permission:request_cogs']);
@@ -290,4 +292,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Update Sales Prospect
     Route::put('sales-update-tmb/{id}', [SalesController::class, 'updateTmb'])->middleware(['permission:read_sales_update|manage_sales_update']);
     Route::put('sales-update-pbth/{id}', [SalesController::class, 'updatePbth'])->middleware(['permission:read_sales_update|manage_sales_update']);
+
+    // IGTE
+    Route::get('igte', [IGTEController::class, 'index']);
+    Route::get('learning', [LearningController::class, 'index']);
 });

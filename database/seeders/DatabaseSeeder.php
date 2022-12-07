@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             ComponentSeeder::class,
             EngineSeeder::class,
             AircraftTypeSeeder::class,
+            IgteSeeder::class,
+            LearningSeeder::class,
             CustomerSeeder::class,
             ContactPersonSeeder::class,
             // AMSCustomerSeeder::class,
