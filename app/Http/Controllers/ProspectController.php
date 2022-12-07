@@ -110,6 +110,8 @@ class ProspectController extends Controller
                         $tmb->ac_type_id = $data['aircraft_type']['id'] ?? null;
                         $tmb->component_id = $data['component']['id'] ?? null;
                         $tmb->engine_id = $data['engine']['id'] ?? null;
+                        $tmb->igte_id = $data['igte']['id'] ?? null;
+                        $tmb->learning_id = $data['learning']['id'] ?? null;
                         $tmb->market_share = $data['market_share'];
                         $tmb->remarks = $data['remark'];
                         $tmb->maintenance_id = $data['maintenance_id']['id'];
@@ -224,7 +226,9 @@ class ProspectController extends Controller
         $sales_plan     = $prospect->sales_plan;
 
         $data       = TMB::where('prospect_id', $id)
-                        ->get();
+                        ->with([
+                            'product',
+                        ])->get();
 
         return response()->json([
             'data' => [

@@ -601,6 +601,16 @@ class Sales extends Model
         return $this->belongsTo(Engine::class, 'engine_id');
     }
 
+    public function igte()
+    {
+        return $this->belongsTo(IGTE::class, 'igte_id');
+    }
+
+    public function learning()
+    {
+        return $this->belongsTo(Learning::class, 'learning_id');
+    }
+
     public function apu()
     {
         return $this->belongsTo(Apu::class, 'apu_id');

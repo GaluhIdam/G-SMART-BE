@@ -57,4 +57,14 @@ class tmb extends Model
     {
         return $this->belongsTo(Maintenance::class, 'maintenance_id');
     }
+
+    public function igte()
+    {
+        return $this->belongsTo(IGTE::class, 'igte_id');
+    }
+
+    public function learning()
+    {
+        return $this->belongsTo(Learning::class, 'maintenance_id');
+    }
 }
