@@ -85,6 +85,7 @@ class SalesController extends Controller
             'level' => $request->level,
             'progress' => $request->progress,
             'status' => $request->status,
+            'year' => $request->year,
         ];
 
         $search = $request->search;
