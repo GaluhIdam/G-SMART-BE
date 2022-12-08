@@ -23,8 +23,8 @@ class Sales extends Model
 
     const STATUS_ARRAY = [
         self::STATUS_OPEN => 'Open',
-        self::STATUS_CLOSE_IN => 'Closed',
-        self::STATUS_CLOSED_SALES => 'Close in',
+        self::STATUS_CLOSE_IN => 'Closed In',
+        self::STATUS_CLOSED_SALES => 'Closed Sales',
         self::STATUS_CANCEL => 'Cancel',
     ];
 
@@ -82,12 +82,12 @@ class Sales extends Model
         $query->whereRelation('salesLevel', 'status', 1);
     }
 
-    public function scopeClosed($query)
+    public function scopeClosedIn($query)
     {
         $query->whereRelation('salesLevel', 'status', 2);
     }
 
-    public function scopeCloseIn($query)
+    public function scopeClosedSales($query)
     {
         $query->whereRelation('salesLevel', 'status', 3);
     }
