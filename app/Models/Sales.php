@@ -23,8 +23,8 @@ class Sales extends Model
 
     const STATUS_ARRAY = [
         self::STATUS_OPEN => 'Open',
-        self::STATUS_CLOSE_IN => 'Closed',
-        self::STATUS_CLOSED_SALES => 'Close in',
+        self::STATUS_CLOSE_IN => 'Closed In',
+        self::STATUS_CLOSED_SALES => 'Closed Sales',
         self::STATUS_CANCEL => 'Cancel',
     ];
 
@@ -82,12 +82,12 @@ class Sales extends Model
         $query->whereRelation('salesLevel', 'status', 1);
     }
 
-    public function scopeClosed($query)
+    public function scopeClosedIn($query)
     {
         $query->whereRelation('salesLevel', 'status', 2);
     }
 
-    public function scopeCloseIn($query)
+    public function scopeClosedSales($query)
     {
         $query->whereRelation('salesLevel', 'status', 3);
     }
@@ -104,8 +104,7 @@ class Sales extends Model
 
     public function scopeThisYear($query)
     {
-        $query->whereYear('start_date', Carbon::now()->format('Y'))
-            ->whereYear('end_date', Carbon::now()->format('Y'));
+        $query->whereYear('start_date', Carbon::now()->format('Y'));
     }
 
     public function scopeUser($query, $user)
@@ -184,6 +183,7 @@ class Sales extends Model
         $level = $filters['level'];
         $progress = $filters['progress'];
         $status = $filters['status'];
+        $year = $filters['year'];
 
         $query->when(($start_date && $end_date), function ($query) use ($start_date, $end_date) {
             $query->whereDate('start_date', '>=', Carbon::parse($start_date)->format('Y-m-d'))
@@ -237,6 +237,10 @@ class Sales extends Model
 
         $query->when($status, function ($query) use ($status) {
             $query->whereRelation('salesLevel', 'status', $status);
+        });
+
+        $query->when($year, function ($query) use ($year) {
+            $query->whereYear('start_date', $year);
         });
     }
 

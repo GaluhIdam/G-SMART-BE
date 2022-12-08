@@ -33,20 +33,20 @@ class SalesController extends Controller
 
         $target = Sales::user($user)->thisYear()->rkap()->sum('value');
         $open = Sales::user($user)->thisYear()->open()->sum('value');
-        $closed = Sales::user($user)->thisYear()->closed()->sum('value');
-        $closein = Sales::user($user)->thisYear()->closeIn()->sum('value');
+        $closedIn = Sales::user($user)->thisYear()->closedIn()->sum('value');
+        $closedSales = Sales::user($user)->thisYear()->closedSales()->sum('value');
         $cancel = Sales::user($user)->thisYear()->cancel()->sum('value');
 
         for ($i = 1; $i <= 4; $i++){
             ${"level$i"} = [
                 'total' => Sales::user($user)->thisYear()->level($i)->sum('value'),
                 'open' => Sales::user($user)->thisYear()->level($i)->open()->sum('value'),
-                'closed' => Sales::user($user)->thisYear()->level($i)->closed()->sum('value'),
-                'closeIn' => Sales::user($user)->thisYear()->level($i)->closeIn()->sum('value'),
+                'closedIn' => Sales::user($user)->thisYear()->level($i)->closedIn()->sum('value'),
+                'closedSales' => Sales::user($user)->thisYear()->level($i)->closedSales()->sum('value'),
                 'cancel' => Sales::user($user)->thisYear()->level($i)->cancel()->sum('value'),
                 'countOpen' => Sales::user($user)->thisYear()->level($i)->open()->count(),
-                'countClosed' => Sales::user($user)->thisYear()->level($i)->closed()->count(),
-                'countCloseIn' => Sales::user($user)->thisYear()->level($i)->closeIn()->count(),
+                'countClosedIn' => Sales::user($user)->thisYear()->level($i)->closedIn()->count(),
+                'countClosedSales' => Sales::user($user)->thisYear()->level($i)->closedSales()->count(),
                 'countCancel' => Sales::user($user)->thisYear()->level($i)->cancel()->count(),
             ];
         }
@@ -57,8 +57,8 @@ class SalesController extends Controller
             'data' => [
                 'totalTarget' => $target,
                 'totalOpen' => $open,
-                'totalClosed' => $closed,
-                'totalCloseIn' => $closein,
+                'totalClosedIn' => $closedIn,
+                'totalClosedSales' => $closedSales,
                 'totalCancel' => $cancel,
                 'level4' => $level4,
                 'level3' => $level3,
@@ -85,6 +85,7 @@ class SalesController extends Controller
             'level' => $request->level,
             'progress' => $request->progress,
             'status' => $request->status,
+            'year' => $request->year,
         ];
 
         $search = $request->search;
