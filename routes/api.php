@@ -37,6 +37,8 @@ use App\Http\Controllers\LineController;
 use App\Http\Controllers\HangarController;
 use App\Http\Controllers\AMSCustomerController;
 use App\Http\Controllers\CancelCategoryController;
+use App\Http\Controllers\IGTEController;
+use App\Http\Controllers\LearningController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('register', 'register');
