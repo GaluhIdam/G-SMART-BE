@@ -11,15 +11,15 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        $total_area1 = number_format((Sales::user($user)->rkap()->area('I')->sum('value') / 1000000), 1);
-        $total_area2 = number_format((Sales::user($user)->rkap()->area('II')->sum('value') / 1000000), 1);
-        $total_area3 = number_format((Sales::user($user)->rkap()->area('III')->sum('value') / 1000000), 1);
-        $total_kam = number_format((Sales::user($user)->rkap()->area('KAM')->sum('value') / 1000000), 1);
+        $total_area1 = (float)number_format((Sales::user($user)->rkap()->area('I')->sum('value') / 1000000), 1);
+        $total_area2 = (float)number_format((Sales::user($user)->rkap()->area('II')->sum('value') / 1000000), 1);
+        $total_area3 = (float)number_format((Sales::user($user)->rkap()->area('III')->sum('value') / 1000000), 1);
+        $total_kam = (float)number_format((Sales::user($user)->rkap()->area('KAM')->sum('value') / 1000000), 1);
 
-        $progress_area1 = number_format((Sales::user($user)->rkap()->area('I')->level(1)->clean()->sum('value') / 1000000), 1);
-        $progress_area2 = number_format((Sales::user($user)->rkap()->area('II')->level(1)->clean()->sum('value') / 1000000), 1);
-        $progress_area3 = number_format((Sales::user($user)->rkap()->area('III')->level(1)->clean()->sum('value') / 1000000), 1);
-        $progress_kam = number_format((Sales::user($user)->rkap()->area('KAM')->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_area1 = (float)number_format((Sales::user($user)->rkap()->area('I')->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_area2 = (float)number_format((Sales::user($user)->rkap()->area('II')->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_area3 = (float)number_format((Sales::user($user)->rkap()->area('III')->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_kam = (float)number_format((Sales::user($user)->rkap()->area('KAM')->level(1)->clean()->sum('value') / 1000000), 1);
 
         $data = [
             'pie' => [
@@ -32,22 +32,22 @@ class DashboardController extends Controller
                 'area1' => [
                     'target' => $total_area1,
                     'progress' => $progress_area1,
-                    'percentage' => number_format((($progress_area1 / $total_area1) * 100), 1),
+                    'percentage' => (float)number_format((($progress_area1 / $total_area1) * 100), 1),
                 ],
                 'area2' => [
                     'target' => $total_area2,
                     'progress' => $progress_area2,
-                    'percentage' => number_format((($progress_area2 / $total_area2) * 100), 1),
+                    'percentage' => (float)number_format((($progress_area2 / $total_area2) * 100), 1),
                 ],
                 'area3' => [
                     'target' => $total_area3,
                     'progress' => $progress_area3,
-                    'percentage' => number_format((($progress_area3 / $total_area3) * 100), 1),
+                    'percentage' => (float)number_format((($progress_area3 / $total_area3) * 100), 1),
                 ],
                 'kam' => [
                     'target' => $total_kam,
                     'progress' => $progress_kam,
-                    'percentage' => number_format((($progress_kam / $total_kam) * 100), 1),
+                    'percentage' => (float)number_format((($progress_kam / $total_kam) * 100), 1),
                 ],
             ],
         ];
