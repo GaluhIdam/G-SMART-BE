@@ -81,6 +81,11 @@ class Sales extends Model
         });
     }
 
+    public function scopeGroupType($query, $groupType)
+    {
+        $query->whereRelation('customer', 'group_type', $groupType);
+    }
+
     public function scopeClean($query)
     {
         $query->whereRelation('salesLevel', 'status', '!=', 4);

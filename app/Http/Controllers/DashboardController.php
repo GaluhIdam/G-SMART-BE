@@ -58,4 +58,41 @@ class DashboardController extends Controller
             'data' => $data,
         ], 200);
     }
+
+    public function group()
+    {
+        $user = auth()->user();
+
+        $total_group1 = (float)number_format((Sales::user($user)->rkap()->groupType(0)->sum('value') / 1000000), 1);
+        $total_group2 = (float)number_format((Sales::user($user)->rkap()->groupType(1)->sum('value') / 1000000), 1);
+
+        $progress_group1 = (float)number_format((Sales::user($user)->rkap()->groupType(0)->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_group2 = (float)number_format((Sales::user($user)->rkap()->groupType(1)->level(1)->clean()->sum('value')
+        / 1000000), 1);
+
+        $data = [
+            'pie' => [
+                $total_group1,
+                $total_group2,
+            ],
+            'bar' => [
+                'group1' => [
+                    'target' => $total_group1,
+                    'progress' => $progress_group1,
+                    'percentage' => (float)number_format((($progress_group1 / $total_group1) * 100), 1),
+                ],
+                'group2' => [
+                    'target' => $total_group2,
+                    'progress' => $progress_group2,
+                    'percentage' => (float)number_format((($progress_group2 / $total_group2) * 100), 1),
+                ],
+            ],
+        ];
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data succesfully',
+            'data' => $data,
+        ], 200);
+    }
 }
