@@ -72,6 +72,20 @@ class Sales extends Model
         'maintenance_name',
     ];
 
+    public function scopeArea($query, $area)
+    {
+        $query->whereHas('prospect', function ($query) use ($area) {
+            $query->whereHas('amsCustomer', function ($query) use ($area) {
+                $query->whereRelation('area', 'name', $area);
+            });
+        });
+    }
+
+    public function scopeClean($query)
+    {
+        $query->whereRelation('salesLevel', 'status', '!=', 4);
+    }
+
     public function scopeLevel($query, $level)
     {
         $query->whereRelation('salesLevel', 'level_id', $level);

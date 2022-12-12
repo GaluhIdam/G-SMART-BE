@@ -39,6 +39,7 @@ use App\Http\Controllers\AMSCustomerController;
 use App\Http\Controllers\CancelCategoryController;
 use App\Http\Controllers\IGTEController;
 use App\Http\Controllers\LearningController;
+use App\Http\Controllers\DashboardController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('register', 'register');
@@ -46,6 +47,18 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Dashboard's resource
+    Route::controller(DashboardController::class)
+        ->middleware(['permission:read_dashboard'])
+        ->group(function () {
+            Route::get('dashboard-area', 'area');
+            Route::get('dashboard-group', 'group');
+            Route::get('dashboard-product', 'product');
+            Route::get('dashboard-rofo-total', 'rofoTotal');
+            Route::get('dashboard-rofo-garuda', 'rofoGaruda');
+            Route::get('dashboard-rofo-citilink', 'rofoCitilink');
+    });
 
     // Module's resource
     Route::get('module-permission', [ModulePermissionController::class, 'index']);
