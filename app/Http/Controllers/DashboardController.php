@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Sales;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -87,6 +88,67 @@ class DashboardController extends Controller
                     'percentage' => (float)number_format((($progress_group2 / $total_group2) * 100), 1),
                 ],
             ],
+        ];
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data succesfully',
+            'data' => $data,
+        ], 200);
+    }
+
+    public function rofoTotal()
+    {
+        $user = auth()->user();
+
+        $year = date('Y');
+        $month = date('m');
+        $day = date('d');
+
+        $data = [];
+        $total_target = 0;
+        $total_progress = 0;
+
+        for ($i = 1; $i <= 12; $i++) {
+            if ($i < $month) {
+                $total_days = Carbon::create()->day(1)->month($i)->year($year)->endOfMonth()->format('d');
+
+                $date_range = [
+                    'start_date' => Carbon::create()->day(1)->month($i)->year($year)->format('Y-m-d'),
+                    'end_date' => Carbon::create()->day($total_days)->month($i)->year($year)->format('Y-m-d'),
+                ];
+            } else if ($i == $month) {
+                $date_range = [
+                    'start_date' => Carbon::create()->day(1)->month($i)->year($year)->format('Y-m-d'),
+                    'end_date' => Carbon::create()->day($day)->month($i)->year($year)->format('Y-m-d'),
+                ];
+            }
+
+            if ($i > $month) {
+                $target = 0;
+                $progress = 0;
+            } else {
+                $target = (float)number_format((Sales::user($user)->rkap()->month($i)->sum('value') / 1000000), 1);
+                $progress = (float)number_format((Sales::user($user)->rkap()->filter($date_range)->level(1)->clean()->sum('value') / 1000000), 1);
+            }
+
+            $per_month = [
+                'target' => $target,
+                'progress' => $progress,
+                'percentage' => $target == 0 ? 0 : (float)number_format((($progress / $target) * 100), 1),
+                'gap' => $target == 0 ? 0 : (float)number_format(($target - $progress), 1),
+            ];
+
+            $data[] = $per_month;
+            $total_target += $target;
+            $total_progress += $progress;
+        }
+
+        $data[] = [
+            'target' => (float)number_format($total_target, 1),
+            'progress' => (float)number_format($total_progress, 1),
+            'percentage' => (float)number_format((($total_progress / $total_target) * 100), 1),
+            'gap' => (float)number_format(($total_target - $total_progress), 1),
         ];
 
         return response()->json([
