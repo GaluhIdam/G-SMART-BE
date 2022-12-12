@@ -202,7 +202,9 @@ class ProspectController extends Controller
         $sales_plan     = $prospect->sales_plan;
         
         $data   = PBTH::where('prospect_id', $id)
-                        ->get();
+                        ->with([
+                            'product',
+                        ])->get();
         
         return response()->json([
             'data' => [
