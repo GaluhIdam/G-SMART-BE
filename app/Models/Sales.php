@@ -72,6 +72,12 @@ class Sales extends Model
         'maintenance_name',
     ];
 
+    public function scopeMonth($query, $month)
+    {
+        $query->whereMonth('start_date', $month)
+            ->whereYear('start_date', Carbon::now()->format('Y'));
+    }
+
     public function scopeArea($query, $area)
     {
         $query->whereHas('prospect', function ($query) use ($area) {
@@ -193,25 +199,25 @@ class Sales extends Model
 
     public function scopeFilter($query, array $filters)
     {
-        $start_date = $filters['start_date'];
-        $end_date = $filters['end_date'];
-        $type = $filters['type'];
-        $customer = $filters['customer'];
-        $product = $filters['product'];
-        $ac_type = $filters['ac_type'];
-        $component = $filters['component'];
-        $engine = $filters['engine'];
-        $apu = $filters['apu'];
-        $ac_reg = $filters['ac_reg'];
-        $other = $filters['other'];
-        $level = $filters['level'];
-        $progress = $filters['progress'];
-        $status = $filters['status'];
-        $year = $filters['year'];
+        $start_date = $filters['start_date'] ?? false;
+        $end_date = $filters['end_date'] ?? false;
+        $type = $filters['type'] ?? false;
+        $customer = $filters['customer'] ?? false;
+        $product = $filters['product'] ?? false;
+        $ac_type = $filters['ac_type'] ?? false;
+        $component = $filters['component'] ?? false;
+        $engine = $filters['engine'] ?? false;
+        $apu = $filters['apu'] ?? false;
+        $ac_reg = $filters['ac_reg'] ?? false;
+        $other = $filters['other'] ?? null;
+        $level = $filters['level'] ?? false;
+        $progress = $filters['progress'] ?? false;
+        $status = $filters['status'] ?? false;
+        $year = $filters['year'] ?? false;
 
         $query->when(($start_date && $end_date), function ($query) use ($start_date, $end_date) {
-            $query->whereDate('start_date', '>=', Carbon::parse($start_date)->format('Y-m-d'))
-                ->whereDate('end_date', '<=', Carbon::parse($end_date)->format('Y-m-d'));
+            $query->where('start_date', '>=', Carbon::parse($start_date)->format('Y-m-d'))
+                ->where('start_date', '<=', Carbon::parse($end_date)->format('Y-m-d'));
         });
 
         $query->when($type, function ($query) use ($type) {
