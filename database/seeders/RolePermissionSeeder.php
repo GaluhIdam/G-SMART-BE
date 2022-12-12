@@ -557,6 +557,13 @@ class RolePermissionSeeder extends Seeder
         ModulePermissions::create(['module_id' => $manage_contacts->id, 'permission_id' => $create_contacts->id],);
         ModulePermissions::create(['module_id' => $manage_contacts->id, 'permission_id' => $delete_contacts->id],);
 
+        // Line Hangar Permission
+        $manage_dashboard = Module::create([
+            'module_name' => 'Manage Dashboard'
+        ]);
+        $read_dashboard = Permission::create(['name' => 'read_dashboard']);
+        ModulePermissions::create(['module_id' => $manage_dashboard->id, 'permission_id' => $read_dashboard->id]);
+
         // Admininistrator
         $admin = Role::create([
             'name' => 'Administrator',
@@ -607,6 +614,7 @@ class RolePermissionSeeder extends Seeder
             $read_files,
             $show_files,
             $read_contacts,
+            $read_dashboard,
         ]);
 
         // TPR
@@ -657,6 +665,7 @@ class RolePermissionSeeder extends Seeder
             $file_histories,
             $read_contacts,
             $create_maintenance,
+            $read_dashboard,
         ]);
 
         // CBO
@@ -708,6 +717,7 @@ class RolePermissionSeeder extends Seeder
             $approve_reschedule,
             $approve_cancel,
             $create_maintenance,
+            $read_dashboard,
         ]);
 
         // AMS
@@ -767,6 +777,7 @@ class RolePermissionSeeder extends Seeder
             $request_cancel,
             $request_cogs,
             $create_maintenance,
+            $read_dashboard,
         ]);
 
         $init = Role::create([
