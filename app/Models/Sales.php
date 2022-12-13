@@ -92,6 +92,11 @@ class Sales extends Model
         $query->whereRelation('customer', 'group_type', $groupType);
     }
 
+    public function scopeProduct($query, $product)
+    {
+        $query->whereRelation('product', 'id', $product);
+    }
+
     public function scopeClean($query)
     {
         $query->whereRelation('salesLevel', 'status', '!=', 4);

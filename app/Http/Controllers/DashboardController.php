@@ -97,6 +97,97 @@ class DashboardController extends Controller
         ], 200);
     }
 
+    public function product()
+    {
+        $user = auth()->user();
+
+        $total_learning = (float)number_format((Sales::user($user)->rkap()->product(1)->sum('value') / 1000000), 1);
+        $total_igte = (float)number_format((Sales::user($user)->rkap()->product(2)->sum('value') / 1000000), 1);
+        $total_others = (float)number_format((Sales::user($user)->rkap()->product(3)->sum('value') / 1000000), 1);
+        $total_engapu = (float)number_format((Sales::user($user)->rkap()->product(4)->sum('value') / 1000000), 1);
+        $total_material = (float)number_format((Sales::user($user)->rkap()->product(5)->sum('value') / 1000000), 1);
+        $total_line = (float)number_format((Sales::user($user)->rkap()->product(6)->sum('value') / 1000000), 1);
+        $total_engineering = (float)number_format((Sales::user($user)->rkap()->product(7)->sum('value') / 1000000), 1);
+        $total_component = (float)number_format((Sales::user($user)->rkap()->product(8)->sum('value') / 1000000), 1);
+        $total_airframe = (float)number_format((Sales::user($user)->rkap()->product(9)->sum('value') / 1000000), 1);
+
+        $progress_learning = (float)number_format((Sales::user($user)->rkap()->product(1)->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_igte = (float)number_format((Sales::user($user)->rkap()->product(2)->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_others = (float)number_format((Sales::user($user)->rkap()->product(3)->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_engapu = (float)number_format((Sales::user($user)->rkap()->product(4)->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_material = (float)number_format((Sales::user($user)->rkap()->product(5)->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_line = (float)number_format((Sales::user($user)->rkap()->product(6)->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_engineering = (float)number_format((Sales::user($user)->rkap()->product(7)->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_component = (float)number_format((Sales::user($user)->rkap()->product(8)->level(1)->clean()->sum('value') / 1000000), 1);
+        $progress_airframe = (float)number_format((Sales::user($user)->rkap()->product(9)->level(1)->clean()->sum('value') / 1000000), 1);
+
+        $data = [
+            'pie' => [
+                $total_learning,
+                $total_igte,
+                $total_others,
+                $total_engapu,
+                $total_material,
+                $total_line,
+                $total_engineering,
+                $total_component,
+                $total_airframe,
+            ],
+            'bar' => [
+                'learning' => [
+                    'target'     => $total_learning,
+                    'progress'   => $progress_learning,
+                    'percentage' => (float)number_format((($progress_learning / $total_learning) * 100), 1),
+                ],
+                'igte' => [
+                    'target'     => $total_igte,
+                    'progress'   => $progress_igte,
+                    'percentage' => (float)number_format((($progress_igte / $total_igte) * 100), 1),
+                ],
+                'others' => [
+                    'target'     => $total_others,
+                    'progress'   => $progress_others,
+                    'percentage' => (float)number_format((($progress_others / $total_others) * 100), 1),
+                ],
+                'engapu' => [
+                    'target'     => $total_engapu,
+                    'progress'   => $progress_engapu,
+                    'percentage' => (float)number_format((($progress_engapu / $total_engapu) * 100), 1),
+                ],
+                'material' => [
+                    'target'     => $total_material,
+                    'progress'   => $progress_material,
+                    'percentage' => (float)number_format((($progress_material / $total_material) * 100), 1),
+                ],
+                'line' => [
+                    'target'     => $total_line,
+                    'progress'   => $progress_line,
+                    'percentage' => (float)number_format((($progress_line / $total_line) * 100), 1),
+                ],
+                'engineering' => [
+                    'target'     => $total_engineering,
+                    'progress'   => $progress_engineering,
+                    'percentage' => (float)number_format((($progress_engineering / $total_engineering) * 100), 1),
+                ],
+                'component' => [
+                    'target'     => $total_component,
+                    'progress'   => $progress_component,
+                    'percentage' => (float)number_format((($progress_component / $total_component) * 100), 1),
+                ],
+                'airframe' => [
+                    'target'     => $total_airframe,
+                    'progress'   => $progress_airframe,
+                    'percentage' => (float)number_format((($progress_airframe / $total_airframe) * 100), 1),
+                ],
+            ],
+        ];
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data succesfully',
+            'data' => $data,
+        ], 200);
+    }
     public function rofoTotal()
     {
         $user = auth()->user();
