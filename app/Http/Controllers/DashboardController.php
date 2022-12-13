@@ -255,4 +255,71 @@ class DashboardController extends Controller
             'data' => $data,
         ], 200);
     }
+
+    public function rofoGaruda()
+    {
+        $user = auth()->user();
+
+        $year = date('Y');
+        $month = date('m');
+        $day = date('d');
+
+        $array_target = [];
+        $array_progress = [];
+        $array_percentage = [];
+        $array_gap = [];
+
+        $total_target = 0;
+        $total_progress = 0;
+
+        for ($i = 1; $i <= 12; $i++) {
+            if ($i < $month) {
+                $total_days = Carbon::create()->day(1)->month($i)->year($year)->endOfMonth()->format('d');
+
+                $date_range = [
+                    'start_date' => Carbon::create()->day(1)->month($i)->year($year)->format('Y-m-d'),
+                    'end_date' => Carbon::create()->day($total_days)->month($i)->year($year)->format('Y-m-d'),
+                ];
+            } else if ($i == $month) {
+                $date_range = [
+                    'start_date' => Carbon::create()->day(1)->month($i)->year($year)->format('Y-m-d'),
+                    'end_date' => Carbon::create()->day($day)->month($i)->year($year)->format('Y-m-d'),
+                ];
+            }
+
+            if ($i > $month) {
+                $target = 0;
+                $progress = 0;
+            } else {
+                $target = (float)number_format((Sales::user($user)->rkap()->customerName('Garuda Indonesia')->month($i)->sum('value') / 1000000), 1);
+                $progress = (float)number_format((Sales::user($user)->rkap()->customerName('Garuda Indonesia')->filter($date_range)->level(1)->clean()->sum('value') / 1000000), 1);
+            }
+
+            $array_target[] = $target;
+            $array_progress[] = $progress;
+            $array_percentage[] = $target == 0 ? 0 : (float)number_format((($progress / $target) * 100), 1);
+            $array_gap[] = $target == 0 ? 0 : (float)number_format(($target - $progress), 1);
+
+            $total_target += $target;
+            $total_progress += $progress;
+        }
+
+        $array_target[] = (float)number_format($total_target, 1);
+        $array_progress[] = (float)number_format($total_progress, 1);
+        $array_percentage[] = $total_target == 0 ? 0 : (float)number_format((($total_progress / $total_target) * 100), 1);
+        $array_gap[] = $total_target == 0 ? 0 : (float)number_format(($total_target - $total_progress), 1);
+
+        $data = [
+            'target' => $array_target,
+            'progress' => $array_progress,
+            'percentage' => $array_percentage,
+            'gap' => $array_gap,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data succesfully',
+            'data' => $data,
+        ], 200);
+    }
 }
