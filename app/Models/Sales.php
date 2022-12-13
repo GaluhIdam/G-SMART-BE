@@ -72,6 +72,11 @@ class Sales extends Model
         'maintenance_name',
     ];
 
+    public function scopeCustomerName($query, $customer)
+    {
+        $query->whereRelation('customer', 'name', $customer);
+    }
+
     public function scopeMonth($query, $month)
     {
         $query->whereMonth('start_date', $month)
