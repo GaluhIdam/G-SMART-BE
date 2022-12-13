@@ -224,7 +224,7 @@ class DashboardController extends Controller
                 $target = 0;
                 $progress = 0;
             } else {
-                $target = (float)number_format((Sales::user($user)->rkap()->month($i)->sum('value') / 1000000), 1);
+                $target = (float)number_format((Sales::user($user)->rkap()->month($i)->clean()->sum('value') / 1000000), 1);
                 $progress = (float)number_format((Sales::user($user)->rkap()->filter($date_range)->level(1)->clean()->sum('value') / 1000000), 1);
             }
 
@@ -291,7 +291,7 @@ class DashboardController extends Controller
                 $target = 0;
                 $progress = 0;
             } else {
-                $target = (float)number_format((Sales::user($user)->rkap()->customerName('Garuda Indonesia')->month($i)->sum('value') / 1000000), 1);
+                $target = (float)number_format((Sales::user($user)->rkap()->customerName('Garuda Indonesia')->month($i)->clean()->sum('value') / 1000000), 1);
                 $progress = (float)number_format((Sales::user($user)->rkap()->customerName('Garuda Indonesia')->filter($date_range)->level(1)->clean()->sum('value') / 1000000), 1);
             }
 
@@ -358,7 +358,7 @@ class DashboardController extends Controller
                 $target = 0;
                 $progress = 0;
             } else {
-                $target = (float)number_format((Sales::user($user)->rkap()->customerName('Citilink Indonesia')->month($i)->sum('value') / 1000000), 1);
+                $target = (float)number_format((Sales::user($user)->rkap()->customerName('Citilink Indonesia')->month($i)->clean()->sum('value') / 1000000), 1);
                 $progress = (float)number_format((Sales::user($user)->rkap()->customerName('Citilink Indonesia')->filter($date_range)->level(1)->clean()->sum('value') / 1000000), 1);
             }
 
