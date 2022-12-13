@@ -188,6 +188,7 @@ class DashboardController extends Controller
             'data' => $data,
         ], 200);
     }
+
     public function rofoTotal()
     {
         $user = auth()->user();
@@ -196,7 +197,11 @@ class DashboardController extends Controller
         $month = date('m');
         $day = date('d');
 
-        $data = [];
+        $array_target = [];
+        $array_progress = [];
+        $array_percentage = [];
+        $array_gap = [];
+
         $total_target = 0;
         $total_progress = 0;
 
@@ -223,23 +228,25 @@ class DashboardController extends Controller
                 $progress = (float)number_format((Sales::user($user)->rkap()->filter($date_range)->level(1)->clean()->sum('value') / 1000000), 1);
             }
 
-            $per_month = [
-                'target' => $target,
-                'progress' => $progress,
-                'percentage' => $target == 0 ? 0 : (float)number_format((($progress / $target) * 100), 1),
-                'gap' => $target == 0 ? 0 : (float)number_format(($target - $progress), 1),
-            ];
+            $array_target[] = $target;
+            $array_progress[] = $progress;
+            $array_percentage[] = $target == 0 ? 0 : (float)number_format((($progress / $target) * 100), 1);
+            $array_gap[] = $target == 0 ? 0 : (float)number_format(($target - $progress), 1);
 
-            $data[] = $per_month;
             $total_target += $target;
             $total_progress += $progress;
         }
 
-        $data[] = [
-            'target' => (float)number_format($total_target, 1),
-            'progress' => (float)number_format($total_progress, 1),
-            'percentage' => (float)number_format((($total_progress / $total_target) * 100), 1),
-            'gap' => (float)number_format(($total_target - $total_progress), 1),
+        $array_target[] = (float)number_format($total_target, 1);
+        $array_progress[] = (float)number_format($total_progress, 1);
+        $array_percentage[] = $total_target == 0 ? 0 : (float)number_format((($total_progress / $total_target) * 100), 1);
+        $array_gap[] = $total_target == 0 ? 0 : (float)number_format(($total_target - $total_progress), 1);
+
+        $data = [
+            'target' => $array_target,
+            'progress' => $array_progress,
+            'percentage' => $array_percentage,
+            'gap' => $array_gap,
         ];
 
         return response()->json([
