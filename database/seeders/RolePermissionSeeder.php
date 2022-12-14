@@ -557,7 +557,7 @@ class RolePermissionSeeder extends Seeder
         ModulePermissions::create(['module_id' => $manage_contacts->id, 'permission_id' => $create_contacts->id],);
         ModulePermissions::create(['module_id' => $manage_contacts->id, 'permission_id' => $delete_contacts->id],);
 
-        // Line Hangar Permission
+        // Dashboard Permission
         $manage_dashboard = Module::create([
             'module_name' => 'Manage Dashboard'
         ]);
