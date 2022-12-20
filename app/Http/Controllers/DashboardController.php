@@ -176,14 +176,20 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
+        $array_target = [];
+        $array_progress = [];
+
         $target = (float)number_format((Sales::user($user)->rkap()->thisYear()->clean()->sum('value') / 1000000), 2);
         $progress = (float)number_format((Sales::user($user)->rkap()->thisYear()->level(1)->clean()->sum('value') / 1000000), 2);
         $percentage = $target == 0 ? 0 : (float)number_format((($progress / $target) * 100), 2);
         $gap = $target == 0 ? 0 : (float)number_format(($target - $progress), 2);
 
+        $array_target[] = $target;
+        $array_progress[] = $progress;
+
         $data = [
-            'target' => $target,
-            'progress' => $progress,
+            'target' => $array_target,
+            'progress' => $array_progress,
             'percentage' => $percentage,
             'gap' => $gap,
         ];
@@ -255,14 +261,20 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
+        $array_target = [];
+        $array_progress = [];
+
         $target = (float)number_format((Sales::user($user)->rkap()->customerName('Garuda Indonesia')->thisYear()->clean()->sum('value') / 1000000), 2);
         $progress = (float)number_format((Sales::user($user)->rkap()->customerName('Garuda Indonesia')->thisYear()->level(1)->clean()->sum('value') / 1000000), 2);
         $percentage = $target == 0 ? 0 : (float)number_format((($progress / $target) * 100), 2);
         $gap = $target == 0 ? 0 : (float)number_format(($target - $progress), 2);
 
+        $array_target[] = $target;
+        $array_progress[] = $progress;
+
         $data = [
-            'target' => $target,
-            'progress' => $progress,
+            'target' => $array_target,
+            'progress' => $array_progress,
             'percentage' => $percentage,
             'gap' => $gap,
         ];
@@ -334,14 +346,20 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
+        $array_target = [];
+        $array_progress = [];
+
         $target = (float)number_format((Sales::user($user)->rkap()->customerName('Citilink Indonesia')->thisYear()->clean()->sum('value') / 1000000), 2);
         $progress = (float)number_format((Sales::user($user)->rkap()->customerName('Citilink Indonesia')->thisYear()->level(1)->clean()->sum('value') / 1000000), 2);
         $percentage = $target == 0 ? 0 : (float)number_format((($progress / $target) * 100), 2);
         $gap = $target == 0 ? 0 : (float)number_format(($target - $progress), 2);
 
+        $array_target[] = $target;
+        $array_progress[] = $progress;
+
         $data = [
-            'target' => $target,
-            'progress' => $progress,
+            'target' => $array_target,
+            'progress' => $array_progress,
             'percentage' => $percentage,
             'gap' => $gap,
         ];
