@@ -57,8 +57,10 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('dashboard-product', 'product');
             Route::get('dashboard-rofo-total-month', 'rofoTotalMonth');
             Route::get('dashboard-rofo-total-year', 'rofoTotalYear');
-            Route::get('dashboard-rofo-garuda', 'rofoGaruda');
-            Route::get('dashboard-rofo-citilink', 'rofoCitilink');
+            Route::get('dashboard-rofo-garuda-month', 'rofoGarudaMonth');
+            Route::get('dashboard-rofo-garuda-year', 'rofoGarudaYear');
+            Route::get('dashboard-rofo-citilink-month', 'rofoCitilinkMonth');
+            Route::get('dashboard-rofo-citilink-year', 'rofoCitilinkYear');
     });
 
     // Module's resource

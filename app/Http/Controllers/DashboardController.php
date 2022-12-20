@@ -195,7 +195,7 @@ class DashboardController extends Controller
         ], 200);
     }
 
-    public function rofoGaruda()
+    public function rofoGarudaMonth()
     {
         $user = auth()->user();
 
@@ -207,9 +207,6 @@ class DashboardController extends Controller
         $array_progress = [];
         $array_percentage = [];
         $array_gap = [];
-
-        $total_target = 0;
-        $total_progress = 0;
 
         for ($i = 1; $i <= 12; $i++) {
             if ($i < $month) {
@@ -238,15 +235,7 @@ class DashboardController extends Controller
             $array_progress[] = $progress;
             $array_percentage[] = $target == 0 ? 0 : (float)number_format((($progress / $target) * 100), 2);
             $array_gap[] = $target == 0 ? 0 : (float)number_format(($target - $progress), 2);
-
-            $total_target += $target;
-            $total_progress += $progress;
         }
-
-        $array_target[] = (float)number_format($total_target, 2);
-        $array_progress[] = (float)number_format($total_progress, 2);
-        $array_percentage[] = $total_target == 0 ? 0 : (float)number_format((($total_progress / $total_target) * 100), 2);
-        $array_gap[] = $total_target == 0 ? 0 : (float)number_format(($total_target - $total_progress), 2);
 
         $data = [
             'target' => $array_target,
@@ -262,7 +251,30 @@ class DashboardController extends Controller
         ], 200);
     }
 
-    public function rofoCitilink()
+    public function rofoGarudaYear()
+    {
+        $user = auth()->user();
+
+        $target = (float)number_format((Sales::user($user)->rkap()->customerName('Garuda Indonesia')->thisYear()->clean()->sum('value') / 1000000), 2);
+        $progress = (float)number_format((Sales::user($user)->rkap()->customerName('Garuda Indonesia')->thisYear()->level(1)->clean()->sum('value') / 1000000), 2);
+        $percentage = $target == 0 ? 0 : (float)number_format((($progress / $target) * 100), 2);
+        $gap = $target == 0 ? 0 : (float)number_format(($target - $progress), 2);
+
+        $data = [
+            'target' => $target,
+            'progress' => $progress,
+            'percentage' => $percentage,
+            'gap' => $gap,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data succesfully',
+            'data' => $data,
+        ], 200);
+    }
+
+    public function rofoCitilinkMonth()
     {
         $user = auth()->user();
 
@@ -274,9 +286,6 @@ class DashboardController extends Controller
         $array_progress = [];
         $array_percentage = [];
         $array_gap = [];
-
-        $total_target = 0;
-        $total_progress = 0;
 
         for ($i = 1; $i <= 12; $i++) {
             if ($i < $month) {
@@ -305,21 +314,36 @@ class DashboardController extends Controller
             $array_progress[] = $progress;
             $array_percentage[] = $target == 0 ? 0 : (float)number_format((($progress / $target) * 100), 2);
             $array_gap[] = $target == 0 ? 0 : (float)number_format(($target - $progress), 2);
-
-            $total_target += $target;
-            $total_progress += $progress;
         }
-
-        $array_target[] = (float)number_format($total_target, 2);
-        $array_progress[] = (float)number_format($total_progress, 2);
-        $array_percentage[] = $total_target == 0 ? 0 : (float)number_format((($total_progress / $total_target) * 100), 2);
-        $array_gap[] = $total_target == 0 ? 0 : (float)number_format(($total_target - $total_progress), 2);
 
         $data = [
             'target' => $array_target,
             'progress' => $array_progress,
             'percentage' => $array_percentage,
             'gap' => $array_gap,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Retrieve data succesfully',
+            'data' => $data,
+        ], 200);
+    }
+
+    public function rofoCitilinkYear()
+    {
+        $user = auth()->user();
+
+        $target = (float)number_format((Sales::user($user)->rkap()->customerName('Citilink Indonesia')->thisYear()->clean()->sum('value') / 1000000), 2);
+        $progress = (float)number_format((Sales::user($user)->rkap()->customerName('Citilink Indonesia')->thisYear()->level(1)->clean()->sum('value') / 1000000), 2);
+        $percentage = $target == 0 ? 0 : (float)number_format((($progress / $target) * 100), 2);
+        $gap = $target == 0 ? 0 : (float)number_format(($target - $progress), 2);
+
+        $data = [
+            'target' => $target,
+            'progress' => $progress,
+            'percentage' => $percentage,
+            'gap' => $gap,
         ];
 
         return response()->json([
